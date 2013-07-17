@@ -13,6 +13,32 @@ SDL_Texture *LoadImage(string file, SDL_Renderer *renderer) {
 	return tex;
 }
 
+void render(SDL_Texture *texture,
+			SDL_Renderer *renderer,
+			int offsetX,
+			int offsetY) {
+	//Clear the window
+	SDL_RenderClear(renderer);
+	
+	int tileWidth = 72;
+	int tileHeight = 34;
+	for(int i = 0; i < 10; ++i) {
+		for (int j = 0; j < 10; ++j) {
+			ApplySurface(
+				offsetX + j * tileWidth,
+				offsetY + i * tileHeight,
+				texture, renderer);
+			ApplySurface(
+				offsetX + j * tileWidth + cast(int)(tileWidth / 2),
+				offsetY + i * tileHeight + cast(int)(tileHeight / 2),
+				texture, renderer);
+		}
+	}
+	
+	//Update the screen
+	SDL_RenderPresent(renderer);
+}
+
 void ApplySurface(int x, int y, SDL_Texture *tex, SDL_Renderer *rend){
 	//First we must create an SDL_Rect for the position of the image, as SDL
 	//won't accept raw coordinates as the image's position
@@ -60,21 +86,50 @@ int main(string[] args) {
 	SDL_Texture *image;
 	image = LoadImage("resources/img/grid_72_34.png", ren);
 	
-	//Clear the window
-	SDL_RenderClear(ren);
+	int offsetX = 0;
+	int offsetY = 0;
+	int mouseX = 0;
+	int mouseY = 0;
+	bool mousePressed = false;
+	render(image, ren, offsetX, offsetY);
 	
-	int tileWidth = 72;
-	int tileHeight = 34;
-	for(int i = 0; i < 10; ++i) {
-		for (int j = 0; j < 10; ++j) {
-			ApplySurface(j * tileWidth, i * tileHeight, image, ren);
-			ApplySurface(j * tileWidth + cast(int)(tileWidth / 2), i * tileHeight + cast(int)(tileHeight / 2), image, ren);
+	//For tracking if we want to quit
+	SDL_Event event;
+	
+	bool quit = false;
+	while (!quit) {
+		//Event Polling
+		while (SDL_PollEvent(&event)) {
+			//If user closes the window
+			if (event.type == SDL_QUIT) {
+				quit = true;
+			}
+			if (event.type == SDL_KEYDOWN) {
+				if (event.key.keysym.sym == SDLK_q) {
+					quit = true;
+				}
+				writefln("The %s key was pressed!\n",
+                   event.key.keysym);
+			}
+			
+			if (event.type == SDL_MOUSEBUTTONDOWN &&
+				event.button.button == SDL_BUTTON_RIGHT) {
+				mousePressed = true;
+				mouseX = event.button.x - offsetX;
+				mouseY = event.button.y - offsetY;
+			} else if (event.type == SDL_MOUSEBUTTONUP &&
+				event.button.button == SDL_BUTTON_RIGHT) {
+				mousePressed = false;
+			} else if (event.type == SDL_MOUSEMOTION) {
+				if (mousePressed) {
+					offsetX = event.motion.x - mouseX;
+					offsetY = event.motion.y - mouseY;
+				}
+			}
 		}
+		
+		render(image, ren, offsetX, offsetY);
 	}
-	
-	//Update the screen
-	SDL_RenderPresent(ren);
-	SDL_Delay(2000);
 	
 	SDL_DestroyTexture(image);
 	SDL_DestroyRenderer(ren);
