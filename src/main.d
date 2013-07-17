@@ -13,27 +13,40 @@ SDL_Texture *LoadImage(string file, SDL_Renderer *renderer) {
 	return tex;
 }
 
-void render(SDL_Texture *texture,
+void render(SDL_Texture *grass,
+			SDL_Texture *water,
 			SDL_Renderer *renderer,
+			SDL_Surface *map,
 			int offsetX,
 			int offsetY) {
 	//Clear the window
 	SDL_RenderClear(renderer);
 	
+	SDL_LockSurface(map);
+	
 	int tileWidth = 72;
 	int tileHeight = 34;
-	for(int i = 0; i < 10; ++i) {
-		for (int j = 0; j < 10; ++j) {
-			ApplySurface(
-				offsetX + j * tileWidth,
-				offsetY + i * tileHeight,
-				texture, renderer);
-			ApplySurface(
-				offsetX + j * tileWidth + cast(int)(tileWidth / 2),
-				offsetY + i * tileHeight + cast(int)(tileHeight / 2),
-				texture, renderer);
+	int mapWidth = map.w;
+	int mapHeight = map.h;
+	void *pixelPointer = map.pixels;
+	for(int i = 0; i < mapHeight; ++i) {
+		for (int j = 0; j < mapWidth; ++j) {
+			if (*cast(byte*)(pixelPointer) == 0) {
+				ApplySurface(
+					offsetX + j * tileWidth - cast(int)(i * 0.5 * tileWidth),
+					offsetY + cast(int)(i * 0.5 * tileHeight),
+					grass, renderer);
+			} else {
+				ApplySurface(
+					offsetX + j * tileWidth - cast(int)(i * 0.5 * tileWidth),
+					offsetY + cast(int)(i * 0.5 * tileHeight),
+					water, renderer);
+			}
+			pixelPointer += 4;
 		}
 	}
+	
+	SDL_UnlockSurface(map);
 	
 	//Update the screen
 	SDL_RenderPresent(renderer);
@@ -63,7 +76,7 @@ int main(string[] args) {
 	//First we need to create a window to draw things in
 	SDL_Window *win;
 	//Create a window with title "Hello World" at 100, 100 on the screen with w:640 h:480 and show it
-	win = SDL_CreateWindow("Kayzers", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	win = SDL_CreateWindow("Kayzers", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
 	//Make sure creating our window went ok
 	if (win is null){
 		writeln(SDL_GetError());
@@ -83,15 +96,21 @@ int main(string[] args) {
 		return 1;
 	}
 	
-	SDL_Texture *image;
-	image = LoadImage("resources/img/grid_72_34.png", ren);
+	SDL_Texture *grass;
+	SDL_Texture *water;
+	grass = LoadImage("resources/img/grass.png", ren);
+	water = LoadImage("resources/img/water.png", ren);
+	
+	
+	SDL_Surface *map;
+	map = IMG_Load("resources/img/map.png");
 	
 	int offsetX = 0;
 	int offsetY = 0;
 	int mouseX = 0;
 	int mouseY = 0;
 	bool mousePressed = false;
-	render(image, ren, offsetX, offsetY);
+	render(grass, water, ren, map, offsetX, offsetY);
 	
 	//For tracking if we want to quit
 	SDL_Event event;
@@ -128,10 +147,12 @@ int main(string[] args) {
 			}
 		}
 		
-		render(image, ren, offsetX, offsetY);
+		render(grass, water, ren, map, offsetX, offsetY);
 	}
 	
-	SDL_DestroyTexture(image);
+	SDL_FreeSurface(map);
+	SDL_DestroyTexture(grass);
+	SDL_DestroyTexture(water);
 	SDL_DestroyRenderer(ren);
 	SDL_DestroyWindow(win);
 	
