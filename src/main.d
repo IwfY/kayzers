@@ -37,7 +37,7 @@ int main(string[] args) {
 	//First we need to create a window to draw things in
 	SDL_Window *win;
 	//Create a window with title "Hello World" at 100, 100 on the screen with w:640 h:480 and show it
-	win = SDL_CreateWindow("Hello World!", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	win = SDL_CreateWindow("Kayzers", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
 	//Make sure creating our window went ok
 	if (win is null){
 		writeln(SDL_GetError());

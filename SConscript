@@ -25,6 +25,6 @@ env.Append(DPATH   = dPath)
 env.Append(DFLAGS   = ['-debug'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)
-default = env.Program(target = 'kaizers', source = srcFiles)
+default = env.Program(target = 'kayzers', source = srcFiles)
 
 Default(default)
