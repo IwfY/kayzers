@@ -112,11 +112,15 @@ int main(string[] args) {
 	bool mousePressed = false;
 	render(grass, water, ren, map, offsetX, offsetY);
 	
+	const int MAX_FRAMES_PER_SECOND = 60;
+	
 	//For tracking if we want to quit
 	SDL_Event event;
+	int frameStartTime;
 	
 	bool quit = false;
 	while (!quit) {
+		frameStartTime = SDL_GetTicks();
 		//Event Polling
 		while (SDL_PollEvent(&event)) {
 			//If user closes the window
@@ -148,6 +152,11 @@ int main(string[] args) {
 		}
 		
 		render(grass, water, ren, map, offsetX, offsetY);
+		
+		int frameDuration = SDL_GetTicks() - frameStartTime;
+		if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {
+			SDL_Delay(( 1000 / MAX_FRAMES_PER_SECOND ) - frameDuration );
+		}
 	}
 	
 	SDL_FreeSurface(map);
