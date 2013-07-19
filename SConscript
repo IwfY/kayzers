@@ -1,5 +1,6 @@
 srcFiles = Split("""
     src/main.d
+    src/renderer.d
 """)
 
 dFlags = ['-L-L/usr/lib/dmd',
@@ -15,7 +16,8 @@ libs = ['dl',
 
 libPath = ['/usr/lib/dmd']
 
-dPath = ['/usr/include/d']
+dPath = ['/usr/include/d',
+		 'src']
 
 
 # build environment

@@ -1,71 +1,16 @@
+import renderer;
+
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
 import std.stdio;
 import std.string;
 
-SDL_Texture *LoadImage(string file, SDL_Renderer *renderer) {
-	SDL_Texture *tex = null;
-	tex = IMG_LoadTexture(renderer, toStringz(file));
-	if (tex is null) {
-		writeln("failed to load texture");
-	}
-	return tex;
-}
-
-void render(SDL_Texture *grass,
-			SDL_Texture *water,
-			SDL_Renderer *renderer,
-			SDL_Surface *map,
-			int offsetX,
-			int offsetY) {
-	//Clear the window
-	SDL_RenderClear(renderer);
-	
-	SDL_LockSurface(map);
-	
-	int tileWidth = 72;
-	int tileHeight = 34;
-	int mapWidth = map.w;
-	int mapHeight = map.h;
-	void *pixelPointer = map.pixels;
-	for(int i = 0; i < mapHeight; ++i) {
-		for (int j = 0; j < mapWidth; ++j) {
-			if (*cast(byte*)(pixelPointer) == 0) {
-				ApplySurface(
-					offsetX + j * tileWidth - cast(int)(i * 0.5 * tileWidth),
-					offsetY + cast(int)(i * 0.5 * tileHeight),
-					grass, renderer);
-			} else {
-				ApplySurface(
-					offsetX + j * tileWidth - cast(int)(i * 0.5 * tileWidth),
-					offsetY + cast(int)(i * 0.5 * tileHeight),
-					water, renderer);
-			}
-			pixelPointer += 4;
-		}
-	}
-	
-	SDL_UnlockSurface(map);
-	
-	//Update the screen
-	SDL_RenderPresent(renderer);
-}
-
-void ApplySurface(int x, int y, SDL_Texture *tex, SDL_Renderer *rend){
-	//First we must create an SDL_Rect for the position of the image, as SDL
-	//won't accept raw coordinates as the image's position
-	SDL_Rect pos;
-	pos.x = x;
-	pos.y = y;
-	//We also need to query the texture to get its width and height to use
-	SDL_QueryTexture(tex, null, null, &pos.w, &pos.h);
-	SDL_RenderCopy(rend, tex, null, &pos);
-}
-
 int main(string[] args) {
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
+	
+	Renderer renderer;
 	
 	//First we need to start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
@@ -74,43 +19,30 @@ int main(string[] args) {
 	}
 
 	//First we need to create a window to draw things in
-	SDL_Window *win;
+	SDL_Window *window;
 	//Create a window with title "Hello World" at 100, 100 on the screen with w:640 h:480 and show it
-	win = SDL_CreateWindow("Kayzers", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Kayzers", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
 	//Make sure creating our window went ok
-	if (win is null){
-		writeln(SDL_GetError());
-		return 1;
-	}
-
-	//Now we create our renderer
-	SDL_Renderer *ren;
-	//Create a renderer that will draw to window, -1 specifies that we want to load whichever 
-	//video driver supports the flags we're passing
-	//Flags: SDL_RENDERER_ACCELERATED: We want to use hardware accelerated rendering, b/c it rocks!
-	//SDL_RENDERER_PRESENTVSYNC: We want the renderer's present function (update screen) to be
-	//synchornized with the monitor's refresh rate
-	ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (ren is null){
+	if (window is null){
 		writeln(SDL_GetError());
 		return 1;
 	}
 	
-	SDL_Texture *grass;
-	SDL_Texture *water;
-	grass = LoadImage("resources/img/grass.png", ren);
-	water = LoadImage("resources/img/water.png", ren);
+	renderer = new Renderer(window);
 	
+	renderer.registerTexture("grass", "resources/img/grass.png");
+	renderer.registerTexture("water", "resources/img/water.png");
 	
-	SDL_Surface *map;
-	map = IMG_Load("resources/img/map.png");
+	renderer.loadMap("resources/img/map.png");
 	
 	int offsetX = 0;
 	int offsetY = 0;
-	int mouseX = 0;
-	int mouseY = 0;
+	SDL_Rect *offset = new SDL_Rect(0, 0);
+	int mousePressedX = 0;
+	int mousePressedY = 0;
 	bool mousePressed = false;
-	render(grass, water, ren, map, offsetX, offsetY);
+	SDL_Point *mousePosition = new SDL_Point(0, 0);
+	renderer.render(offset);
 	
 	const int MAX_FRAMES_PER_SECOND = 60;
 	
@@ -138,20 +70,22 @@ int main(string[] args) {
 			if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_RIGHT) {
 				mousePressed = true;
-				mouseX = event.button.x - offsetX;
-				mouseY = event.button.y - offsetY;
+				mousePressedX = event.button.x - offset.x;
+				mousePressedY = event.button.y - offset.y;
 			} else if (event.type == SDL_MOUSEBUTTONUP &&
 				event.button.button == SDL_BUTTON_RIGHT) {
 				mousePressed = false;
 			} else if (event.type == SDL_MOUSEMOTION) {
+				mousePosition.x = event.motion.x;
+				mousePosition.y = event.motion.y;
 				if (mousePressed) {
-					offsetX = event.motion.x - mouseX;
-					offsetY = event.motion.y - mouseY;
+					offset.x = event.motion.x - mousePressedX;
+					offset.y = event.motion.y - mousePressedY;
 				}
 			}
 		}
 		
-		render(grass, water, ren, map, offsetX, offsetY);
+		renderer.render(offset);
 		
 		int frameDuration = SDL_GetTicks() - frameStartTime;
 		if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {
@@ -159,11 +93,9 @@ int main(string[] args) {
 		}
 	}
 	
-	SDL_FreeSurface(map);
-	SDL_DestroyTexture(grass);
-	SDL_DestroyTexture(water);
-	SDL_DestroyRenderer(ren);
-	SDL_DestroyWindow(win);
+	delete renderer;
+	
+	SDL_DestroyWindow(window);
 	
 	SDL_Quit();
 	
