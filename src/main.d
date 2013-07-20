@@ -32,6 +32,7 @@ int main(string[] args) {
 	
 	renderer.registerTexture("grass", "resources/img/grass.png");
 	renderer.registerTexture("water", "resources/img/water.png");
+	renderer.registerTexture("border", "resources/img/grid_border.png");
 	
 	renderer.loadMap("resources/img/map.png");
 	
@@ -42,7 +43,7 @@ int main(string[] args) {
 	int mousePressedY = 0;
 	bool mousePressed = false;
 	SDL_Point *mousePosition = new SDL_Point(0, 0);
-	renderer.render(offset);
+	renderer.render(offset, mousePosition);
 	
 	const int MAX_FRAMES_PER_SECOND = 60;
 	
@@ -85,7 +86,7 @@ int main(string[] args) {
 			}
 		}
 		
-		renderer.render(offset);
+		renderer.render(offset, mousePosition);
 		
 		int frameDuration = SDL_GetTicks() - frameStartTime;
 		if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {

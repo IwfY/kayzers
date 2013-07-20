@@ -17,6 +17,7 @@ class Renderer {
 	private SDL_Renderer *renderer;
 	private TextureWrapper*[string] textures;
 	private SDL_Window *window;
+	private SDL_Rect *tileDimensions;
 	
 	
 	public this(SDL_Window *window) {
@@ -29,6 +30,10 @@ class Renderer {
 		if (this.renderer is null) {
 			writeln(SDL_GetError());
 		}
+		
+		this.tileDimensions = new SDL_Rect(0, 0);
+		this.tileDimensions.w = 72;
+		this.tileDimensions.h = 36;
 	}
 	
 	
@@ -110,14 +115,25 @@ class Renderer {
 	}
 	
 	
-	public void render(SDL_Rect *offset) {
+	private void getTileAtPixel(SDL_Rect *offset,
+								SDL_Point *mousePosition,
+								out int i, out int j) {
+		//x = offset.x + j * tileWidth - cast(int)(i * 0.5 * tileWidth),
+		//y = offset.y + cast(int)(i * 0.5 * tileHeight)
+		i = cast(int)((mousePosition.y - offset.y) * 2 / this.tileDimensions.h);
+		j = cast(int)(((mousePosition.x - offset.x) + cast(int)(i * 0.5 * this.tileDimensions.w)) / this.tileDimensions.w);
+		//writefln("i: %d, j: %d", i, j);
+	}
+	
+	
+	public void render(SDL_Rect *offset, SDL_Point *mousePosition) {
 		if (this.renderer !is null && this.map !is null) {
 			SDL_RenderClear(this.renderer);
 	
 			SDL_LockSurface(this.map);
 			
-			int tileWidth = 72;
-			int tileHeight = 34;
+			int tileWidth = this.tileDimensions.w;
+			int tileHeight = this.tileDimensions.h;
 			int mapWidth = this.map.w;
 			int mapHeight = this.map.h;
 			void *pixelPointer = this.map.pixels;
@@ -141,6 +157,16 @@ class Renderer {
 			}
 			
 			SDL_UnlockSurface(this.map);
+			
+			// mouse marker
+			int mouseI;
+			int mouseJ;
+			this.getTileAtPixel(offset, mousePosition, mouseI, mouseJ);
+			this.drawTexture(
+							offset.x + mouseJ * tileWidth - 
+								cast(int)(mouseI * 0.5 * tileWidth),
+							offset.y + cast(int)(mouseI * 0.5 * tileHeight),
+							this.getTexture("border"));
 			
 			//Update the screen
 			SDL_RenderPresent(this.renderer);
