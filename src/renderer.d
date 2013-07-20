@@ -6,10 +6,16 @@ import derelict.sdl2.image;
 import std.stdio;
 import std.string;
 
+
+struct TextureWrapper {
+	public SDL_Texture *texture;
+}
+
+
 class Renderer {
 	private SDL_Surface *map;
 	private SDL_Renderer *renderer;
-	private SDL_Texture*[string] textures;
+	private TextureWrapper*[string] textures;
 	private SDL_Window *window;
 	
 	
@@ -35,8 +41,10 @@ class Renderer {
 		// destroy textures
 		string[] keys = this.textures.keys;
 		for (int i = 0; i < keys.length; ++i) {
-			SDL_DestroyTexture(this.textures[keys[i]]);
-			this.textures.remove(keys[i]);
+			string key = keys[i];
+			SDL_Texture *texture = this.getTexture(key);
+			this.textures.remove(key);
+			SDL_DestroyTexture(texture);
 		}
 	}
 	
@@ -66,9 +74,9 @@ class Renderer {
 			return false;
 		}
 		
-		SDL_Texture *tex;
-		tex = IMG_LoadTexture(this.renderer, toStringz(filename));
-		if (tex is null) {
+		TextureWrapper *tex = new TextureWrapper();
+		tex.texture = IMG_LoadTexture(this.renderer, toStringz(filename));
+		if (tex.texture is null) {
 			return false;
 		}
 		
@@ -85,7 +93,7 @@ class Renderer {
 	
 	public SDL_Texture *getTexture(const string textureName) {
 		// TODO: check if texture available
-		return this.textures[textureName];
+		return this.textures[textureName].texture;
 	}
 	
 	/**
