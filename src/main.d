@@ -34,7 +34,7 @@ int main(string[] args) {
 	renderer.registerTexture("water", "resources/img/water_n.png");
 	renderer.registerTexture("border", "resources/img/grid_border.png");
 
-	renderer.loadMap("resources/img/map.png");
+	renderer.loadMap("resources/img/map_tiny.png");
 
 	bool mousePressed = false;
 	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);

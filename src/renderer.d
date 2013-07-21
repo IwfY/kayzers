@@ -9,12 +9,14 @@ import std.math;
 
 
 struct TextureWrapper {
+	public SDL_Surface *surface;
 	public SDL_Texture *texture;
 }
 
 
 class Renderer {
 	private SDL_Surface *map;
+	private SDL_Texture *mapTexture;
 	private SDL_Renderer *renderer;
 	private TextureWrapper*[string] textures;
 	private SDL_Window *window;
@@ -39,6 +41,8 @@ class Renderer {
 		this.tileDimensions.w = 120;
 		this.tileDimensions.h = 70;
 		this.zoom = 1;
+
+		this.mapTexture = null;
 	}
 
 
@@ -60,13 +64,78 @@ class Renderer {
 
 
 	/**
-	 * load an image file representing the map
+	 * load an image file representing the map and prerender the map to
+	 * a surface
 	 **/
 	public bool loadMap(string filename) {
-		this.map = IMG_Load(toStringz(filename));
-		if (this.map is null) {
+		SDL_Surface *map = IMG_Load(toStringz(filename));
+		if (map is null) {
 			return false;
 		}
+
+		int tileWidth = this.tileDimensions.w;
+		int tileHeight = this.tileDimensions.h;
+		int mapWidth = cast(int)(map.w * tileWidth + 0.5 * tileWidth * (map.h - 1));
+		int mapHeight = cast(int)((map.h + 1) * 0.5 * tileHeight);
+
+		SDL_Surface *mapSurface =
+				SDL_CreateRGBSurface(
+						0 ,mapWidth ,mapHeight ,32 ,0 ,0 ,0 ,0);
+
+		this.zoom = 1;
+		this.offset.x = cast(int)(-0.5 * tileWidth +
+							0.5 * map.w * tileWidth);
+		this.offset.y = 0;
+
+		// iterate over input map data and render tile map
+		SDL_LockSurface(map);
+
+		void *pixelPointer = map.pixels;
+		for(int i = 0; i < map.h; ++i) {
+			for (int j = 0; j < map.w; ++j) {
+				int x, y;
+				this.getTopLeftScreenCoordinate(
+						i, j, x, y);
+
+				SDL_Rect *srcRect = new SDL_Rect(0, 0);
+				srcRect.w = tileWidth;
+				srcRect.h = tileHeight;
+
+				SDL_Rect *destRect = new SDL_Rect(x, y);
+				destRect.w = tileWidth;
+				destRect.h = tileHeight;
+
+
+				if (*cast(byte*)(pixelPointer) == 0) {	// land
+
+					SDL_BlitSurface(
+							this.getSurface("grass"),
+							srcRect,
+							mapSurface,
+							destRect);
+				} else {								// water
+					SDL_BlitSurface(
+							this.getSurface("water"),
+							srcRect,
+							mapSurface,
+							destRect);
+				}
+				pixelPointer += 4;
+			}
+		}
+
+		SDL_UnlockSurface(map);
+
+		this.mapTexture = SDL_CreateTextureFromSurface(this.renderer,
+								mapSurface);
+
+		//SDL_SaveBMP(mapSurface, "/tmp/t.bmp");
+
+		SDL_FreeSurface(map);
+		SDL_FreeSurface(mapSurface);
+
+		this.offset.x = cast(int)(0.5 * tileWidth -
+							0.5 * map.w * tileWidth);
 
 		return true;
 	}
@@ -85,7 +154,12 @@ class Renderer {
 		}
 
 		TextureWrapper *tex = new TextureWrapper();
-		tex.texture = IMG_LoadTexture(this.renderer, toStringz(filename));
+		tex.surface = IMG_Load(toStringz(filename));
+		if (tex.surface is null) {
+			return false;
+		}
+		tex.texture = SDL_CreateTextureFromSurface(this.renderer,
+							tex.surface);
 		if (tex.texture is null) {
 			return false;
 		}
@@ -93,7 +167,7 @@ class Renderer {
 		this.textures[textureName] = tex;
 
 		debug(2) {
-			writeln("Renderer::registerTexture Load %s as %s",
+			writefln("Renderer::registerTexture Load %s as %s",
 					filename, textureName);
 		}
 
@@ -106,6 +180,11 @@ class Renderer {
 		return this.textures[textureName].texture;
 	}
 
+	public SDL_Surface *getSurface(const string textureName) {
+		// TODO: check if texture available
+		return this.textures[textureName].surface;
+	}
+
 	/**
 	 * draw a texture to the renderer
 	 **/
@@ -114,10 +193,20 @@ class Renderer {
 		position.x = x;
 		position.y = y;
 
+		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
+
+		writefln("%d, %d, %d, %d", position.x, position.y, position.w, position.h);
+
+		SDL_RenderCopy(this.renderer, texture, null, &position);
+	}
+
+	private void drawTile(int x, int y, SDL_Texture *texture) {
+		SDL_Rect position;
+		position.x = x;
+		position.y = y;
+
 		position.w = cast(int)(ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
 		position.h = cast(int)(ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
-		//~ position.w = position.w / this.zoom;
-		//~ position.h = position.h / this.zoom;
 
 		SDL_RenderCopy(this.renderer, texture, null, &position);
 	}
@@ -136,6 +225,9 @@ class Renderer {
 	}
 
 
+	/**
+	 * get the top left coordinate of a tile drawn in column i, row j
+	 **/
 	private void getTopLeftScreenCoordinate(int i, int j,
 											out int x, out int y) {
 		double tileWidth =
@@ -183,36 +275,12 @@ class Renderer {
 
 
 	public void render(SDL_Point *mousePosition) {
-		if (this.renderer !is null && this.map !is null) {
+		if (this.renderer !is null) {
 			SDL_RenderClear(this.renderer);
 
-			SDL_LockSurface(this.map);
-
-			int tileWidth = this.tileDimensions.w;
-			int tileHeight = this.tileDimensions.h;
-			int mapWidth = this.map.w;
-			int mapHeight = this.map.h;
-
-			void *pixelPointer = this.map.pixels;
-			for(int i = 0; i < mapHeight; ++i) {
-				for (int j = 0; j < mapWidth; ++j) {
-					int x, y;
-					this.getTopLeftScreenCoordinate(
-							i, j, x, y);
-					if (*cast(byte*)(pixelPointer) == 0) {
-						this.drawTexture(
-							x, y,
-							this.getTexture("grass"));
-					} else {
-						this.drawTexture(
-							x, y,
-							this.getTexture("water"));
-					}
-					pixelPointer += 4;
-				}
-			}
-
-			SDL_UnlockSurface(this.map);
+			this.drawTexture(
+					this.offset.x, this.offset.y,
+					this.mapTexture);
 
 			// mouse marker
 			int mouseI;
@@ -221,7 +289,7 @@ class Renderer {
 			int x, y;
 			this.getTopLeftScreenCoordinate(
 					mouseI, mouseJ, x, y);
-			this.drawTexture(
+			this.drawTile(
 					x, y,
 					this.getTexture("border"));
 
