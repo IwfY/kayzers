@@ -1,6 +1,7 @@
 srcFiles = Split("""
     src/main.d
     src/renderer.d
+    src/map.d
 """)
 
 dFlags = ['-L-L/usr/lib/dmd',
@@ -24,7 +25,7 @@ dPath = ['/usr/include/d',
 
 env = Environment()
 env.Append(DPATH   = dPath)
-env.Append(DFLAGS  = ['-debug=1'])
+env.Append(DFLAGS  = ['-debug=2'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)
 default = env.Program(target = 'kayzers', source = srcFiles)

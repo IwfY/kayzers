@@ -12,17 +12,13 @@ int main(string[] args) {
 
 	Renderer renderer;
 
-	//First we need to start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		writeln(SDL_GetError());
 		return 1;
 	}
 
-	//First we need to create a window to draw things in
 	SDL_Window *window;
-	//Create a window with title "Hello World" at 100, 100 on the screen with w:640 h:480 and show it
 	window = SDL_CreateWindow("Kayzers", 100, 100, 800, 600, SDL_WINDOW_SHOWN);
-	//Make sure creating our window went ok
 	if (window is null){
 		writeln(SDL_GetError());
 		return 1;
@@ -43,8 +39,7 @@ int main(string[] args) {
 	renderer.render(mousePosition);
 
 	const int MAX_FRAMES_PER_SECOND = 60;
-
-	//For tracking if we want to quit
+	
 	SDL_Event event;
 	int frameStartTime;
 
