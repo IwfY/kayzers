@@ -5,6 +5,7 @@ import derelict.sdl2.image;
 
 import std.stdio;
 import std.string;
+import std.math;
 
 
 struct TextureWrapper {
@@ -115,6 +116,11 @@ class Renderer {
 		// get width and height of texture
 		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
 
+		position.w = cast(int)(ceil(cast(double)position.w / cast(double)this.zoom));
+		position.h = cast(int)(ceil(cast(double)position.h / cast(double)this.zoom));
+		//~ position.w = position.w / this.zoom;
+		//~ position.h = position.h / this.zoom;
+
 		SDL_RenderCopy(this.renderer, texture, null, &position);
 	}
 
@@ -125,19 +131,40 @@ class Renderer {
 				* 2 / this.tileDimensions.h);
 		j = cast(int)(((mousePosition.x - this.offset.x)
 				+ cast(int)(i * 0.5 * this.tileDimensions.w)) / this.tileDimensions.w);
-		//writefln("i: %d, j: %d", i, j);
+
+		debug(2) {
+			writefln("Renderer::getTileAtPixel i: %d, j: %d", i, j);
+		}
 	}
 
 
 	private void getTopLeftScreenCoordinate(int i, int j,
 											out int x, out int y) {
-		int tileWidth = this.tileDimensions.w;
-		int tileHeight = this.tileDimensions.h;
-		x = this.offset.x + j * tileWidth -
-				cast(int)(i * 0.5 * tileWidth);
-		y = this.offset.y + cast(int)(i * 0.5 * tileHeight);
-		//writefln("i: %d, j: %d --> x: %d, y:%d", i, j, x, y);
+		double tileWidth =
+				cast(double)this.tileDimensions.w /
+				cast(double)this.zoom;
+		double tileHeight =
+				cast(double)this.tileDimensions.h /
+				cast(double)this.zoom;
+
+		x = cast(int)(this.offset.x + j * tileWidth -
+				i * 0.5 * tileWidth);
+		y = cast(int)(this.offset.y + i * 0.5 * tileHeight);
+
+		debug(3) {
+			writefln("Renderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
+					 i, j, x, y);
+		}
 	}
+
+
+	public void setZoom(int zoom)
+		in {
+			assert(zoom >= 1 && zoom <= 4);
+		}
+		body {
+			this.zoom = zoom;
+		}
 
 
 	public void setOffset(int x, int y) {

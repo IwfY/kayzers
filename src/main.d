@@ -9,9 +9,9 @@ import std.string;
 int main(string[] args) {
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
-	
+
 	Renderer renderer;
-	
+
 	//First we need to start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		writeln(SDL_GetError());
@@ -27,27 +27,27 @@ int main(string[] args) {
 		writeln(SDL_GetError());
 		return 1;
 	}
-	
+
 	renderer = new Renderer(window);
-	
+
 	renderer.registerTexture("grass", "resources/img/grass.png");
 	renderer.registerTexture("water", "resources/img/water.png");
 	renderer.registerTexture("border", "resources/img/grid_border.png");
-	
-	renderer.loadMap("resources/img/map.png");
-	
+
+	renderer.loadMap("resources/img/map_tiny.png");
+
 	bool mousePressed = false;
 	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);
 	SDL_Point *mousePosition = new SDL_Point(0, 0);
-	
+
 	renderer.render(mousePosition);
-	
+
 	const int MAX_FRAMES_PER_SECOND = 60;
-	
+
 	//For tracking if we want to quit
 	SDL_Event event;
 	int frameStartTime;
-	
+
 	bool quit = false;
 	while (!quit) {
 		frameStartTime = SDL_GetTicks();
@@ -60,11 +60,22 @@ int main(string[] args) {
 			if (event.type == SDL_KEYDOWN) {
 				if (event.key.keysym.sym == SDLK_q) {
 					quit = true;
+				} else if (event.key.keysym.sym == SDLK_1) {
+					renderer.setZoom(1);
+				} else if (event.key.keysym.sym == SDLK_2) {
+					renderer.setZoom(2);
+				} else if (event.key.keysym.sym == SDLK_3) {
+					renderer.setZoom(3);
+				} else if (event.key.keysym.sym == SDLK_4) {
+					renderer.setZoom(4);
 				}
-				writefln("The %s key was pressed!\n",
-                   event.key.keysym);
+				
+				debug(2) {
+					writefln("The %s key was pressed!\n",
+					   event.key.keysym);
+				}
 			}
-			
+
 			if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_RIGHT) {
 				mousePressed = true;
@@ -85,21 +96,21 @@ int main(string[] args) {
 				}
 			}
 		}
-		
+
 		renderer.render(mousePosition);
-		
+
 		int frameDuration = SDL_GetTicks() - frameStartTime;
 		if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {
 			SDL_Delay(( 1000 / MAX_FRAMES_PER_SECOND ) - frameDuration );
 		}
 	}
-	
+
 	delete renderer;
-	
+
 	SDL_DestroyWindow(window);
-	
+
 	SDL_Quit();
-	
+
 	DerelictSDL2Image.unload();
 	DerelictSDL2.unload();
 

@@ -24,7 +24,7 @@ dPath = ['/usr/include/d',
 
 env = Environment()
 env.Append(DPATH   = dPath)
-env.Append(DFLAGS   = ['-debug'])
+env.Append(DFLAGS  = ['-debug=1'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)
 default = env.Program(target = 'kayzers', source = srcFiles)
