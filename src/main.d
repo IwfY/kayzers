@@ -36,14 +36,11 @@ int main(string[] args) {
 	
 	renderer.loadMap("resources/img/map.png");
 	
-	int offsetX = 0;
-	int offsetY = 0;
-	SDL_Rect *offset = new SDL_Rect(0, 0);
-	int mousePressedX = 0;
-	int mousePressedY = 0;
 	bool mousePressed = false;
+	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);
 	SDL_Point *mousePosition = new SDL_Point(0, 0);
-	renderer.render(offset, mousePosition);
+	
+	renderer.render(mousePosition);
 	
 	const int MAX_FRAMES_PER_SECOND = 60;
 	
@@ -71,8 +68,8 @@ int main(string[] args) {
 			if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_RIGHT) {
 				mousePressed = true;
-				mousePressedX = event.button.x - offset.x;
-				mousePressedY = event.button.y - offset.y;
+				mousePressedPosition.x = event.button.x;
+				mousePressedPosition.y = event.button.y;
 			} else if (event.type == SDL_MOUSEBUTTONUP &&
 				event.button.button == SDL_BUTTON_RIGHT) {
 				mousePressed = false;
@@ -80,13 +77,16 @@ int main(string[] args) {
 				mousePosition.x = event.motion.x;
 				mousePosition.y = event.motion.y;
 				if (mousePressed) {
-					offset.x = event.motion.x - mousePressedX;
-					offset.y = event.motion.y - mousePressedY;
+					renderer.moveOffset(
+							event.motion.x - mousePressedPosition.x,
+							event.motion.y - mousePressedPosition.y);
+					mousePressedPosition.x = event.motion.x;
+					mousePressedPosition.y = event.motion.y;
 				}
 			}
 		}
 		
-		renderer.render(offset, mousePosition);
+		renderer.render(mousePosition);
 		
 		int frameDuration = SDL_GetTicks() - frameStartTime;
 		if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {
