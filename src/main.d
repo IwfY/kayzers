@@ -10,6 +10,11 @@ int main(string[] args) {
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
 
+	if (args.length < 2) {
+		writeln("open: ./loadpixels <<image>>");
+		return 0;
+	}
+
 	Renderer renderer;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
@@ -30,7 +35,7 @@ int main(string[] args) {
 	renderer.registerTexture("water", "resources/img/water_n.png");
 	renderer.registerTexture("border", "resources/img/grid_border.png");
 
-	renderer.loadMap("resources/img/map_tiny.png");
+	renderer.loadMap(args[1]);
 
 	bool mousePressed = false;
 	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);

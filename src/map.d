@@ -28,7 +28,7 @@ public class Map {
 			assert(y < this.height, "Map::getTile");
 		}
 		body {
-			return this.tiles[y + x * this.height];
+			return this.tiles[x + y * this.width];
 		}
 	
 	public uint getWidth() {
@@ -63,7 +63,7 @@ public class Map {
 			} else {								// water
 				this.tiles ~= 1;
 			}
-			pixelPointer += 4;
+			pixelPointer += mapSurface.format.BytesPerPixel;
 		}
 
 		SDL_UnlockSurface(mapSurface);

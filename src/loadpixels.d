@@ -2,10 +2,16 @@ import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
 import std.stdio;
+import std.string;
 
 int main(string[] args) {
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
+
+	if (args.length < 2) {
+		writeln("open: ./loadpixels <<image>>");
+		return 0;
+	}
 	
 	//First we need to start up SDL, and make sure it went ok
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
@@ -24,15 +30,24 @@ int main(string[] args) {
 	}
 		
 	SDL_Surface *surface;
-	surface = IMG_Load("resources/img/4color.png");
+	surface = IMG_Load(toStringz(args[1]));
+
+	writefln("pixel format of %s: bpp %d", args[1], surface.format.BytesPerPixel);
 	
 	void *pixelPointer = surface.pixels;
 	for (int i = 0; i < surface.w * surface.h; ++i) {
-		writefln("r (%02X), g (%02X), b (%02X), a (%02X)",
-			     *cast(byte*)(pixelPointer++),
-			     *cast(byte*)(pixelPointer++),
-			     *cast(byte*)(pixelPointer++),
-			     *cast(byte*)(pixelPointer++));
+		if (surface.format.BytesPerPixel == 4) {
+			writefln("r (%02X), g (%02X), b (%02X), a (%02X)",
+					 *cast(byte*)(pixelPointer++),
+					 *cast(byte*)(pixelPointer++),
+					 *cast(byte*)(pixelPointer++),
+					 *cast(byte*)(pixelPointer++));
+		 } else if (surface.format.BytesPerPixel == 3) {
+			writefln("r (%02X), g (%02X), b (%02X)",
+					 *cast(byte*)(pixelPointer++),
+					 *cast(byte*)(pixelPointer++),
+					 *cast(byte*)(pixelPointer++));
+		 }
 	}
 	
 	SDL_FreeSurface(surface);

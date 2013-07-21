@@ -166,9 +166,9 @@ class Renderer {
 				cast(double)this.tileDimensions.h /
 				cast(double)this.zoom;
 
-		x = cast(int)(this.offset.x + j * tileWidth -
-				i * 0.5 * tileWidth);
-		y = cast(int)(this.offset.y + i * 0.5 * tileHeight);
+		x = cast(int)(this.offset.x + i * tileWidth -
+				j * 0.5 * tileWidth);
+		y = cast(int)(this.offset.y + j * 0.5 * tileHeight);
 
 		debug(3) {
 			writefln("Renderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
