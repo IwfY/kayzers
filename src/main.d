@@ -30,11 +30,11 @@ int main(string[] args) {
 
 	renderer = new Renderer(window);
 
-	renderer.registerTexture("grass", "resources/img/grass.png");
-	renderer.registerTexture("water", "resources/img/water.png");
+	renderer.registerTexture("grass", "resources/img/grass_n.png");
+	renderer.registerTexture("water", "resources/img/water_n.png");
 	renderer.registerTexture("border", "resources/img/grid_border.png");
 
-	renderer.loadMap("resources/img/map_tiny.png");
+	renderer.loadMap("resources/img/map.png");
 
 	bool mousePressed = false;
 	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);

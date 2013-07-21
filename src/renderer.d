@@ -36,8 +36,8 @@ class Renderer {
 
 		this.offset = new SDL_Point(0, 0);
 		this.tileDimensions = new SDL_Rect(0, 0);
-		this.tileDimensions.w = 72;
-		this.tileDimensions.h = 34;
+		this.tileDimensions.w = 120;
+		this.tileDimensions.h = 70;
 		this.zoom = 1;
 	}
 
@@ -113,11 +113,9 @@ class Renderer {
 		SDL_Rect position;
 		position.x = x;
 		position.y = y;
-		// get width and height of texture
-		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
 
-		position.w = cast(int)(ceil(cast(double)position.w / cast(double)this.zoom));
-		position.h = cast(int)(ceil(cast(double)position.h / cast(double)this.zoom));
+		position.w = cast(int)(ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
+		position.h = cast(int)(ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
 		//~ position.w = position.w / this.zoom;
 		//~ position.h = position.h / this.zoom;
 
