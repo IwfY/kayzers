@@ -22,6 +22,8 @@ class Renderer {
 	private TextureWrapper*[string] textures;
 	private SDL_Window *window;
 	private SDL_Rect *tileDimensions;
+
+	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
 
@@ -129,24 +131,89 @@ class Renderer {
 		SDL_RenderCopy(this.renderer, texture, null, &position);
 	}
 
+
 	private void drawTile(int x, int y, SDL_Texture *texture) {
 		SDL_Rect position;
 		position.x = x;
 		position.y = y;
 
-		position.w = cast(int)(ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
-		position.h = cast(int)(ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
+		position.w = cast(int)(
+			ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
+		position.h = cast(int)(
+			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
 
 		SDL_RenderCopy(this.renderer, texture, null, &position);
 	}
 
 
-	private void getTileAtPixel(SDL_Point *mousePosition,
+	private double getDistance(double x1, double y1, double x2, double y2) {
+		return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+	}
+
+
+	/**
+	 * get the tile coordinate for a given screen position
+	 *
+	 * TODO: distance function could be weighted depending on tile
+	 * 		 dimension
+	 **/
+	private void getTileAtPixel(SDL_Point *position,
 								out int i, out int j) {
-		i = cast(int)((mousePosition.y - this.offset.y)
-				* 2 / this.tileDimensions.h);
-		j = cast(int)(((mousePosition.x - this.offset.x)
-				+ cast(int)(i * 0.5 * this.tileDimensions.w)) / this.tileDimensions.w);
+		double tileWidth =
+				cast(double)this.tileDimensions.w /
+				cast(double)this.zoom;
+		double tileHeight =
+				cast(double)this.tileDimensions.h /
+				cast(double)this.zoom;
+
+		double nearestJ = (position.y -
+				this.offset.y - 0.5 * tileHeight) * 2.0 / tileHeight;
+		double nearestI = (position.x - this.offset.x +
+				(nearestJ - 1.0) * 0.5 * tileWidth) / tileWidth;
+
+		int x, y;
+		double distance, minDistance;
+		// check for distances to 4 surounding tiles
+		this.getTopLeftScreenCoordinate(
+			cast(int)floor(nearestI), cast(int)floor(nearestJ), x, y);
+		x += 0.5 * tileWidth;
+		y += 0.5 * tileHeight;
+		minDistance = getDistance(position.x, position.y, x, y);
+		i = cast(int)floor(nearestI);
+		j = cast(int)floor(nearestJ);
+
+		this.getTopLeftScreenCoordinate(
+			cast(int)floor(nearestI), cast(int)ceil(nearestJ), x, y);
+		x += 0.5 * tileWidth;
+		y += 0.5 * tileHeight;
+		distance = getDistance(position.x, position.y, x, y);
+		if (distance < minDistance) {
+			minDistance = distance;
+			i = cast(int)floor(nearestI);
+			j = cast(int)ceil(nearestJ);
+		}
+
+		this.getTopLeftScreenCoordinate(
+			cast(int)ceil(nearestI), cast(int)floor(nearestJ), x, y);
+		x += 0.5 * tileWidth;
+		y += 0.5 * tileHeight;
+		distance = getDistance(position.x, position.y, x, y);
+		if (distance < minDistance) {
+			minDistance = distance;
+			i = cast(int)ceil(nearestI);
+			j = cast(int)floor(nearestJ);
+		}
+
+		this.getTopLeftScreenCoordinate(
+			cast(int)ceil(nearestI), cast(int)ceil(nearestJ), x, y);
+		x += 0.5 * tileWidth;
+		y += 0.5 * tileHeight;
+		distance = getDistance(position.x, position.y, x, y);
+		if (distance < minDistance) {
+			minDistance = distance;
+			i = cast(int)ceil(nearestI);
+			j = cast(int)ceil(nearestJ);
+		}
 
 		debug(2) {
 			writefln("Renderer::getTileAtPixel i: %d, j: %d", i, j);
@@ -166,8 +233,7 @@ class Renderer {
 				cast(double)this.tileDimensions.h /
 				cast(double)this.zoom;
 
-		x = cast(int)(this.offset.x + i * tileWidth -
-				j * 0.5 * tileWidth);
+		x = cast(int)(this.offset.x + i * tileWidth - j * 0.5 * tileWidth);
 		y = cast(int)(this.offset.y + j * 0.5 * tileHeight);
 
 		debug(3) {
@@ -211,14 +277,14 @@ class Renderer {
 				for (uint j = 0; j < this.map.getHeight(); ++j) {
 					int x, y;
 					byte tile = this.map.getTile(i, j);
-					
-					SDL_Texture *texture;					
+
+					SDL_Texture *texture;
 					if (tile == 0) {
 						texture = this.getTexture("grass");
 					} else if (tile == 1) {
 						texture = this.getTexture("water");
 					}
-					
+
 					this.getTopLeftScreenCoordinate(
 						i, j, x, y);
 					this.drawTile(x, y, texture);

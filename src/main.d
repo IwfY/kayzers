@@ -11,7 +11,7 @@ int main(string[] args) {
 	DerelictSDL2Image.load();
 
 	if (args.length < 2) {
-		writeln("open: ./loadpixels <<image>>");
+		writeln("open: ./kayzers <<image>>");
 		return 0;
 	}
 
