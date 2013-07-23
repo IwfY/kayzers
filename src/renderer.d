@@ -1,6 +1,7 @@
 module renderer;
 
 import map;
+import utils;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -273,8 +274,23 @@ class Renderer {
 		if (this.renderer !is null && this.map !is null) {
 			SDL_RenderClear(this.renderer);
 
-			for (uint i = 0; i < this.map.getWidth(); ++i) {
-				for (uint j = 0; j < this.map.getHeight(); ++j) {
+			// get tiles section to draw per frame
+			int iMin, iMax, jMin, jMax, windowWidth, windowHeight;
+			SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
+			this.getTileAtPixel(new SDL_Point(0, 0), iMin, jMin);
+			this.getTileAtPixel(new SDL_Point(windowWidth, windowHeight),
+								iMax, jMax);
+			iMin -= 1;
+			jMin -= 1;
+			iMax += 1;
+			jMax += 1;
+			iMin = min(max(iMin, 0), this.map.getWidth() - 1);
+			jMin = min(max(jMin, 0), this.map.getHeight() - 1);
+			iMax = max(min(iMax, this.map.getWidth() - 1), 0);
+			jMax = max(min(jMax, this.map.getHeight() - 1), 0);
+
+			for (uint i = iMin; i <= iMax; ++i) {
+				for (uint j = jMin; j <= jMax; ++j) {
 					int x, y;
 					byte tile = this.map.getTile(i, j);
 

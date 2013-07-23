@@ -2,6 +2,7 @@ srcFiles = Split("""
     src/main.d
     src/renderer.d
     src/map.d
+    src/utils.d
 """)
 
 dFlags = ['-L-L/usr/lib/dmd',
