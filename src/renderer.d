@@ -66,8 +66,8 @@ class Renderer {
 	 * load an image file representing the map and prerender the map to
 	 * a surface
 	 **/
-	public void loadMap(string filename) {
-		this.map = new Map(filename);
+	public void setMap(Map map) {
+		this.map = map;
 	}
 
 

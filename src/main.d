@@ -1,4 +1,5 @@
 import renderer;
+import map;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -15,6 +16,7 @@ int main(string[] args) {
 		return 0;
 	}
 
+	Map map;
 	Renderer renderer;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
@@ -35,7 +37,8 @@ int main(string[] args) {
 	renderer.registerTexture("water", "resources/img/water_n.png");
 	renderer.registerTexture("border", "resources/img/grid_border.png");
 
-	renderer.loadMap(args[1]);
+	map = new Map(args[1]);
+	renderer.setMap(map);
 
 	bool mousePressed = false;
 	SDL_Point *mousePressedPosition = new SDL_Point(0, 0);
