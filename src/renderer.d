@@ -126,7 +126,8 @@ class Renderer {
 		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
 
 		debug(2) {
-			writefln("%d, %d, %d, %d", position.x, position.y, position.w, position.h);
+			writefln("Renderer::drawTexture %d, %d, %d, %d",
+					 position.x, position.y, position.w, position.h);
 		}
 
 		SDL_RenderCopy(this.renderer, texture, null, &position);
@@ -147,11 +148,6 @@ class Renderer {
 	}
 
 
-	private double getDistance(double x1, double y1, double x2, double y2) {
-		return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-	}
-
-
 	/**
 	 * get the tile coordinate for a given screen position
 	 *
@@ -167,9 +163,16 @@ class Renderer {
 				cast(double)this.tileDimensions.h /
 				cast(double)this.zoom;
 
+		double offsetX =
+				cast(double)this.offset.x /
+				cast(double)this.zoom;
+		double offsetY =
+				cast(double)this.offset.y /
+				cast(double)this.zoom;
+
 		double nearestJ = (position.y -
-				this.offset.y - 0.5 * tileHeight) * 2.0 / tileHeight;
-		double nearestI = (position.x - this.offset.x +
+				offsetY - 0.5 * tileHeight) * 2.0 / tileHeight;
+		double nearestI = (position.x - offsetX +
 				(nearestJ - 1.0) * 0.5 * tileWidth) / tileWidth;
 
 		int x, y;
@@ -234,8 +237,15 @@ class Renderer {
 				cast(double)this.tileDimensions.h /
 				cast(double)this.zoom;
 
-		x = cast(int)(this.offset.x + i * tileWidth - j * 0.5 * tileWidth);
-		y = cast(int)(this.offset.y + j * 0.5 * tileHeight);
+		double offsetX =
+				cast(double)this.offset.x /
+				cast(double)this.zoom;
+		double offsetY =
+				cast(double)this.offset.y /
+				cast(double)this.zoom;
+
+		x = cast(int)(offsetX + i * tileWidth - j * 0.5 * tileWidth);
+		y = cast(int)(offsetY + j * 0.5 * tileHeight);
 
 		debug(3) {
 			writefln("Renderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
@@ -244,12 +254,31 @@ class Renderer {
 	}
 
 
+	/**
+	 * center preserving zoom
+	 *
+	 * @param zoom ... zoom level
+	 * 				   	1 ... close
+	 * 					4 ... far
+	 **/
 	public void setZoom(int zoom)
 		in {
 			assert(zoom >= 1 && zoom <= 4);
 		}
 		body {
+			int windowWidth, windowHeight;
+			int centerIOld, centerJOld, centerINew, centerJNew;
+			SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
+			this.getTileAtPixel(
+					new SDL_Point(windowWidth / 2, windowHeight / 2),
+					centerIOld, centerJOld);
 			this.zoom = zoom;
+			this.getTileAtPixel(
+					new SDL_Point(windowWidth / 2, windowHeight / 2),
+					centerINew, centerJNew);
+			// adjust offset
+			this.offset.x += (centerINew - centerIOld) * 0.5 * this.tileDimensions.w;
+			this.offset.y += (centerJNew - centerJOld) * 0.5 * this.tileDimensions.h;
 		}
 
 
@@ -260,8 +289,8 @@ class Renderer {
 
 
 	public void moveOffset(int x, int y) {
-		this.offset.x += x;
-		this.offset.y += y;
+		this.offset.x += x * zoom;
+		this.offset.y += y * zoom;
 	}
 
 
