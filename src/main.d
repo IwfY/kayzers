@@ -71,6 +71,8 @@ int main(string[] args) {
 					renderer.setZoom(3);
 				} else if (event.key.keysym.sym == SDLK_4) {
 					renderer.setZoom(4);
+				} else if (event.key.keysym.sym == SDLK_5) {
+					renderer.setZoom(12);
 				}
 				
 				debug(2) {

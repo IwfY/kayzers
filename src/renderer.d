@@ -263,7 +263,8 @@ class Renderer {
 	 **/
 	public void setZoom(int zoom)
 		in {
-			assert(zoom >= 1 && zoom <= 4);
+			assert(zoom >= 1 && zoom <= 12,
+				   "Renderer::setZoom Invalid zoom level");
 		}
 		body {
 			int windowWidth, windowHeight;
