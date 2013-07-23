@@ -268,13 +268,13 @@ class Renderer {
 		body {
 			int windowWidth, windowHeight;
 			int centerIOld, centerJOld, centerINew, centerJNew;
-			SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
+			SDL_Rect *mapRegion = this.getMapScreenRegion();
 			this.getTileAtPixel(
-					new SDL_Point(windowWidth / 2, windowHeight / 2),
+					new SDL_Point(mapRegion.w / 2, mapRegion.h / 2),
 					centerIOld, centerJOld);
 			this.zoom = zoom;
 			this.getTileAtPixel(
-					new SDL_Point(windowWidth / 2, windowHeight / 2),
+					new SDL_Point(mapRegion.w / 2, mapRegion.h / 2),
 					centerINew, centerJNew);
 			// adjust offset
 			this.offset.x += (centerINew - centerIOld) * 0.5 * this.tileDimensions.w;
@@ -299,16 +299,30 @@ class Renderer {
 	}
 
 
+	/**
+	 * get the rectangular region of the screen where the map is drawn
+	 **/
+	private SDL_Rect *getMapScreenRegion() {
+		int windowWidth, windowHeight;
+		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
+		
+		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight);
+
+		return region;
+	}
+
+
 	public void render(SDL_Point *mousePosition) {
 		if (this.renderer !is null && this.map !is null) {
 			SDL_RenderClear(this.renderer);
 
 			// get tiles section to draw per frame
 			int iMin, iMax, jMin, jMax, windowWidth, windowHeight;
-			SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
-			this.getTileAtPixel(new SDL_Point(0, 0), iMin, jMin);
-			this.getTileAtPixel(new SDL_Point(windowWidth, windowHeight),
-								iMax, jMax);
+			SDL_Rect *mapRegion = this.getMapScreenRegion();
+			this.getTileAtPixel(
+					new SDL_Point(mapRegion.x, mapRegion.y), iMin, jMin);
+			this.getTileAtPixel(
+					new SDL_Point(mapRegion.w, mapRegion.h), iMax, jMax);
 			iMin -= 1;
 			jMin -= 1;
 			iMax += 1;
