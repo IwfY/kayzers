@@ -46,9 +46,9 @@ public class Map {
 		this.height = mapSurface.h;
 		this.width = mapSurface.w;
 		
-		debug(2) {
-			writefln("Map::loadFromFile w: %d, h: %d",
-					 this.width, this.height);
+		debug(1) {
+			writefln("Map::loadFromFile %s w: %d, h: %d",
+					 filename, this.width, this.height);
 		}
 		
 		// iterate over input map data
