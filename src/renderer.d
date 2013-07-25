@@ -3,6 +3,7 @@ module renderer;
 import map;
 import texturemanager;
 import utils;
+import client;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -18,13 +19,15 @@ class Renderer {
 	private TextureManager textures;
 	private SDL_Window *window;
 	private SDL_Rect *tileDimensions;
+	private Client client;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
 
 
-	public this(SDL_Window *window) {
+	public this(Client client, SDL_Window *window) {
+		this.client = client;
 		this.window = window;
 
 		this.renderer = SDL_CreateRenderer(
@@ -262,7 +265,7 @@ class Renderer {
 	private SDL_Rect *getMapScreenRegion() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
-		
+
 		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight);
 
 		return region;

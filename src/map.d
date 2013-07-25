@@ -8,7 +8,7 @@ import std.string;
 
 public class Map {
 	/** variables *****************************************************/
-	
+
 	private byte[] tiles;
 	private uint width;
 	private uint height;
@@ -19,7 +19,7 @@ public class Map {
 	public this(string filename) {
 		this.loadFromFile(filename);
 	}
-	
+
 	public byte getTile(int x, int y)
 		in {
 			assert(x >= 0, "Map::getTile");
@@ -30,27 +30,27 @@ public class Map {
 		body {
 			return this.tiles[x + y * this.width];
 		}
-	
+
 	public uint getWidth() {
 		return this.width;
 	}
-	
+
 	public uint getHeight() {
 		return this.height;
 	}
-	
+
 	private void loadFromFile(string filename) {
 		SDL_Surface *mapSurface = IMG_Load(toStringz(filename));
 		assert(mapSurface !is null);
-		
+
 		this.height = mapSurface.h;
 		this.width = mapSurface.w;
-		
+
 		debug(1) {
 			writefln("Map::loadFromFile %s w: %d, h: %d",
 					 filename, this.width, this.height);
 		}
-		
+
 		// iterate over input map data
 		SDL_LockSurface(mapSurface);
 
