@@ -34,8 +34,10 @@ int main(string[] args) {
 
 	client.run();
 	
+	delete client;
+	delete game;
+	
 	SDL_Quit();
-	writefln("sdl quited");
 	
 	DerelictSDL2.unload();
 	DerelictSDL2Image.unload();
