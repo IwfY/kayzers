@@ -1,6 +1,7 @@
 module renderer;
 
 import map;
+import texturemanager;
 import utils;
 
 import derelict.sdl2.sdl;
@@ -11,16 +12,10 @@ import std.string;
 import std.math;
 
 
-struct TextureWrapper {
-	public SDL_Surface *surface;
-	public SDL_Texture *texture;
-}
-
-
 class Renderer {
 	private Map map;
 	private SDL_Renderer *renderer;
-	private TextureWrapper*[string] textures;
+	private TextureManager textures;
 	private SDL_Window *window;
 	private SDL_Rect *tileDimensions;
 
@@ -40,6 +35,7 @@ class Renderer {
 			writeln(SDL_GetError());
 		}
 
+		this.textures = new TextureManager(this.renderer);
 		this.offset = new SDL_Point(0, 0);
 		this.tileDimensions = new SDL_Rect(0, 0);
 		this.tileDimensions.w = 120;
@@ -49,16 +45,20 @@ class Renderer {
 
 
 	public ~this() {
+		delete this.textures;
 		SDL_DestroyRenderer(this.renderer);
-
-		// destroy textures
-		string[] keys = this.textures.keys;
-		for (int i = 0; i < keys.length; ++i) {
-			string key = keys[i];
-			SDL_Texture *texture = this.getTexture(key);
-			this.textures.remove(key);
-			SDL_DestroyTexture(texture);
-		}
+	}
+	
+	/**
+	 * load a texture from a file and make it accessible through the texture
+	 * manager
+	 *
+	 * @param textureName key to the texture manager
+	 * @param filename path to the texture to load
+	 **/
+	public bool registerTexture(const string textureName,
+							    const string filename) {
+		return this.textures.registerTexture(textureName, filename);
 	}
 
 
@@ -69,51 +69,7 @@ class Renderer {
 	public void setMap(Map map) {
 		this.map = map;
 	}
-
-
-	/**
-	 * load a texture from a file and make it accessible through the texture map
-	 *
-	 * @param textureName key to the texture map
-	 * @param filename path to the texture to load
-	 **/
-	public bool registerTexture(const string textureName,
-							    const string filename) {
-		if (this.renderer is null) {
-			return false;
-		}
-
-		TextureWrapper *tex = new TextureWrapper();
-		tex.surface = IMG_Load(toStringz(filename));
-		if (tex.surface is null) {
-			return false;
-		}
-		tex.texture = SDL_CreateTextureFromSurface(this.renderer,
-							tex.surface);
-		if (tex.texture is null) {
-			return false;
-		}
-
-		this.textures[textureName] = tex;
-
-		debug(2) {
-			writefln("Renderer::registerTexture Load %s as %s",
-					filename, textureName);
-		}
-
-		return true;
-	}
-
-
-	public SDL_Texture *getTexture(const string textureName) {
-		// TODO: check if texture available
-		return this.textures[textureName].texture;
-	}
-
-	public SDL_Surface *getSurface(const string textureName) {
-		// TODO: check if texture available
-		return this.textures[textureName].surface;
-	}
+	
 
 	/**
 	 * draw a texture to the renderer
@@ -340,9 +296,9 @@ class Renderer {
 
 					SDL_Texture *texture;
 					if (tile == 0) {
-						texture = this.getTexture("grass");
+						texture = this.textures.getTexture("grass");
 					} else if (tile == 1) {
-						texture = this.getTexture("water");
+						texture = this.textures.getTexture("water");
 					}
 
 					this.getTopLeftScreenCoordinate(
@@ -360,7 +316,7 @@ class Renderer {
 					mouseI, mouseJ, x, y);
 			this.drawTile(
 					x, y,
-					this.getTexture("border"));
+					this.textures.getTexture("border"));
 
 			//Update the screen
 			SDL_RenderPresent(this.renderer);
