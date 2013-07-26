@@ -12,6 +12,7 @@ public class Client {
 	private Game game;
 	private Renderer renderer;
 	private SDL_Window *window;
+	private SDL_Rect *selectedRegion;
 	private bool active;	// player is active and can interact with the game
 	private bool running;
 
@@ -26,12 +27,15 @@ public class Client {
 			writeln(SDL_GetError());
 		}
 
+		this.selectedRegion = new SDL_Rect();
 		this.renderer = new Renderer(this, this.window);
 
 		this.renderer.registerTexture("grass", "resources/img/grass_n.png");
 		this.renderer.registerTexture("water", "resources/img/water_n.png");
 		this.renderer.registerTexture("border",
 									   "resources/img/grid_border.png");
+		this.renderer.registerTexture("cursor",
+									   "resources/img/grid_cursor.png");
 
 		this.renderer.setMap(this.game.getMap());
 	}
@@ -49,7 +53,7 @@ public class Client {
 		SDL_Point *mousePressedPosition = new SDL_Point(0, 0);
 		SDL_Point *mousePosition = new SDL_Point(0, 0);
 
-		this.renderer.render(mousePosition);
+		this.renderer.render(mousePosition, this.selectedRegion);
 
 		const int MAX_FRAMES_PER_SECOND = 60;
 
@@ -89,13 +93,20 @@ public class Client {
 				}
 
 				if (event.type == SDL_MOUSEBUTTONDOWN &&
-					event.button.button == SDL_BUTTON_RIGHT) {
+						event.button.button == SDL_BUTTON_RIGHT) {
 					mousePressed = true;
 					mousePressedPosition.x = event.button.x;
 					mousePressedPosition.y = event.button.y;
 				} else if (event.type == SDL_MOUSEBUTTONUP &&
-					event.button.button == SDL_BUTTON_RIGHT) {
+						event.button.button == SDL_BUTTON_RIGHT) {
 					mousePressed = false;
+				} else if (event.type == SDL_MOUSEBUTTONDOWN &&
+						event.button.button == SDL_BUTTON_LEFT) {
+					mousePosition.x = event.button.x;
+					mousePosition.y = event.button.y;
+					this.renderer.getTileAtPixel(mousePosition,
+												 this.selectedRegion.x,
+												 this.selectedRegion.y);
 				} else if (event.type == SDL_MOUSEMOTION) {
 					mousePosition.x = event.motion.x;
 					mousePosition.y = event.motion.y;
@@ -109,7 +120,7 @@ public class Client {
 				}
 			}
 
-			this.renderer.render(mousePosition);
+			this.renderer.render(mousePosition, this.selectedRegion);
 
 			int frameDuration = SDL_GetTicks() - frameStartTime;
 			if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {

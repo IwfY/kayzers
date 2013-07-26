@@ -51,7 +51,7 @@ class Renderer {
 		delete this.textures;
 		SDL_DestroyRenderer(this.renderer);
 	}
-	
+
 	/**
 	 * load a texture from a file and make it accessible through the texture
 	 * manager
@@ -63,7 +63,7 @@ class Renderer {
 							    const string filename) {
 		return this.textures.registerTexture(textureName, filename);
 	}
-	
+
 	/**
 	 * pan the map center to the given tile coordinate
 	 **/
@@ -86,7 +86,7 @@ class Renderer {
 	public void setMap(Map map) {
 		this.map = map;
 	}
-	
+
 
 	/**
 	 * draw a texture to the renderer
@@ -121,13 +121,26 @@ class Renderer {
 	}
 
 
+	private void drawTileIJ(int i, int j, SDL_Texture *texture) {
+		SDL_Rect *position = new SDL_Rect();
+		this.getTopLeftScreenCoordinate(i, j, position.x, position.y);
+
+		position.w = cast(int)(
+			ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
+		position.h = cast(int)(
+			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
+
+		SDL_RenderCopy(this.renderer, texture, null, position);
+	}
+
+
 	/**
 	 * get the tile coordinate for a given screen position
 	 *
 	 * TODO: distance function could be weighted depending on tile
 	 * 		 dimension
 	 **/
-	private void getTileAtPixel(SDL_Point *position,
+	public void getTileAtPixel(SDL_Point *position,
 								out int i, out int j) {
 		double tileWidth =
 				cast(double)this.tileDimensions.w /
@@ -285,7 +298,8 @@ class Renderer {
 	}
 
 
-	public void render(SDL_Point *mousePosition) {
+	public void render(SDL_Point *mousePosition,
+					   SDL_Rect *selectedRegion) {
 		if (this.renderer !is null && this.map !is null) {
 			SDL_RenderClear(this.renderer);
 
@@ -317,21 +331,21 @@ class Renderer {
 						texture = this.textures.getTexture("water");
 					}
 
-					this.getTopLeftScreenCoordinate(
-						i, j, x, y);
-					this.drawTile(x, y, texture);
+					this.drawTileIJ(i, j, texture);
 				}
 			}
+
+			// selected region
+			this.drawTileIJ(
+					selectedRegion.x, selectedRegion.y,
+					this.textures.getTexture("cursor"));
 
 			// mouse marker
 			int mouseI;
 			int mouseJ;
 			this.getTileAtPixel(mousePosition, mouseI, mouseJ);
-			int x, y;
-			this.getTopLeftScreenCoordinate(
-					mouseI, mouseJ, x, y);
-			this.drawTile(
-					x, y,
+			this.drawTileIJ(
+					mouseI, mouseJ,
 					this.textures.getTexture("border"));
 
 			//Update the screen
