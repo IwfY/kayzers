@@ -63,6 +63,20 @@ class Renderer {
 							    const string filename) {
 		return this.textures.registerTexture(textureName, filename);
 	}
+	
+	/**
+	 * pan the map center to the given tile coordinate
+	 **/
+	public void panToTile(int i, int j) {
+		int centerIOld, centerJOld;
+		SDL_Rect *mapRegion = this.getMapScreenRegion();
+		this.getTileAtPixel(
+				new SDL_Point(mapRegion.w / 2, mapRegion.h / 2),
+				centerIOld, centerJOld);
+		// adjust offset
+		this.offset.x += (centerIOld - i) * 0.5 * this.tileDimensions.w;
+		this.offset.y += (centerJOld - j) * 0.5 * this.tileDimensions.h;
+	}
 
 
 	/**
@@ -226,7 +240,6 @@ class Renderer {
 				   "Renderer::setZoom Invalid zoom level");
 		}
 		body {
-			int windowWidth, windowHeight;
 			int centerIOld, centerJOld, centerINew, centerJNew;
 			SDL_Rect *mapRegion = this.getMapScreenRegion();
 			this.getTileAtPixel(

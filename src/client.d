@@ -76,6 +76,10 @@ public class Client {
 						this.renderer.setZoom(4);
 					} else if (event.key.keysym.sym == SDLK_5) {
 						this.renderer.setZoom(12);
+					} else if (event.key.keysym.sym == SDLK_KP_5) {
+						this.renderer.panToTile(
+								cast(int)(this.game.getMap().getWidth() / 2),
+								cast(int)(this.game.getMap().getHeight() / 2));
 					}
 
 					debug(2) {
