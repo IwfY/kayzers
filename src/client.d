@@ -21,7 +21,7 @@ public class Client {
 		this.game = game;
 
 		this.window = SDL_CreateWindow("Kayzers",
-									   100, 100, 800, 600,
+									   0, 0, 800, 600,
 									   SDL_WINDOW_SHOWN);
 		if (this.window is null){
 			writeln(SDL_GetError());
@@ -33,9 +33,11 @@ public class Client {
 		this.renderer.registerTexture("grass", "resources/img/grass_n.png");
 		this.renderer.registerTexture("water", "resources/img/water_n.png");
 		this.renderer.registerTexture("border",
-									   "resources/img/grid_border.png");
+									  "resources/img/grid_border.png");
 		this.renderer.registerTexture("cursor",
-									   "resources/img/grid_cursor.png");
+									  "resources/img/grid_cursor.png");
+		this.renderer.registerTexture("ui_background",
+									  "resources/img/ui_background.png");
 
 		this.renderer.setMap(this.game.getMap());
 	}

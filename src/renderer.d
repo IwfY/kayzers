@@ -292,9 +292,20 @@ class Renderer {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
 
-		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight);
+		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight - 150);
 
 		return region;
+	}
+	
+	
+	/**
+	 * draw the ui
+	 **/
+	private void renderUI(SDL_Point *mousePosition,
+						  SDL_Rect *selectedRegion) {
+		SDL_Rect *mapRegion = this.getMapScreenRegion();
+		this.drawTexture(0, mapRegion.h,
+						 this.textures.getTexture("ui_background"));
 	}
 
 
@@ -348,6 +359,7 @@ class Renderer {
 					mouseI, mouseJ,
 					this.textures.getTexture("border"));
 
+			this.renderUI(mousePosition, selectedRegion);
 			//Update the screen
 			SDL_RenderPresent(this.renderer);
 		}
