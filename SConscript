@@ -10,8 +10,7 @@ srcFiles = Split("""
 
 dFlags = ['-L-L/usr/lib/dmd',
 		  '-L-ldl',
-		  '-L-lDerelictSDL2',
-		  '-L-lDerelictSDL2',
+		  '-L-lDerelictSDL2'
 		  '-L-lDerelictUtil']
 
 libs = ['dl',

@@ -3,6 +3,7 @@ import game;
 import map;
 
 import derelict.sdl2.sdl;
+import derelict.sdl2.ttf;
 import derelict.sdl2.image;
 
 import std.stdio;
@@ -16,9 +17,15 @@ int main(string[] args) {
 
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
+	DerelictSDL2ttf.load();
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		writeln(SDL_GetError());
+		return 1;
+	}
+	
+	if (TTF_Init() == -1){
+		writeln(TTF_GetError());
 		return 1;
 	}
 
@@ -37,10 +44,12 @@ int main(string[] args) {
 	delete client;
 	delete game;
 	
+	TTF_Quit();
 	SDL_Quit();
 	
 	DerelictSDL2.unload();
 	DerelictSDL2Image.unload();
+	DerelictSDL2ttf.unload();
 
 	return 0;
 }

@@ -7,6 +7,7 @@ import client;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+import derelict.sdl2.ttf;
 
 import std.stdio;
 import std.string;
@@ -19,6 +20,7 @@ class Renderer {
 	private TextureManager textures;
 	private SDL_Window *window;
 	private SDL_Rect *tileDimensions;
+	private TTF_Font *font;
 	private Client client;
 
 	// offset is added to the tile position when drawing
@@ -50,6 +52,10 @@ class Renderer {
 	public ~this() {
 		delete this.textures;
 		SDL_DestroyRenderer(this.renderer);
+		
+		if (this.font !is null) {
+			TTF_CloseFont(this.font);
+		}
 	}
 
 	/**
@@ -77,6 +83,19 @@ class Renderer {
 		this.offset.x += (centerIOld - i) * 0.5 * this.tileDimensions.w;
 		this.offset.y += (centerJOld - j) * 0.5 * this.tileDimensions.h;
 	}
+	
+	
+	/**
+	 * set the font for drawing text
+	 **/
+	public bool setFont(string fontFilename) {
+		this.font = null;
+		this.font = TTF_OpenFont(toStringz(fontFilename), 12);
+		if (this.font is null) {
+			return false;
+		}
+		return true;
+	}
 
 
 	/**
@@ -86,6 +105,27 @@ class Renderer {
 	public void setMap(Map map) {
 		this.map = map;
 	}
+	
+	
+	public void drawText(int x, int y,
+						 string text,
+						 SDL_Color *color = null)
+		in {
+			assert(font !is null, "Renderer::drawText: font is null");
+		}
+		body {
+			if (color is null) {
+				color = new SDL_Color(255, 255, 255);
+			}
+			SDL_Surface *surface = TTF_RenderText_Blended(
+					this.font, toStringz(text), *color);
+			SDL_Texture *texture = SDL_CreateTextureFromSurface(
+					this.renderer, surface);
+			this.drawTexture(x, y, texture);
+			
+			SDL_FreeSurface(surface);
+			SDL_DestroyTexture(texture);
+		}
 
 
 	/**

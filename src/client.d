@@ -38,6 +38,8 @@ public class Client {
 									  "resources/img/grid_cursor.png");
 		this.renderer.registerTexture("ui_background",
 									  "resources/img/ui_background.png");
+		//TODO make portable
+		this.renderer.setFont("/usr/share/fonts/TTF/DejaVuSans.ttf");
 
 		this.renderer.setMap(this.game.getMap());
 	}
