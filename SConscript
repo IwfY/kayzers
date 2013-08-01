@@ -5,6 +5,7 @@ srcFiles = Split("""
     src/game.d
     src/client.d
     src/renderer.d
+    src/ui.d
     src/map.d
     src/utils.d
 """)

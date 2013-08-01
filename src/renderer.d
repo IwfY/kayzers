@@ -1,6 +1,7 @@
 module renderer;
 
 import map;
+import ui;
 import texturemanager;
 import fontmanager;
 import utils;
@@ -17,6 +18,7 @@ import std.math;
 
 class Renderer {
 	private Map map;
+	private UI ui;
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
 	private FontManager fonts;
@@ -43,6 +45,9 @@ class Renderer {
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
+
+		this.ui = new UI(this.client, this);
+
 		this.offset = new SDL_Point(0, 0);
 		this.tileDimensions = new SDL_Rect(0, 0);
 		this.tileDimensions.w = 120;
@@ -104,8 +109,8 @@ class Renderer {
 	public void setMap(Map map) {
 		this.map = map;
 	}
-	
-	
+
+
 	public void drawText(const int x, const int y,
 						 const string text,
 						 const string fontName = "std",
@@ -124,16 +129,27 @@ class Renderer {
 			SDL_Texture *texture = SDL_CreateTextureFromSurface(
 					this.renderer, surface);
 			this.drawTexture(x, y, texture);
-			
+
 			SDL_FreeSurface(surface);
 			SDL_DestroyTexture(texture);
 		}
 
 
 	/**
+	 * draw a named texture to the renderer
+	 **/
+	public void drawTexture(const int x, const int y,
+						    const string textureName) {
+		SDL_Texture *texture = this.textures.getTexture(textureName);
+		this.drawTexture(x, y, texture);
+	}
+
+
+	/**
 	 * draw a texture to the renderer
 	 **/
-	public void drawTexture(int x, int y, SDL_Texture *texture) {
+	public void drawTexture(const int x, const int y,
+							SDL_Texture *texture) {
 		SDL_Rect position;
 		position.x = x;
 		position.y = y;
@@ -338,17 +354,6 @@ class Renderer {
 
 		return region;
 	}
-	
-	
-	/**
-	 * draw the ui
-	 **/
-	private void renderUI(SDL_Point *mousePosition,
-						  SDL_Rect *selectedRegion) {
-		SDL_Rect *mapRegion = this.getMapScreenRegion();
-		this.drawTexture(0, mapRegion.h,
-						 this.textures.getTexture("ui_background"));
-	}
 
 
 	public void render(SDL_Point *mousePosition,
@@ -401,7 +406,7 @@ class Renderer {
 					mouseI, mouseJ,
 					this.textures.getTexture("border"));
 
-			this.renderUI(mousePosition, selectedRegion);
+			this.ui.render(mousePosition, selectedRegion);
 			//Update the screen
 			SDL_RenderPresent(this.renderer);
 		}
