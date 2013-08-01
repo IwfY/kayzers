@@ -4,8 +4,11 @@ srcFiles = Split("""
     src/fontmanager.d
     src/game.d
     src/client.d
-    src/renderer.d
-    src/ui.d
+    src/renderhelper.d
+    src/maprenderer.d
+    src/ui/ui.d
+    src/ui/widget.d
+    src/ui/button.d
     src/map.d
     src/utils.d
 """)

@@ -2,6 +2,7 @@ module renderhelper;
 
 import map;
 import ui.ui;
+import maprenderer;
 import texturemanager;
 import fontmanager;
 import utils;
@@ -19,17 +20,12 @@ import std.math;
 class RenderHelper {
 	private Map map;
 	private UI ui;
+	private MapRenderer mapRenderer;
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
 	private FontManager fonts;
 	private SDL_Window *window;
-	private SDL_Rect *tileDimensions;
 	private Client client;
-	private SDL_Rect *selectedRegion;
-
-	// offset is added to the tile position when drawing
-	private SDL_Point *offset;
-	private int zoom;
 
 
 	public this(Client client, SDL_Window *window, Map map) {
@@ -41,6 +37,7 @@ class RenderHelper {
 				this.window,
 				-1,
 				SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
 		if (this.renderer is null) {
 			writeln(SDL_GetError());
 		}
@@ -49,13 +46,10 @@ class RenderHelper {
 		this.fonts = new FontManager();
 
 		this.ui = new UI(this.client, this);
-		this.selectedRegion = new SDL_Rect();
+		this.mapRenderer = new MapRenderer(this, this.map);
 
-		this.offset = new SDL_Point(0, 0);
-		this.tileDimensions = new SDL_Rect(0, 0);
-		this.tileDimensions.w = 120;
-		this.tileDimensions.h = 70;
-		this.zoom = 1;
+		this.updateScreenRegions();
+
 	}
 
 
@@ -64,8 +58,8 @@ class RenderHelper {
 		delete this.fonts;
 		SDL_DestroyRenderer(this.renderer);
 	}
-	
-	
+
+
 	public void uiCallbackHandler(string name) {
 		writefln("Renderer::uiCallbackHandler %s", name);
 	}
@@ -129,23 +123,34 @@ class RenderHelper {
 	}
 
 
+	public void drawTexture(SDL_Rect *dest, string textureName) {
+		SDL_Texture *texture = this.textures.getTexture(textureName);
+		this.drawTexture(dest, texture);
+	}
+
+
+	public void drawTexture(SDL_Rect *dest, SDL_Texture *texture) {
+		debug(2) {
+			writefln("Renderer::drawTexture %d, %d, %d, %d",
+					 dest.x, dest.y, dest.w, dest.h);
+		}
+
+		SDL_RenderCopy(this.renderer, texture, null, dest);
+	}
+
+
 	/**
 	 * draw a texture to the renderer
 	 **/
 	public void drawTexture(const int x, const int y,
 							SDL_Texture *texture) {
-		SDL_Rect position;
+		SDL_Rect *position = new SDL_Rect();
 		position.x = x;
 		position.y = y;
 
 		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
 
-		debug(2) {
-			writefln("Renderer::drawTexture %d, %d, %d, %d",
-					 position.x, position.y, position.w, position.h);
-		}
-
-		SDL_RenderCopy(this.renderer, texture, null, &position);
+		this.drawTexture(position, texture);
 	}
 
 
@@ -160,9 +165,30 @@ class RenderHelper {
 
 		return region;
 	}
-	
-	
+
+
+	public void updateScreenRegions() {
+		int windowWidth, windowHeight;
+		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
+		this.mapRenderer.setScreenRegion(0, 0, windowWidth, windowHeight - 150);
+		this.ui.setScreenRegion(0, windowHeight - 150, windowWidth, 150);
+	}
+
+
+	public void handleEvent(SDL_Event event) {
+		this.mapRenderer.handleEvent(event);
+		this.ui.handleEvent(event);
+	}
+
+
 	public void render() {
-		
+		this.updateScreenRegions();
+		SDL_RenderClear(this.renderer);
+
+		this.mapRenderer.render();
+		this.ui.render();
+
+		// update screen
+		SDL_RenderPresent(this.renderer);
 	}
 }

@@ -1,7 +1,7 @@
 module ui.button;
 
 import utils;
-import renderer;
+import renderhelper;
 import ui.widget;
 
 import derelict.sdl2.sdl;
@@ -10,7 +10,7 @@ import derelict.sdl2.sdl;
 class Button : Widget {
 	private void delegate(string) callback;	// callback function pointer
 	
-	public this(Renderer renderer,
+	public this(RenderHelper renderer,
 				string name,
 				string textureName,
 				SDL_Rect *bounds,
