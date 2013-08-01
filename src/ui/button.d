@@ -20,7 +20,7 @@ class Button : Widget {
 	}
 				
 	
-	public void click() {
+	override public void click() {
 		this.callback(this.name);
 	}
 	

@@ -5,7 +5,7 @@ import renderhelper;
 
 import derelict.sdl2.sdl;
 
-class Widget {
+abstract class Widget {
 	protected SDL_Rect *bounds;
 	protected RenderHelper renderer;
 	protected string name;
@@ -30,4 +30,6 @@ class Widget {
 		this.renderer.drawTexture(this.bounds.x, this.bounds.y,
 									  this.textureName);
 	}
+	
+	abstract public void click();
 }

@@ -25,10 +25,10 @@ class UI {
 
 		this.screenRegion = new SDL_Rect(0, 0);
 
-		Button button = new Button(this.renderer, "test", "button_default",
-								   new SDL_Rect(100, 100, 20, 20),
-								   &this.renderer.uiCallbackHandler);
-		this.widgets ~= button;
+		//Button button = new Button(this.renderer, "test", "button_default",
+								   //new SDL_Rect(100, 100, 20, 20),
+								   //&this.renderer.uiCallbackHandler);
+		//this.widgets ~= button;
 	}
 
 
@@ -42,7 +42,17 @@ class UI {
 
 
 	public void handleEvent(SDL_Event event) {
-
+		// left mouse down
+		if (event.type == SDL_MOUSEBUTTONDOWN &&
+				event.button.button == SDL_BUTTON_LEFT) {
+			SDL_Point *mousePosition =
+					new SDL_Point(event.button.x, event.button.y);
+			foreach (Widget widget; this.widgets) {
+				if (widget.isPointInBounds(mousePosition)) {
+					widget.click();
+				}
+			}
+		}
 	}
 
 
@@ -50,7 +60,7 @@ class UI {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 		this.renderer.drawText(10, this.screenRegion.y + 10, "test");
 
-		foreach(Widget widget; this.widgets) {
+		foreach (Widget widget; this.widgets) {
 			widget.render();
 		}
 	}
