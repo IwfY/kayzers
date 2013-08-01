@@ -22,7 +22,7 @@ public class Client {
 
 		this.window = SDL_CreateWindow("Kayzers",
 									   0, 0, 800, 600,
-									   SDL_WINDOW_SHOWN);
+									   SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (this.window is null){
 			writeln(SDL_GetError());
 		}
@@ -39,7 +39,8 @@ public class Client {
 		this.renderer.registerTexture("ui_background",
 									  "resources/img/ui_background.png");
 		//TODO make portable
-		this.renderer.setFont("/usr/share/fonts/TTF/DejaVuSans.ttf");
+		this.renderer.registerFont("std", 
+								   "/usr/share/fonts/TTF/DejaVuSans.ttf");
 
 		this.renderer.setMap(this.game.getMap());
 	}

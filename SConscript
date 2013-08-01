@@ -1,6 +1,7 @@
 srcFiles = Split("""
     src/main.d
     src/texturemanager.d
+    src/fontmanager.d
     src/game.d
     src/client.d
     src/renderer.d

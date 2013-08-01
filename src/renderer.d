@@ -2,6 +2,7 @@ module renderer;
 
 import map;
 import texturemanager;
+import fontmanager;
 import utils;
 import client;
 
@@ -18,9 +19,9 @@ class Renderer {
 	private Map map;
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
+	private FontManager fonts;
 	private SDL_Window *window;
 	private SDL_Rect *tileDimensions;
-	private TTF_Font *font;
 	private Client client;
 
 	// offset is added to the tile position when drawing
@@ -41,6 +42,7 @@ class Renderer {
 		}
 
 		this.textures = new TextureManager(this.renderer);
+		this.fonts = new FontManager();
 		this.offset = new SDL_Point(0, 0);
 		this.tileDimensions = new SDL_Rect(0, 0);
 		this.tileDimensions.w = 120;
@@ -51,11 +53,8 @@ class Renderer {
 
 	public ~this() {
 		delete this.textures;
+		delete this.fonts;
 		SDL_DestroyRenderer(this.renderer);
-		
-		if (this.font !is null) {
-			TTF_CloseFont(this.font);
-		}
 	}
 
 	/**
@@ -70,6 +69,19 @@ class Renderer {
 		return this.textures.registerTexture(textureName, filename);
 	}
 
+
+	/**
+	 * load a font from a file and make it accessible through the font manager
+	 *
+	 * @param fontName key to the font manager
+	 * @param filename path to the font to load
+	 **/
+	public bool registerFont(const string fontName,
+							 const string filename) {
+		return this.fonts.registerFont(fontName, filename);
+	 }
+
+
 	/**
 	 * pan the map center to the given tile coordinate
 	 **/
@@ -83,19 +95,6 @@ class Renderer {
 		this.offset.x += (centerIOld - i) * 0.5 * this.tileDimensions.w;
 		this.offset.y += (centerJOld - j) * 0.5 * this.tileDimensions.h;
 	}
-	
-	
-	/**
-	 * set the font for drawing text
-	 **/
-	public bool setFont(string fontFilename) {
-		this.font = null;
-		this.font = TTF_OpenFont(toStringz(fontFilename), 12);
-		if (this.font is null) {
-			return false;
-		}
-		return true;
-	}
 
 
 	/**
@@ -107,18 +106,21 @@ class Renderer {
 	}
 	
 	
-	public void drawText(int x, int y,
-						 string text,
+	public void drawText(const int x, const int y,
+						 const string text,
+						 const string fontName = "std",
 						 SDL_Color *color = null)
 		in {
-			assert(font !is null, "Renderer::drawText: font is null");
+			TTF_Font *ttf = this.fonts.getFont(fontName);
+			assert(ttf !is null, "Renderer::drawText: font is null");
 		}
 		body {
 			if (color is null) {
 				color = new SDL_Color(255, 255, 255);
 			}
+			TTF_Font *ttf = this.fonts.getFont(fontName);
 			SDL_Surface *surface = TTF_RenderText_Blended(
-					this.font, toStringz(text), *color);
+					ttf, toStringz(text), *color);
 			SDL_Texture *texture = SDL_CreateTextureFromSurface(
 					this.renderer, surface);
 			this.drawTexture(x, y, texture);
@@ -131,7 +133,7 @@ class Renderer {
 	/**
 	 * draw a texture to the renderer
 	 **/
-	private void drawTexture(int x, int y, SDL_Texture *texture) {
+	public void drawTexture(int x, int y, SDL_Texture *texture) {
 		SDL_Rect position;
 		position.x = x;
 		position.y = y;
@@ -328,7 +330,7 @@ class Renderer {
 	/**
 	 * get the rectangular region of the screen where the map is drawn
 	 **/
-	private SDL_Rect *getMapScreenRegion() {
+	public SDL_Rect *getMapScreenRegion() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
 
