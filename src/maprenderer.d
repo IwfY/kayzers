@@ -316,10 +316,10 @@ class MapRenderer {
 			jMin -= 1;
 			iMax += 1;
 			jMax += 1;
-			iMin = min(max(iMin, 0), this.map.getWidth() - 1);
-			jMin = min(max(jMin, 0), this.map.getHeight() - 1);
-			iMax = max(min(iMax, this.map.getWidth() - 1), 0);
-			jMax = max(min(jMax, this.map.getHeight() - 1), 0);
+			iMin = min!int(max!int(iMin, 0), this.map.getWidth() - 1);
+			jMin = min!int(max!int(jMin, 0), this.map.getHeight() - 1);
+			iMax = max!int(min!int(iMax, this.map.getWidth() - 1), 0);
+			jMax = max!int(min!int(jMax, this.map.getHeight() - 1), 0);
 
 			for (uint i = iMin; i <= iMax; ++i) {
 				for (uint j = jMin; j <= jMax; ++j) {

@@ -5,14 +5,14 @@ import derelict.sdl2.sdl;
 import std.math;
 
 
-int min(int i, int j) {
+T min(T)(T i, T j) if (is(T : double)) {
 	if (i <= j) {
 		return i;
 	}
 	return j;
 }
 
-int max(int i, int j) {
+T max(T)(T i, T j) if (is(T : double)) {
 	if (i >= j) {
 		return i;
 	}
