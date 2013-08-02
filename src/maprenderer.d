@@ -267,7 +267,9 @@ class MapRenderer {
 		// right mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_RIGHT) {
-			this.mousePressed = true;
+			if (rectContainsPoint(this.screenRegion, this.mousePosition)) {
+				this.mousePressed = true;
+			}
 			this.mousePressedPosition.x = event.button.x;
 			this.mousePressedPosition.y = event.button.y;
 		}
