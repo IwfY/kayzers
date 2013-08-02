@@ -7,6 +7,7 @@ import texturemanager;
 import fontmanager;
 import utils;
 import client;
+import world.structureprototype;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -44,12 +45,48 @@ class RenderHelper {
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
+		
+		this.loadTexturesAndFonts();
 
 		this.ui = new UI(this.client, this);
 		this.mapRenderer = new MapRenderer(this, this.map);
 
 		this.updateScreenRegions();
 
+	}
+	
+	
+	
+	public void loadTexturesAndFonts() {
+		this.textures.registerTexture("grass", "resources/img/grass_n.png");
+		this.textures.registerTexture("water", "resources/img/water_n.png");
+		this.textures.registerTexture("border",
+									  "resources/img/grid_border.png");
+		this.textures.registerTexture("cursor",
+									  "resources/img/grid_cursor.png");
+		this.textures.registerTexture("ui_background",
+									  "resources/img/ui_background.png");
+		this.textures.registerTexture("button_default",
+									  "resources/img/ui/button_default.png");
+		// load textures for structures
+		foreach (const StructurePrototype structurePrototype;
+				 this.client.getStructurePrototypes()) {
+			debug(2) {
+				writefln("load texture for structure %s",
+						 structurePrototype.getName());
+			}
+			bool success =
+				this.textures.registerTexture(
+						structurePrototype.getIconImageName(),
+						structurePrototype.getIconImage());
+			success =
+				this.textures.registerTexture(
+					structurePrototype.getTileImageName(),
+					structurePrototype.getTileImage());
+		}
+		
+		//TODO make portable
+		this.fonts.registerFont("std", "/usr/share/fonts/TTF/DejaVuSans.ttf");
 	}
 
 

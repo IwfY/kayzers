@@ -6,6 +6,7 @@ import utils;
 import client;
 import ui.widget;
 import ui.button;
+import world.structureprototype;
 
 import derelict.sdl2.sdl;
 
@@ -16,6 +17,7 @@ class UI {
 	private Client client;
 	private RenderHelper renderer;
 	private Widget[] widgets;
+	private Button[] structureButtons;
 	private SDL_Rect *screenRegion;
 
 
@@ -24,11 +26,23 @@ class UI {
 		this.renderer = renderer;
 
 		this.screenRegion = new SDL_Rect(0, 0);
-
-		//Button button = new Button(this.renderer, "test", "button_default",
-								   //new SDL_Rect(100, 100, 20, 20),
-								   //&this.renderer.uiCallbackHandler);
-		//this.widgets ~= button;
+		
+		this.initWidgets();
+	}
+	
+	
+	public void initWidgets() {
+		// structure buttons
+		foreach (const StructurePrototype structurePrototype;
+				 this.client.getStructurePrototypes()) {
+			Button button = new Button(this.renderer,
+									   structurePrototype.getName(),
+									   structurePrototype.getIconImageName(),
+									   new SDL_Rect(0, 0, 20, 20),
+									   &this.renderer.uiCallbackHandler);
+		   this.structureButtons ~= button;
+		   this.widgets ~= button;
+		}
 	}
 
 
@@ -37,6 +51,16 @@ class UI {
 		this.screenRegion.y = y;
 		this.screenRegion.w = w;
 		this.screenRegion.h = h;
+	}
+	
+	
+	private void updateWidgets() {
+		int structureButtonX = 50;
+		int structureButtonY = this.screenRegion.y + 40;
+		foreach(Button button; this.structureButtons) {
+			button.setXY(structureButtonX, structureButtonY);
+			structureButtonY += 30;
+		}
 	}
 
 
@@ -59,6 +83,8 @@ class UI {
 	public void render() {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 		this.renderer.drawText(10, this.screenRegion.y + 10, "test");
+		
+		this.updateWidgets();
 
 		foreach (Widget widget; this.widgets) {
 			widget.render();

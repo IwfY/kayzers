@@ -2,6 +2,7 @@ module client;
 
 import game;
 import renderhelper;
+import world.structureprototype;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -27,20 +28,6 @@ public class Client {
 		}
 
 		this.renderer = new RenderHelper(this, this.window, this.game.getMap());
-
-		this.renderer.registerTexture("grass", "resources/img/grass_n.png");
-		this.renderer.registerTexture("water", "resources/img/water_n.png");
-		this.renderer.registerTexture("border",
-									  "resources/img/grid_border.png");
-		this.renderer.registerTexture("cursor",
-									  "resources/img/grid_cursor.png");
-		this.renderer.registerTexture("ui_background",
-									  "resources/img/ui_background.png");
-		this.renderer.registerTexture("button_default",
-									  "resources/img/ui/button_default.png");
-		//TODO make portable
-		this.renderer.registerFont("std",
-								   "/usr/share/fonts/TTF/DejaVuSans.ttf");
 	}
 
 
@@ -48,6 +35,11 @@ public class Client {
 		delete this.renderer;
 
 		SDL_DestroyWindow(this.window);
+	}
+	
+	
+	public const(StructurePrototype[]) getStructurePrototypes() const {
+		return this.game.getStructurePrototypes();
 	}
 
 

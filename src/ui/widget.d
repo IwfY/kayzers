@@ -31,5 +31,11 @@ abstract class Widget {
 									  this.textureName);
 	}
 	
+	
+	public void setXY(int x, int y) {
+		this.bounds.x = x;
+		this.bounds.y = y;
+	}
+	
 	abstract public void click();
 }

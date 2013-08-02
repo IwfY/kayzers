@@ -52,7 +52,6 @@ class TextureManager {
 		if (this.renderer is null) {
 			return false;
 		}
-
 		
 		SDL_Surface *surface = IMG_Load(toStringz(filename));
 		if (surface is null) {

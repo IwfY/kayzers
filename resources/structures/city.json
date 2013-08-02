@@ -1,0 +1,11 @@
+{
+	"name" : "City",
+	"tileImageName" : "structure_city",
+	"tileImage" : "resources/img/structures/city.png",
+	"iconImageName" : "structure_city_button",
+	"iconImage" : "resources/img/ui/button_city.png",
+	"consumeScript" : "",
+	"produceScript" : "",
+	"constructableScript" : "",
+	"progressScript" : ""
+}
