@@ -1,4 +1,5 @@
 {
+	"_fileType" : "structure",
 	"name" : "City",
 	"tileImageName" : "structure_city",
 	"tileImage" : "resources/img/structures/city.png",

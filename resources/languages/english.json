@@ -1,0 +1,8 @@
+{
+	"_fileType" : "language",
+	"name" : "English",
+	"nobiliaryParticleMale" : "of",
+	"nobiliaryParticleFemale" : "of",
+	"maleNames" : ["James", "George", "William", "Edward"],
+	"femaleNames" : ["Anne", "Victoria", "Elizabeth", "Mary", "Alice"]
+}

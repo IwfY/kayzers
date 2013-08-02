@@ -9,6 +9,7 @@ srcFiles = Split("""
     src/ui/ui.d
     src/ui/widget.d
     src/ui/button.d
+    src/world/language.d
     src/world/structureprototype.d
     src/world/structure.d
     src/position.d
