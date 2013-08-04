@@ -1,8 +1,12 @@
 module maprenderer;
 
-import renderhelper;
+import client;
+import game;
 import map;
 import position;
+import renderhelper;
+import world.structure;
+import world.structureprototype;
 import utils;
 
 import derelict.sdl2.sdl;
@@ -12,6 +16,8 @@ import std.math;
 
 class MapRenderer {
 	private Map map;
+	private const(Game) game;
+	private Client client;
 	private RenderHelper renderer;
 	private SDL_Rect *tileDimensions;
 
@@ -25,7 +31,9 @@ class MapRenderer {
 	private bool mousePressed;
 
 
-	public this(RenderHelper renderer, Map map) {
+	public this(Client client, RenderHelper renderer, Map map) {
+		this.client = client;
+		this.game = this.client.getGame();
 		this.renderer = renderer;
 		this.map = map;
 		this.selectedRegion = new SDL_Rect(0, 0);
@@ -342,6 +350,14 @@ class MapRenderer {
 
 					this.drawTileIJ(i, j, textureName);
 				}
+			}
+
+			// draw structures
+			foreach (const(Structure) structure; this.game.getStructures()) {
+				const(StructurePrototype) prototype = structure.getPrototype();
+				const(Position) position = structure.getPosition();
+				this.drawTileIJ(position.i, position.j,
+								prototype.getTileImageName());
 			}
 
 			// selected region

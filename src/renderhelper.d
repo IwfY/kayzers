@@ -50,7 +50,7 @@ class RenderHelper {
 		this.loadTexturesAndFonts();
 
 		this.ui = new UI(this.client, this);
-		this.mapRenderer = new MapRenderer(this, this.map);
+		this.mapRenderer = new MapRenderer(this.client, this, this.map);
 
 		this.updateScreenRegions();
 	}

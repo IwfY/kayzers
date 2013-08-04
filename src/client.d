@@ -42,7 +42,6 @@ public class Client {
 
 
 	public void addStructureHandler(string structureName) {
-		writefln("Client::addStructureHandler %s", structureName);
 		//TODO: if selected region bigger 1x1 --> multiple addStructure calls
 		this.game.addStructure(structureName,
 							   this.currentNation,
@@ -59,6 +58,11 @@ public class Client {
 	}
 	public void setCurrentNation(const(Nation) currentNation) {
 		this.currentNation = currentNation;
+	}
+
+
+	public const(Game) getGame() const {
+		return this.game;
 	}
 
 
