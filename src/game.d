@@ -22,6 +22,7 @@ public class Game {
 	private Language[] languages;
 	private Structure[] structures;
 	private StructurePrototype[] structurePrototypes;
+	private int currentYear;
 
 	public this() {
 		this.initLanguages();
@@ -47,6 +48,13 @@ public class Game {
 	}
 	public void addNation(Nation nation) {
 		this.nations ~= nation;
+	}
+
+	public const(int) getCurrentYear() const {
+		return this.currentYear;
+	}
+	public void setCurrentYear(int currentYear) {
+		this.currentYear = currentYear;
 	}
 
 	public Player[] getPlayers() {
@@ -139,8 +147,9 @@ public class Game {
 		}
 		// check which nation turns next
 		++i;
-		if (i >= this.nations.length) {
+		if (i >= this.nations.length) {		// new year
 			i = 0;
+			++this.currentYear;
 		}
 		this.client.setCurrentNation(this.nations[i]);
 

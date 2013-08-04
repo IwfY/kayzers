@@ -127,8 +127,8 @@ class RenderHelper {
 
 
 	public void drawText(const int x, const int y,
-						 const string text,
-						 const string fontName = "std",
+						 const(string) text,
+						 const(string) fontName = "std",
 						 SDL_Color *color = null)
 		in {
 			TTF_Font *ttf = this.fonts.getFont(fontName);

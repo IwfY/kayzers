@@ -1,5 +1,6 @@
 module ui.ui;
 
+import game;
 import map;
 import renderhelper;
 import utils;
@@ -10,10 +11,12 @@ import world.structureprototype;
 
 import derelict.sdl2.sdl;
 
+import std.conv;
 import std.stdio;
 import std.string;
 
 class UI {
+	private const(Game) game;
 	private Client client;
 	private RenderHelper renderer;
 	private Widget[] widgets;
@@ -23,6 +26,7 @@ class UI {
 
 	public this(Client client, RenderHelper renderer) {
 		this.client = client;
+		this.game = this.client.getGame();
 		this.renderer = renderer;
 
 		this.screenRegion = new SDL_Rect(0, 0);
@@ -82,7 +86,8 @@ class UI {
 
 	public void render() {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
-		this.renderer.drawText(10, this.screenRegion.y + 10, "test");
+		this.renderer.drawText(10, this.screenRegion.y + 10,
+							   text(this.game.getCurrentYear()));
 		
 		this.updateWidgets();
 
