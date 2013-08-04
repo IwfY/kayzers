@@ -2,15 +2,18 @@ module client;
 
 import game;
 import renderhelper;
+import world.nation;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
 import std.stdio;
+import std.typecons;
 
 public class Client {
 	private Game game;
+	private Rebindable!(const(Nation)) currentNation;
 	private RenderHelper renderer;
 	private SDL_Window *window;
 	private bool active;	// player is active and can interact with the game
@@ -36,10 +39,26 @@ public class Client {
 
 		SDL_DestroyWindow(this.window);
 	}
+
+
+	public void addStructureHandler(string structureName) {
+		writefln("Client::addStructureHandler %s", structureName);
+		//TODO: if selected region bigger 1x1 --> multiple addStructure calls
+		this.game.addStructure(structureName,
+							   this.currentNation,
+							   this.renderer.getSelectedPosition());
+	}
 	
 	
 	public const(StructurePrototype[]) getStructurePrototypes() const {
 		return this.game.getStructurePrototypes();
+	}
+
+	public const(Nation) getCurrentNation() const {
+		return this.currentNation;
+	}
+	public void setCurrentNation(const(Nation) currentNation) {
+		this.currentNation = currentNation;
 	}
 
 
@@ -63,8 +82,13 @@ public class Client {
 				}
 
 				if (event.type == SDL_KEYDOWN) {
+					// quit
 					if (event.key.keysym.sym == SDLK_q) {
 						this.running = false;
+					}
+					// end turn
+					if (event.key.keysym.sym == SDLK_RETURN) {
+						this.game.endTurn(this.currentNation);
 					}
 					debug(2) {
 						writefln("The %s key was pressed!\n",

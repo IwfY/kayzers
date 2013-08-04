@@ -7,6 +7,7 @@ import texturemanager;
 import fontmanager;
 import utils;
 import client;
+import position;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -52,7 +53,13 @@ class RenderHelper {
 		this.mapRenderer = new MapRenderer(this, this.map);
 
 		this.updateScreenRegions();
+	}
 
+
+	public ~this() {
+		delete this.textures;
+		delete this.fonts;
+		SDL_DestroyRenderer(this.renderer);
 	}
 	
 	
@@ -90,15 +97,8 @@ class RenderHelper {
 	}
 
 
-	public ~this() {
-		delete this.textures;
-		delete this.fonts;
-		SDL_DestroyRenderer(this.renderer);
-	}
-
-
-	public void uiCallbackHandler(string name) {
-		writefln("Renderer::uiCallbackHandler %s", name);
+	public Position getSelectedPosition() {
+		return this.mapRenderer.getSelectedPosition();
 	}
 
 	/**

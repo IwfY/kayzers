@@ -12,22 +12,22 @@ class Nation {
 		
 	}
 
-	public string getName() {
-        return this.name;
+	public const(string) getName() const {
+		return this.name;
 	}
 	public void setName(string name) {
 		this.name = name;
 	}
 
-	public Language getLanguage() {
-        return this.language;
+	public const(Language) getLanguage() const {
+		return this.language;
 	}
 	public void setLanguage(Language language) {
 		this.language = language;
 	}
 
-	public Character getRuler() {
-        return this.ruler;
+	public const(Character) getRuler() const {
+		return this.ruler;
 	}
 	public void setRuler(Character ruler) {
 		this.ruler = ruler;

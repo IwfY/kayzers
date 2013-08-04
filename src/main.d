@@ -1,6 +1,7 @@
 import client;
 import game;
 import map;
+import world.nation;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.ttf;
@@ -35,9 +36,10 @@ int main(string[] args) {
 	map = new Map(args[1]);
 	game = new Game();
 	game.setMap(map);
+	game.addNation(new Nation());
 	
 	client = new Client(game);
-	game.addClient(client);
+	game.setClient(client);
 
 	client.run();
 	

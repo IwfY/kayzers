@@ -39,7 +39,7 @@ class UI {
 									   structurePrototype.getName(),
 									   structurePrototype.getIconImageName(),
 									   new SDL_Rect(0, 0, 20, 20),
-									   &this.renderer.uiCallbackHandler);
+									   &this.client.addStructureHandler);
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;
 		}

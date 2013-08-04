@@ -2,6 +2,7 @@ module maprenderer;
 
 import renderhelper;
 import map;
+import position;
 import utils;
 
 import derelict.sdl2.sdl;
@@ -241,6 +242,11 @@ class MapRenderer {
 
 	public SDL_Point *getOffset() {
 		return this.offset;
+	}
+
+
+	public Position getSelectedPosition() {
+		return new Position(this.selectedRegion.x, this.selectedRegion.y);
 	}
 
 

@@ -1,22 +1,24 @@
 srcFiles = Split("""
-    src/main.d
-    src/texturemanager.d
+    src/client.d
     src/fontmanager.d
     src/game.d
-    src/client.d
-    src/renderhelper.d
+    src/main.d
+    src/map.d
     src/maprenderer.d
+    src/player.d
+    src/position.d
+    src/renderhelper.d
+    src/utils.d
+    src/texturemanager.d
+    src/ui/button.d
     src/ui/ui.d
     src/ui/widget.d
-    src/ui/button.d
     src/world/character.d
+    src/world/dynasty.d
     src/world/language.d
     src/world/nation.d
-    src/world/structureprototype.d
     src/world/structure.d
-    src/position.d
-    src/map.d
-    src/utils.d
+    src/world/structureprototype.d
 """)
 
 dFlags = ['-L-L/usr/lib/dmd',
