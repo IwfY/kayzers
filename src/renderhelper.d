@@ -19,6 +19,9 @@ import std.string;
 import std.math;
 
 
+/**
+ * interface to the SDL rendering infrastructure
+ **/
 class RenderHelper {
 	private Map map;
 	private UI ui;

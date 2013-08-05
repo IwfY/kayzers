@@ -4,6 +4,7 @@ import client;
 import game;
 import map;
 import position;
+import renderer;
 import renderhelper;
 import world.structure;
 import world.structureprototype;
@@ -14,24 +15,23 @@ import derelict.sdl2.sdl;
 import std.stdio;
 import std.math;
 
-class MapRenderer {
+class MapRenderer : Renderer {
 	private Map map;
 	private const(Game) game;
 	private Client client;
-	private RenderHelper renderer;
 	private SDL_Rect *tileDimensions;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
 	private SDL_Rect *selectedRegion;	// in tile coordinates (i, j)
-	private SDL_Rect *screenRegion;
 	private SDL_Point *mousePosition;
 	private SDL_Point *mousePressedPosition;
 	private bool mousePressed;
 
 
 	public this(Client client, RenderHelper renderer, Map map) {
+		super(renderer);
 		this.client = client;
 		this.game = this.client.getGame();
 		this.renderer = renderer;
@@ -43,17 +43,9 @@ class MapRenderer {
 		this.tileDimensions = new SDL_Rect(0, 0);
 		this.tileDimensions.w = 120;
 		this.tileDimensions.h = 70;
-		this.zoom = 1;
+		this.zoom = 2;
 		this.mousePressed = false;
 		this.mousePressedPosition = new SDL_Point(0, 0);
-	}
-
-
-	public void setScreenRegion(int x, int y, int w, int h) {
-		this.screenRegion.x = x;
-		this.screenRegion.y = y;
-		this.screenRegion.w = w;
-		this.screenRegion.h = h;
 	}
 
 
@@ -258,7 +250,7 @@ class MapRenderer {
 	}
 
 
-	public void handleEvent(SDL_Event event) {
+	public override void handleEvent(SDL_Event event) {
 		// key down
 		if (event.type == SDL_KEYDOWN) {
 			if (event.key.keysym.sym == SDLK_1) {
@@ -318,7 +310,7 @@ class MapRenderer {
 	}
 
 
-	public void render() {
+	public override void render() {
 		if (this.renderer !is null && this.map !is null) {
 			// get tiles section to draw per frame
 			int iMin, iMax, jMin, jMax, windowWidth, windowHeight;

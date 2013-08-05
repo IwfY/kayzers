@@ -7,6 +7,7 @@ srcFiles = Split("""
     src/maprenderer.d
     src/player.d
     src/position.d
+    src/renderer.d
     src/renderhelper.d
     src/utils.d
     src/texturemanager.d

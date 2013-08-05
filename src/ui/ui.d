@@ -5,6 +5,7 @@ import map;
 import renderhelper;
 import utils;
 import client;
+import renderer;
 import ui.widget;
 import ui.button;
 import world.structureprototype;
@@ -15,21 +16,19 @@ import std.conv;
 import std.stdio;
 import std.string;
 
-class UI {
+class UI : Renderer {
 	private const(Game) game;
 	private Client client;
-	private RenderHelper renderer;
 	private Widget[] widgets;
 	private Button[] structureButtons;
-	private SDL_Rect *screenRegion;
+	
 
 
 	public this(Client client, RenderHelper renderer) {
+		super(renderer);
 		this.client = client;
 		this.game = this.client.getGame();
 		this.renderer = renderer;
-
-		this.screenRegion = new SDL_Rect(0, 0);
 		
 		this.initWidgets();
 	}
@@ -48,14 +47,6 @@ class UI {
 		   this.widgets ~= button;
 		}
 	}
-
-
-	public void setScreenRegion(int x, int y, int w, int h) {
-		this.screenRegion.x = x;
-		this.screenRegion.y = y;
-		this.screenRegion.w = w;
-		this.screenRegion.h = h;
-	}
 	
 	
 	private void updateWidgets() {
@@ -69,7 +60,7 @@ class UI {
 
 
 
-	public void handleEvent(SDL_Event event) {
+	public override void handleEvent(SDL_Event event) {
 		// left mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_LEFT) {
@@ -84,7 +75,7 @@ class UI {
 	}
 
 
-	public void render() {
+	public override void render() {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 		this.renderer.drawText(10, this.screenRegion.y + 10,
 							   text(this.game.getCurrentYear()));
