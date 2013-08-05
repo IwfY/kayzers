@@ -12,6 +12,7 @@ srcFiles = Split("""
     src/utils.d
     src/texturemanager.d
     src/ui/button.d
+    src/ui/mainmenu.d
     src/ui/ui.d
     src/ui/widget.d
     src/world/character.d

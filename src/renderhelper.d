@@ -1,13 +1,14 @@
 module renderhelper;
 
 import map;
-import ui.ui;
 import maprenderer;
 import texturemanager;
 import fontmanager;
 import utils;
 import client;
 import position;
+import ui.mainmenu;
+import ui.ui;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -26,6 +27,7 @@ class RenderHelper {
 	private Map map;
 	private UI ui;
 	private MapRenderer mapRenderer;
+	private MainMenu mainMenu;
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
 	private FontManager fonts;
@@ -53,6 +55,7 @@ class RenderHelper {
 		this.loadTexturesAndFonts();
 
 		this.ui = new UI(this.client, this);
+		this.mainMenu = new MainMenu(this.client, this);
 		this.mapRenderer = new MapRenderer(this.client, this, this.map);
 
 		this.updateScreenRegions();
@@ -68,6 +71,7 @@ class RenderHelper {
 	
 	
 	public void loadTexturesAndFonts() {
+		//TODO load from file
 		this.textures.registerTexture("grass", "resources/img/grass_n.png");
 		this.textures.registerTexture("water", "resources/img/water_n.png");
 		this.textures.registerTexture("border",
@@ -78,6 +82,11 @@ class RenderHelper {
 									  "resources/img/ui_background.png");
 		this.textures.registerTexture("button_default",
 									  "resources/img/ui/button_default.png");
+		this.textures.registerTexture("mainmenu_bg",
+									  "resources/img/ui/mainmenu_bg.png");
+		this.textures.registerTexture("mainmenu_button",
+									  "resources/img/ui/mainmenu_button.png");
+
 		// load textures for structures
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
@@ -162,6 +171,17 @@ class RenderHelper {
 		this.drawTexture(x, y, texture);
 	}
 
+	public void drawTexture(int x, int y, int w, int h,
+						    const string textureName) {
+		SDL_Rect *position = new SDL_Rect();
+		position.x = x;
+		position.y = y;
+		position.w = w;
+		position.h = h;
+		SDL_Texture *texture = this.textures.getTexture(textureName);
+		this.drawTexture(position, texture);
+	}
+
 
 	public void drawTexture(SDL_Rect *dest, string textureName) {
 		SDL_Texture *texture = this.textures.getTexture(textureName);
@@ -212,6 +232,7 @@ class RenderHelper {
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
 		this.mapRenderer.setScreenRegion(0, 0, windowWidth, windowHeight - 150);
 		this.ui.setScreenRegion(0, windowHeight - 150, windowWidth, 150);
+		this.mainMenu.setScreenRegion(0, 0, windowWidth, windowHeight);
 	}
 
 
@@ -227,6 +248,7 @@ class RenderHelper {
 
 		this.mapRenderer.render();
 		this.ui.render();
+		//this.mainMenu.render();
 
 		// update screen
 		SDL_RenderPresent(this.renderer);

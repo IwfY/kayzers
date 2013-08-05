@@ -27,14 +27,20 @@ abstract class Widget {
 
 
 	public void render() {
-		this.renderer.drawTexture(this.bounds.x, this.bounds.y,
-									  this.textureName);
+		this.renderer.drawTexture(this.bounds, this.textureName);
 	}
 	
 	
 	public void setXY(int x, int y) {
 		this.bounds.x = x;
 		this.bounds.y = y;
+	}
+
+	public void setBounds(int x, int y, int w, int h) {
+		this.bounds.x = x;
+		this.bounds.y = y;
+		this.bounds.w = w;
+		this.bounds.h = h;
 	}
 	
 	abstract public void click();
