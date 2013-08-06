@@ -86,6 +86,8 @@ class RenderHelper {
 									  "resources/img/ui/mainmenu_bg.png");
 		this.textures.registerTexture("mainmenu_button",
 									  "resources/img/ui/mainmenu_button.png");
+		this.textures.registerTexture("null",
+									  "resources/img/ui/null.png");
 
 		// load textures for structures
 		foreach (const StructurePrototype structurePrototype;
