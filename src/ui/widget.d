@@ -14,11 +14,11 @@ abstract class Widget {
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
-				SDL_Rect *bounds) {
+				const(SDL_Rect *)bounds) {
 		this.renderer = renderer;
 		this.name = name;
 		this.textureName = textureName;
-		this.bounds = bounds;
+		this.bounds = new SDL_Rect(bounds.x, bounds.y, bounds.w, bounds.h);
 	}
 	
 	public bool isPointInBounds(SDL_Point *point) {
@@ -46,6 +46,10 @@ abstract class Widget {
 		this.bounds.y = y;
 		this.bounds.w = w;
 		this.bounds.h = h;
+	}
+	
+	public const(SDL_Rect *)getBounds() const {
+		return this.bounds;
 	}
 	
 	abstract public void click();

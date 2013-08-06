@@ -5,6 +5,7 @@ import renderer;
 import renderhelper;
 import ui.button;
 import ui.label;
+import ui.labelbutton;
 import ui.widget;
 
 import derelict.sdl2.sdl;
@@ -12,8 +13,8 @@ import derelict.sdl2.sdl;
 class MainMenu : Renderer {
 	private Client client;
 	private Label head;
-	private Button exitButton;
-	private Button newGameButton;
+	private LabelButton exitButton;
+	private LabelButton newGameButton;
 	private Widget[] allWidgets;
 	
 	public this(Client client, RenderHelper renderer) {
@@ -24,17 +25,23 @@ class MainMenu : Renderer {
 	}
 
 	private void initWidgets() {
-		this.newGameButton = new Button(this.renderer,
-									 "newGame",
-									 "mainmenu_button",
-									 new SDL_Rect(0, 0, 200, 50),
-									 &this.mainMenuCallbackHandler);
+		this.newGameButton = 
+				new LabelButton(this.renderer,
+								"newGame",
+								"mainmenu_button",
+								new SDL_Rect(0, 0, 200, 50),
+								&this.mainMenuCallbackHandler,
+								"New Game",
+								"std");
 		this.allWidgets ~= this.newGameButton;
-		this.exitButton = new Button(this.renderer,
-									 "exit",
-									 "mainmenu_button",
-									 new SDL_Rect(0, 0, 200, 50),
-									 &this.mainMenuCallbackHandler);
+		this.exitButton =
+				new LabelButton(this.renderer,
+								"exit",
+								"mainmenu_button",
+								new SDL_Rect(0, 0, 200, 50),
+								&this.mainMenuCallbackHandler,
+								"Exit",
+								"std");
 		this.allWidgets ~= this.exitButton;
 		
 		this.head = new Label(this.renderer,

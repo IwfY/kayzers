@@ -12,7 +12,7 @@ class Label : Widget {
 	private string text;
 	private string fontName;
 	private SDL_Color *color;
-	
+
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
@@ -28,15 +28,29 @@ class Label : Widget {
 		} else {
 			this.color = color;
 		}
-		Rect boundsRect = this.renderer.getTextSize(this.text, this.fontName);
+
+		// set width and height to actual bounds of rendered text
+		Rect boundsRect = this.getTextSize();
 		this.bounds.w = boundsRect.w;
 		this.bounds.h = boundsRect.h;
 	}
 
 
-	override public void click() {
+	private Rect getTextSize() {
+		return this.renderer.getTextSize(this.text, this.fontName);
 	}
-	
+
+
+	public override void setBounds(int x, int y, int w, int h) {
+		// don't set new width and height as these are specified by renderer
+		this.bounds.x = x;
+		this.bounds.y = y;
+	}
+
+
+	public override void click() {
+	}
+
 	public override void render() {
 		super.render();
 		this.renderer.drawText(this.bounds.x, this.bounds.y,

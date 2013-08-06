@@ -14,6 +14,7 @@ srcFiles = Split("""
     src/texturemanager.d
     src/ui/button.d
     src/ui/label.d
+    src/ui/labelbutton.d
     src/ui/mainmenu.d
     src/ui/ui.d
     src/ui/widget.d
