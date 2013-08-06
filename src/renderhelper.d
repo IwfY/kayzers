@@ -6,6 +6,7 @@ import map;
 import maprenderer;
 import position;
 import rect;
+import textinput;
 import texturemanager;
 import utils;
 import ui.mainmenu;
@@ -37,6 +38,7 @@ class RenderHelper {
 	private TextureManager textures;
 	private FontManager fonts;
 	private SDL_Window *window;
+	private TextInput textInput;
 	private Client client;
 	
 
@@ -60,6 +62,8 @@ class RenderHelper {
 		this.fonts = new FontManager();
 		
 		this.loadTexturesAndFonts();
+
+		this.textInput = new TextInput();
 
 		this.ui = new UI(this.client, this);
 		this.mainMenu = new MainMenu(this.client, this);
@@ -249,6 +253,11 @@ class RenderHelper {
 	}
 
 
+	public TextInput getTextInputServer() {
+		return this.textInput;
+	}
+
+
 	public void updateScreenRegions() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
@@ -265,6 +274,8 @@ class RenderHelper {
 		} else if (this.state == RendererState.MAIN_MENU) {
 			this.mainMenu.handleEvent(event);
 		}
+
+		this.textInput.handleEvent(event);
 	}
 
 

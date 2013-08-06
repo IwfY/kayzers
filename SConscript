@@ -2,16 +2,19 @@ srcFiles = Split("""
     src/client.d
     src/fontmanager.d
     src/game.d
-    src/inputbox.d
+    src/ui/inputbox.d
     src/main.d
     src/map.d
     src/maprenderer.d
+    src/observable.d
+    src/observer.d
     src/player.d
     src/position.d
     src/rect.d
     src/renderer.d
     src/renderhelper.d
     src/utils.d
+    src/textinput.d
     src/texturemanager.d
     src/ui/button.d
     src/ui/label.d

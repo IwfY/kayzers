@@ -4,6 +4,7 @@ import client;
 import renderer;
 import renderhelper;
 import ui.button;
+import ui.inputbox;
 import ui.label;
 import ui.labelbutton;
 import ui.widget;
@@ -15,6 +16,7 @@ class MainMenu : Renderer {
 	private Label head;
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
+	private InputBox inputBox;
 	private Widget[] allWidgets;
 	
 	public this(Client client, RenderHelper renderer) {
@@ -52,6 +54,14 @@ class MainMenu : Renderer {
 							  "mainMenuHead",
 							  new SDL_Color(162, 59, 0));
 		this.allWidgets ~= this.head;
+
+		this.inputBox = new InputBox(this.renderer,
+							  "head",
+							  "mainmenu_button",
+							  new SDL_Rect(0, 0, 40, 40),
+							  "std",
+							  new SDL_Color(255, 255, 255));
+		this.allWidgets ~= this.inputBox;
 	}
 
 	private void updateWidgets() {
