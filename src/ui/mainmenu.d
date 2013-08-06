@@ -4,12 +4,17 @@ import client;
 import renderer;
 import renderhelper;
 import ui.button;
+import ui.label;
+import ui.widget;
 
 import derelict.sdl2.sdl;
 
 class MainMenu : Renderer {
 	private Client client;
+	private Label head;
 	private Button exitButton;
+	private Button newGameButton;
+	private Widget[] allWidgets;
 	
 	public this(Client client, RenderHelper renderer) {
 		super(renderer);
@@ -19,21 +24,44 @@ class MainMenu : Renderer {
 	}
 
 	private void initWidgets() {
-		this.exitButton = new Button(this.renderer,
-									 "start",
+		this.newGameButton = new Button(this.renderer,
+									 "newGame",
 									 "mainmenu_button",
-									 new SDL_Rect(0, 0, 10, 20),
+									 new SDL_Rect(0, 0, 200, 50),
 									 &this.mainMenuCallbackHandler);
+		this.allWidgets ~= this.newGameButton;
+		this.exitButton = new Button(this.renderer,
+									 "exit",
+									 "mainmenu_button",
+									 new SDL_Rect(0, 0, 200, 50),
+									 &this.mainMenuCallbackHandler);
+		this.allWidgets ~= this.exitButton;
+		
+		this.head = new Label(this.renderer,
+							  "head",
+							  "null",
+							  new SDL_Rect(0, 0, 0, 0),
+							  "Kayzers",
+							  "mainMenuHead",
+							  new SDL_Color(162, 59, 0));
+		this.allWidgets ~= this.head;
 	}
 
 	private void updateWidgets() {
-		this.exitButton.setBounds(50, 200, 200, 50);
+		this.newGameButton.setXY(0, 200);
+		this.newGameButton.centerHorizontally();
+		this.exitButton.setXY(0, 500);
+		this.exitButton.centerHorizontally();
+		this.head.setXY(0, 10);
+		this.head.centerHorizontally();
 	}
 
 	public override void render() {
 		this.updateWidgets;
 		this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
-		this.exitButton.render();
+		foreach (Widget widget; this.allWidgets) {
+			widget.render();
+		}
 	}
 
 	public void mainMenuCallbackHandler(string message) {

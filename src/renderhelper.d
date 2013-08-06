@@ -1,12 +1,13 @@
 module renderhelper;
 
+import client;
+import fontmanager;
 import map;
 import maprenderer;
-import texturemanager;
-import fontmanager;
-import utils;
-import client;
 import position;
+import rect;
+import texturemanager;
+import utils;
 import ui.mainmenu;
 import ui.ui;
 import world.structureprototype;
@@ -108,6 +109,14 @@ class RenderHelper {
 		
 		//TODO make portable
 		this.fonts.registerFont("std", "/usr/share/fonts/TTF/DejaVuSans.ttf");
+		this.fonts.registerFont("mainMenuHead",
+								"/usr/share/fonts/TTF/DejaVuSans.ttf",
+								80);
+	}
+	
+	
+	public Rect getTextSize(string text, string fontName) {
+		return this.fonts.getTextSize(text, fontName);
 	}
 
 
@@ -217,13 +226,13 @@ class RenderHelper {
 
 
 	/**
-	 * get the rectangular region of the screen where the map is drawn
+	 * get the rectangular region of the screen
 	 **/
-	public SDL_Rect *getMapScreenRegion() {
+	public SDL_Rect *getScreenRegion() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
 
-		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight - 150);
+		SDL_Rect *region = new SDL_Rect(0, 0, windowWidth, windowHeight);
 
 		return region;
 	}
@@ -248,9 +257,9 @@ class RenderHelper {
 		this.updateScreenRegions();
 		SDL_RenderClear(this.renderer);
 
-		this.mapRenderer.render();
-		this.ui.render();
-		//this.mainMenu.render();
+		//this.mapRenderer.render();
+		//this.ui.render();
+		this.mainMenu.render();
 
 		// update screen
 		SDL_RenderPresent(this.renderer);

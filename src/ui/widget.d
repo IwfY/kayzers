@@ -35,6 +35,11 @@ abstract class Widget {
 		this.bounds.x = x;
 		this.bounds.y = y;
 	}
+	
+	public void centerHorizontally() {
+		SDL_Rect *screenRegion = this.renderer.getScreenRegion();
+		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
+	}
 
 	public void setBounds(int x, int y, int w, int h) {
 		this.bounds.x = x;
