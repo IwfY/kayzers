@@ -2,6 +2,7 @@ srcFiles = Split("""
     src/client.d
     src/fontmanager.d
     src/game.d
+    src/inputbox.d
     src/main.d
     src/map.d
     src/maprenderer.d
