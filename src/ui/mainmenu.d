@@ -72,9 +72,24 @@ class MainMenu : Renderer {
 	}
 
 	public void mainMenuCallbackHandler(string message) {
-
+		if (message == "exit") {
+			this.client.stop();
+		} else if (message == "newGame") {
+			this.renderer.setState(RendererState.MAP);
+		}
 	}
 	
 	public override void handleEvent(SDL_Event event) {
+		// left mouse down
+		if (event.type == SDL_MOUSEBUTTONDOWN &&
+				event.button.button == SDL_BUTTON_LEFT) {
+			SDL_Point *mousePosition =
+					new SDL_Point(event.button.x, event.button.y);
+			foreach (Widget widget; this.allWidgets) {
+				if (widget.isPointInBounds(mousePosition)) {
+					widget.click();
+				}
+			}
+		}
 	}
 }

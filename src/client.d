@@ -64,6 +64,11 @@ public class Client {
 	public const(Game) getGame() const {
 		return this.game;
 	}
+	
+	
+	public void stop() {
+		this.running = false;
+	}
 
 
 	/**

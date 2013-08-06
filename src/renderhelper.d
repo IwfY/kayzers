@@ -21,25 +21,29 @@ import std.string;
 import std.math;
 
 
+static enum RendererState {MAIN_MENU, MAP};
+
 /**
  * interface to the SDL rendering infrastructure
  **/
 class RenderHelper {
-	private Map map;
 	private UI ui;
 	private MapRenderer mapRenderer;
 	private MainMenu mainMenu;
+	
+	private RendererState state;
+	
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
 	private FontManager fonts;
 	private SDL_Window *window;
 	private Client client;
+	
 
 
 	public this(Client client, SDL_Window *window, Map map) {
 		this.client = client;
 		this.window = window;
-		this.map = map;
 
 		this.renderer = SDL_CreateRenderer(
 				this.window,
@@ -49,6 +53,8 @@ class RenderHelper {
 		if (this.renderer is null) {
 			writeln(SDL_GetError());
 		}
+		
+		this.state = RendererState.MAIN_MENU;
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
@@ -57,7 +63,7 @@ class RenderHelper {
 
 		this.ui = new UI(this.client, this);
 		this.mainMenu = new MainMenu(this.client, this);
-		this.mapRenderer = new MapRenderer(this.client, this, this.map);
+		this.mapRenderer = new MapRenderer(this.client, this, map);
 
 		this.updateScreenRegions();
 	}
@@ -146,7 +152,12 @@ class RenderHelper {
 	public bool registerFont(const string fontName,
 							 const string filename) {
 		return this.fonts.registerFont(fontName, filename);
-	 }
+	}
+
+
+	public void setState(RendererState state) {
+		this.state = state;
+	}
 
 
 	public void drawText(const int x, const int y,
@@ -248,18 +259,25 @@ class RenderHelper {
 
 
 	public void handleEvent(SDL_Event event) {
-		this.mapRenderer.handleEvent(event);
-		this.ui.handleEvent(event);
+		if (this.state == RendererState.MAP) {
+			this.mapRenderer.handleEvent(event);
+			this.ui.handleEvent(event);
+		} else if (this.state == RendererState.MAIN_MENU) {
+			this.mainMenu.handleEvent(event);
+		}
 	}
 
 
 	public void render() {
 		this.updateScreenRegions();
 		SDL_RenderClear(this.renderer);
-
-		//this.mapRenderer.render();
-		//this.ui.render();
-		this.mainMenu.render();
+		
+		if (this.state == RendererState.MAP) {
+			this.mapRenderer.render();
+			this.ui.render();
+		} else if (this.state == RendererState.MAIN_MENU) {
+			this.mainMenu.render();
+		}
 
 		// update screen
 		SDL_RenderPresent(this.renderer);
