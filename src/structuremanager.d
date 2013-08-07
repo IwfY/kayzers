@@ -69,9 +69,30 @@ class StructureManager {
 		this.structures[[position.i, position.j]] = structure;
 	}
 
+
+	public Structure getStructure(int i, int j) {
+		Structure tmp = this.structures.get([i, j], null);
+		return tmp;
+	}
+	public Structure getStructure(Position position) {
+		return this.getStructure(position.i, position.j);
+	}
+
+
+	private bool isTileEmpty(int i, int j) {
+		return (this.getStructure(i, j) is null);
+	}
+	private bool isTileEmpty(Position position) {
+		return this.isTileEmpty(position.i, position.j);
+	}
+
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nation,
 							 Position position) {
+		if (!this.isTileEmpty(position)) {
+			return false;
+		}
+
 		const(StructurePrototype) prototype =
 				this.getStructurePrototypeByName(structurePrototypeName);
 		if (prototype is null) {
