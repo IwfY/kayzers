@@ -54,6 +54,7 @@ class TextInput : Observable {
 				// input stop
 				if (event.key.keysym.sym == SDLK_RETURN) {
 					this.stop();
+					this.notifyObservers();
 				}
 			}
 		}

@@ -46,6 +46,7 @@ class InputBox : Widget, Observer {
 	}
 
 	public override void notify() {
+		// get updated text
 		this.text = this.textInputServer.getTextInput();
 		// if input server stopped reading we unregister
 		if (!this.textInputServer.isReading()) {
@@ -56,7 +57,7 @@ class InputBox : Widget, Observer {
 	public override void render() {
 		super.render();
 		int boundsY = this.bounds.y +
-				(this.bounds.h + this.getTextSize().h) / 2;
+				(this.bounds.h - this.getTextSize().h) / 2;
 		this.renderer.drawText(this.bounds.x + 5, boundsY,
 							   this.text,
 							   this.fontName, this.color);
