@@ -14,6 +14,7 @@ srcFiles = Split("""
     src/renderer.d
     src/renderhelper.d
     src/utils.d
+    src/structuremanager.d
     src/textinput.d
     src/texturemanager.d
     src/ui/button.d

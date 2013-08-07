@@ -4,6 +4,7 @@ import client;
 import map;
 import player;
 import position;
+import structuremanager;
 import world.dynasty;
 import world.language;
 import world.nation;
@@ -20,13 +21,13 @@ public class Game {
 	private Player[] players;
 	private Nation[] nations;
 	private Language[] languages;
-	private Structure[] structures;
-	private StructurePrototype[] structurePrototypes;
+	private StructureManager structureManager;
 	private int currentYear;
 
 	public this() {
 		this.initLanguages();
-		this.initStructurePrototypes();
+
+		this.structureManager = new StructureManager();
 	}
 
 	/************************
@@ -77,56 +78,22 @@ public class Game {
 		}
 	}
 
+
 	public const(Structure[]) getStructures() const {
-		return this.structures;
+		return this.structureManager.getStructures();
 	}
-	public void setStructures(Structure[] structures) {
-		this.structures = structures;
-	}
-	public void addStructure(Structure structure) {
-		this.structures ~= structure;
-	}
+
 
 	public bool addStructure(string structurePrototypeName,
-							  const(Nation) nation,
-							  Position position) {
-		const(StructurePrototype) prototype =
-				this.getStructurePrototypeByName(structurePrototypeName);
-		if (prototype is null) {
-			debug(1) {
-				writefln("Game::addStructure Structure %s not found",
-						 structurePrototypeName);
-			}
-			return false;
-		}
-
-		Structure newStructure = new Structure();
-		newStructure.setPrototype(prototype);
-		newStructure.setPosition(position);
-		newStructure.setNation(nation);
-		newStructure.setCreatingNation(nation);
-
-		this.structures ~= newStructure;
-		debug(1) {
-			writefln("Game::addStructure Add structure %s at position (%d, %d) for nation %s",
-					 prototype.getName(), position.i, position.j,
-					 nation.getName());
-		}
-		return true;
+							 const(Nation) nation,
+							 Position position) {
+		return this.structureManager.addStructure(structurePrototypeName,
+												  nation,
+												  position);
 	}
-	
 
 	public const(StructurePrototype[]) getStructurePrototypes() const {
-		return this.structurePrototypes;
-	}
-
-	private StructurePrototype getStructurePrototypeByName(string name) {
-		foreach (StructurePrototype prototype; this.structurePrototypes) {
-			if (prototype.getName() == name) {
-				return prototype;
-			}
-		}
-		return null;
+		return this.structureManager.getStructurePrototypes();
 	}
 
 
@@ -156,29 +123,6 @@ public class Game {
 		return true;
 	}
 
-
-	/**
-	 * load structure prototypes as JSON from files; create objects and add
-	 * them to the stucture prototype list
-	 **/
-	private void initStructurePrototypes() {
-		foreach (string filename;
-				 dirEntries("resources/structures", "*.json", SpanMode.depth)) {
-			File structureFile = File(filename, "r");
-			string all = structureFile.readln('\0');
-
-			JSONValue json = parseJSON!string(all);
-			if (json["_fileType"].str != "structure") {		// file type check
-				continue;
-			}
-
-			string[string] structureData;
-			foreach(string s; json.object.keys) {
-				structureData[s] = json[s].str;
-			}
-			this.structurePrototypes ~= new StructurePrototype(structureData);
-		}
-	}
 
 	/**
 	 * load languages from JSON files, create objects, add to list
