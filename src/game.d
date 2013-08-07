@@ -79,6 +79,13 @@ public class Game {
 	}
 
 
+	public void startGame() {
+		foreach (Nation nation; this.nations) {
+			nation.getResources().setResource("structureToken", 3.0);
+		}
+	}
+
+
 	public const(Structure[]) getStructures() const {
 		return this.structureManager.getStructures();
 	}
@@ -117,6 +124,11 @@ public class Game {
 		if (i >= this.nations.length) {		// new year
 			i = 0;
 			++this.currentYear;
+
+			foreach (Nation nationCursor; this.nations) {
+				nationCursor.getResources().setResource("structureToken", 3.0);
+			}
+
 		}
 		this.client.setCurrentNation(this.nations[i]);
 

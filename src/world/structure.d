@@ -2,6 +2,7 @@ module world.structure;
 
 import position;
 import world.nation;
+import world.resourcemanager;
 import world.structureprototype;
 
 import std.typecons;
@@ -14,6 +15,11 @@ class Structure {
 	private Position position;
 	private Rebindable!(const(Nation)) nation;
 	private Rebindable!(const(Nation)) creatingNation;
+	private ResourceManager resources;
+
+	public this() {
+		this.resources = new ResourceManager();
+	}
 
 	/************************
 	 * Getters and Setters
@@ -45,5 +51,9 @@ class Structure {
 	}
 	public void setCreatingNation(const(Nation) creatingNation) {
 		this.creatingNation = creatingNation;
+	}
+
+	public ResourceManager getResources() {
+		return this.resources;
 	}
 }

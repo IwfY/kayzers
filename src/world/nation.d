@@ -2,14 +2,16 @@ module world.nation;
 
 import world.character;
 import world.language;
+import world.resourcemanager;
 
 class Nation {
 	private string name;
 	private Character ruler;
 	private Language language;
+	private ResourceManager resources;
 
 	public this() {
-		
+		this.resources = new ResourceManager();
 	}
 
 	public const(string) getName() const {
@@ -31,5 +33,9 @@ class Nation {
 	}
 	public void setRuler(Character ruler) {
 		this.ruler = ruler;
+	}
+
+	public ResourceManager getResources() {
+		return this.resources;
 	}
 }
