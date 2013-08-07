@@ -1,5 +1,6 @@
 module structuremanager;
 
+import game;
 import position;
 import world.nation;
 import world.structure;
@@ -12,9 +13,11 @@ import std.stdio;
 class StructureManager {
 	private StructurePrototype[] structurePrototypes;
 	private Structure[int[2]] structures;
+	private Game game;
 
 
-	public this() {
+	public this(Game game) {
+		this.game = game;
 		this.initStructurePrototypes();
 	}
 
@@ -74,30 +77,59 @@ class StructureManager {
 		Structure tmp = this.structures.get([i, j], null);
 		return tmp;
 	}
+	public const(Structure) getStructure(int i, int j) const {
+		const(Structure) tmp = this.structures.get([i, j], null);
+		return tmp;
+	}
 	public Structure getStructure(Position position) {
 		return this.getStructure(position.i, position.j);
 	}
 
 
-	private bool isTileEmpty(int i, int j) {
+	private bool isTileEmpty(int i, int j) const {
 		return (this.getStructure(i, j) is null);
 	}
-	private bool isTileEmpty(Position position) {
+	private bool isTileEmpty(Position position) const {
 		return this.isTileEmpty(position.i, position.j);
 	}
 
-	public bool addStructure(string structurePrototypeName,
-							 const(Nation) nation,
-							 Position position) {
+
+
+	/**
+	 * checks whether a structure can be build by a nation at given position
+	 **/
+	public bool canBuildStructure(string structurePrototypeName,
+								  const(Nation) nation,
+								  Position position) const {
 		if (!this.isTileEmpty(position)) {
 			return false;
 		}
+
+		if (!nation.getResources().getResourceAmount("structureToken") >= 1.0) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	public bool addStructure(string structurePrototypeName,
+							 const(Nation) nationIn,
+							 Position position) {
+		if (!this.canBuildStructure(structurePrototypeName,
+									nationIn, position)) {
+			return false;
+		}
+		
+		// get a non-const nation reference
+		Nation nation = this.game.getNation(nationIn);
+
 
 		const(StructurePrototype) prototype =
 				this.getStructurePrototypeByName(structurePrototypeName);
 		if (prototype is null) {
 			debug(1) {
-				writefln("Game::addStructure Structure %s not found",
+				writefln("Game::addStructure StructurePrototype %s not found",
 						 structurePrototypeName);
 			}
 			return false;
@@ -108,6 +140,9 @@ class StructureManager {
 		newStructure.setPosition(position);
 		newStructure.setNation(nation);
 		newStructure.setCreatingNation(nation);
+
+		// consume resources
+		nation.getResources().addResource("structureToken", -1.0);
 
 		this.structures[[position.i, position.j]] = newStructure;
 		debug(1) {

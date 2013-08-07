@@ -27,7 +27,7 @@ public class Game {
 	public this() {
 		this.initLanguages();
 
-		this.structureManager = new StructureManager();
+		this.structureManager = new StructureManager(this);
 	}
 
 	/************************
@@ -49,6 +49,17 @@ public class Game {
 	}
 	public void addNation(Nation nation) {
 		this.nations ~= nation;
+	}
+	/**
+	 * un-const a given nation
+	 **/
+	public Nation getNation(const(Nation) nation) {
+		foreach (Nation nationCursor; this.nations) {
+			if (nationCursor == nation) {
+				return nationCursor;
+			}
+		}
+		return null;
 	}
 
 	public const(int) getCurrentYear() const {
@@ -79,7 +90,9 @@ public class Game {
 	}
 
 
-	public void startGame() {
+	public void startNewRound() {
+		++this.currentYear;
+
 		foreach (Nation nation; this.nations) {
 			nation.getResources().setResource("structureToken", 3.0);
 		}
@@ -123,11 +136,7 @@ public class Game {
 		++i;
 		if (i >= this.nations.length) {		// new year
 			i = 0;
-			++this.currentYear;
-
-			foreach (Nation nationCursor; this.nations) {
-				nationCursor.getResources().setResource("structureToken", 3.0);
-			}
+			this.startNewRound();
 
 		}
 		this.client.setCurrentNation(this.nations[i]);

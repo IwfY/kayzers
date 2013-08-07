@@ -38,4 +38,8 @@ class Nation {
 	public ResourceManager getResources() {
 		return this.resources;
 	}
+
+	public const(ResourceManager) getResources() const {
+		return this.resources;
+	}
 }

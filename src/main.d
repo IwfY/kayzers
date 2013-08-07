@@ -37,7 +37,7 @@ int main(string[] args) {
 	game = new Game();
 	game.setMap(map);
 	game.addNation(new Nation());
-	game.startGame();
+	game.startNewRound();
 	
 	client = new Client(game);
 	game.setClient(client);
