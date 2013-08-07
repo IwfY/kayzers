@@ -177,7 +177,7 @@ class RenderHelper {
 				color = new SDL_Color(255, 255, 255);
 			}
 			TTF_Font *ttf = this.fonts.getFont(fontName);
-			SDL_Surface *surface = TTF_RenderText_Blended(
+			SDL_Surface *surface = TTF_RenderUTF8_Blended(
 					ttf, toStringz(text), *color);
 			SDL_Texture *texture = SDL_CreateTextureFromSurface(
 					this.renderer, surface);

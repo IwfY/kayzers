@@ -57,7 +57,7 @@ class FontManager {
 	
 	public Rect getTextSize(string text, string fontName) {
 		int width, height;
-		TTF_SizeText(this.getFont(fontName), toStringz(text), &width, &height);
+		TTF_SizeUTF8(this.getFont(fontName), toStringz(text), &width, &height);
 		Rect textSize = new Rect(0, 0, width, height);
 		
 		return textSize;
