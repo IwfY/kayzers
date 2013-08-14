@@ -29,6 +29,7 @@ srcFiles = Split("""
     src/world/nation.d
     src/world/nationprototype.d
     src/world/resourcemanager.d
+    src/world/scenario.d
     src/world/structure.d
     src/world/structureprototype.d
 """)

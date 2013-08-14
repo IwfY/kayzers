@@ -1,0 +1,7 @@
+{
+	"_fileType" : "scenario",
+	"name" : "Endless Game",
+	"map" : "resources/img/map_big.png",
+	"nations" : ["Barcelona"],
+	"startYear" : 1
+}
