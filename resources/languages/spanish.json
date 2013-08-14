@@ -1,0 +1,8 @@
+{
+	"_fileType" : "language",
+	"name" : "Spanish",
+	"nobiliaryParticleMale" : "de",
+	"nobiliaryParticleFemale" : "de",
+	"maleNames" : ["Alfonso", "Carlos", "Leonor", "Pero"],
+	"femaleNames" : ["Leonor", "Letizia", "Maria Luisa"]
+}

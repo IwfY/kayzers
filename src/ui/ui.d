@@ -8,6 +8,8 @@ import client;
 import renderer;
 import ui.widget;
 import ui.button;
+import world.nation;
+import world.nationprototype;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -21,7 +23,7 @@ class UI : Renderer {
 	private Client client;
 	private Widget[] widgets;
 	private Button[] structureButtons;
-	
+
 
 
 	public this(Client client, RenderHelper renderer) {
@@ -29,11 +31,11 @@ class UI : Renderer {
 		this.client = client;
 		this.game = this.client.getGame();
 		this.renderer = renderer;
-		
+
 		this.initWidgets();
 	}
-	
-	
+
+
 	public void initWidgets() {
 		// structure buttons
 		foreach (const StructurePrototype structurePrototype;
@@ -47,8 +49,8 @@ class UI : Renderer {
 		   this.widgets ~= button;
 		}
 	}
-	
-	
+
+
 	private void updateWidgets() {
 		int structureButtonX = 50;
 		int structureButtonY = this.screenRegion.y + 40;
@@ -77,9 +79,20 @@ class UI : Renderer {
 
 	public override void render() {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
-		this.renderer.drawText(10, this.screenRegion.y + 10,
-							   text(this.game.getCurrentYear()));
-		
+
+		const(Nation) nation = this.client.getCurrentNation();
+		this.renderer.drawTexture(
+				10, this.screenRegion.y + 110,
+				nation.getPrototype().getFlagImageName());
+		this.renderer.drawTexture(10, this.screenRegion.y + 110,
+								   "border_round_30");
+		this.renderer.drawText(44, this.screenRegion.y + 130,
+							    nation.getName());
+
+		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
+							    this.screenRegion.y + 130,
+							    "Year " ~ text(this.game.getCurrentYear()));
+
 		this.updateWidgets();
 
 		foreach (Widget widget; this.widgets) {

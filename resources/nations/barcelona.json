@@ -1,0 +1,9 @@
+{
+	"_fileType" : "nation",
+	"name" : "Barcelona",
+	"language" : "Spanish",
+	"flagImage" : "resources/img/flags/barcelona.png",
+	"flagImageName" : "flag_barcelona",
+	"canBuild" : [],
+	"canNotBuild" :  []
+}

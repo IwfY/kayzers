@@ -36,7 +36,7 @@ int main(string[] args) {
 	map = new Map(args[1]);
 	game = new Game();
 	game.setMap(map);
-	game.addNation(new Nation());
+	game.addNation("Barcelona");
 	game.startNewRound();
 	
 	client = new Client(game);

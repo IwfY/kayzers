@@ -1,31 +1,19 @@
 module world.nation;
 
 import world.character;
-import world.language;
+import world.nationprototype;
 import world.resourcemanager;
 
+import std.typecons;
+
 class Nation {
-	private string name;
+	private Rebindable!(const(NationPrototype)) prototype;
 	private Character ruler;
-	private Language language;
 	private ResourceManager resources;
 
-	public this() {
+	public this(const(NationPrototype) nationPrototype) {
+		this.prototype = nationPrototype;
 		this.resources = new ResourceManager();
-	}
-
-	public const(string) getName() const {
-		return this.name;
-	}
-	public void setName(string name) {
-		this.name = name;
-	}
-
-	public const(Language) getLanguage() const {
-		return this.language;
-	}
-	public void setLanguage(Language language) {
-		this.language = language;
 	}
 
 	public const(Character) getRuler() const {
@@ -38,8 +26,18 @@ class Nation {
 	public ResourceManager getResources() {
 		return this.resources;
 	}
-
 	public const(ResourceManager) getResources() const {
 		return this.resources;
+	}
+
+	public const(NationPrototype) getPrototype() const {
+		return this.prototype;
+	}
+	public void setPrototype(const(NationPrototype) prototype) {
+			this.prototype = prototype;
+	}
+
+	public const(string) getName() const {
+		return this.prototype.getName();
 	}
 }

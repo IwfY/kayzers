@@ -8,6 +8,7 @@ import structuremanager;
 import world.dynasty;
 import world.language;
 import world.nation;
+import world.nationprototype;
 import world.structure;
 import world.structureprototype;
 
@@ -20,12 +21,14 @@ public class Game {
 	private Client client;
 	private Player[] players;
 	private Nation[] nations;
+	private NationPrototype[] nationPrototypes;
 	private Language[] languages;
 	private StructureManager structureManager;
 	private int currentYear;
 
 	public this() {
 		this.initLanguages();
+		this.initNations();
 
 		this.structureManager = new StructureManager(this);
 	}
@@ -50,6 +53,17 @@ public class Game {
 	public void addNation(Nation nation) {
 		this.nations ~= nation;
 	}
+
+	public void addNation(string nationName) {
+		const(NationPrototype) prototype = this.getNationPrototype(nationName);
+		if (prototype is null) {
+			return;
+		}
+		Nation newNation = new Nation(prototype);
+
+		this.nations ~= newNation;
+	}
+
 	/**
 	 * un-const a given nation
 	 **/
@@ -60,6 +74,10 @@ public class Game {
 			}
 		}
 		return null;
+	}
+
+	public const(NationPrototype[]) getNationPrototypes() const {
+		return this.nationPrototypes;
 	}
 
 	public const(int) getCurrentYear() const {
@@ -114,6 +132,34 @@ public class Game {
 
 	public const(StructurePrototype[]) getStructurePrototypes() const {
 		return this.structureManager.getStructurePrototypes();
+	}
+
+
+	/**
+	 * get language by name
+	 **/
+	public const(Language) getLanguage(string languageName) {
+		foreach (Language languageCursor; this.languages) {
+			if (languageCursor.getName() == languageName) {
+				return languageCursor;
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * get nation prototype by name
+	 **/
+	public const(NationPrototype) getNationPrototype(string nationName) {
+		foreach (const(NationPrototype) prototype; this.nationPrototypes) {
+			if (prototype.getName() == nationName) {
+				return prototype;
+			}
+		}
+
+		return null;
 	}
 
 
@@ -175,6 +221,47 @@ public class Game {
 											 nobiliaryParticleMale,
 											 nobiliaryParticleFemale);
 			this.languages ~= language;
+
+		}
+	}
+
+	/**
+	 * load nation prototypes from JSON files, create objects, add to list
+	 *
+	 * languages have to be loaded first.
+	 **/
+	private void initNations() {
+		foreach (string filename;
+				 dirEntries("resources/nations", "*.json", SpanMode.depth)) {
+			File file = File(filename, "r");
+			string all = file.readln('\0');
+
+			JSONValue json = parseJSON!string(all);
+			if (json["_fileType"].str != "nation") {		// file type check
+				continue;
+			}
+
+			string name = json["name"].str;
+			string languageName = json["language"].str;
+			string flagImage = json["flagImage"].str;
+			string flagImageName = json["flagImageName"].str;
+
+			const(Language) language = this.getLanguage(languageName);
+			if (language is null) {
+				debug (1) {
+					writefln("Game::initNations language %s not found",
+							 languageName);
+				}
+				continue;
+			}
+
+			NationPrototype nation = new NationPrototype();
+			nation.setName(name);
+			nation.setLanguage(language);
+			nation.setFlagImage(flagImage);
+			nation.setFlagImageName(flagImageName);
+
+			this.nationPrototypes ~= nation;
 
 		}
 	}

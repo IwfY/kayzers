@@ -11,6 +11,7 @@ import texturemanager;
 import utils;
 import ui.mainmenu;
 import ui.ui;
+import world.nationprototype;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -97,6 +98,8 @@ class RenderHelper {
 									  "resources/img/ui/mainmenu_bg.png");
 		this.textures.registerTexture("mainmenu_button",
 									  "resources/img/ui/mainmenu_button.png");
+		this.textures.registerTexture("border_round_30",
+									  "resources/img/ui/border_round_30.png");
 		this.textures.registerTexture("null",
 									  "resources/img/ui/null.png");
 
@@ -104,7 +107,7 @@ class RenderHelper {
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
 			debug(2) {
-				writefln("load texture for structure %s",
+				writefln("load texture(s) for structure %s",
 						 structurePrototype.getName());
 			}
 			bool success =
@@ -115,6 +118,19 @@ class RenderHelper {
 				this.textures.registerTexture(
 					structurePrototype.getTileImageName(),
 					structurePrototype.getTileImage());
+		}
+
+		// load textures for nations
+		foreach (const(NationPrototype) prototype;
+				 this.client.getNationPrototypes()) {
+			debug(2) {
+				writefln("load texture(s) for nation %s",
+						 nationPrototype.getName());
+			}
+			bool success =
+				this.textures.registerTexture(
+						prototype.getFlagImageName(),
+						prototype.getFlagImage());
 		}
 		
 		//TODO make portable

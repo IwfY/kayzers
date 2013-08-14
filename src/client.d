@@ -3,6 +3,7 @@ module client;
 import game;
 import renderhelper;
 import world.nation;
+import world.nationprototype;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -51,6 +52,10 @@ public class Client {
 	
 	public const(StructurePrototype[]) getStructurePrototypes() const {
 		return this.game.getStructurePrototypes();
+	}
+
+	public const(NationPrototype[]) getNationPrototypes() const {
+		return this.game.getNationPrototypes();
 	}
 
 	public const(Nation) getCurrentNation() const {

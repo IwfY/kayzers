@@ -27,6 +27,7 @@ srcFiles = Split("""
     src/world/dynasty.d
     src/world/language.d
     src/world/nation.d
+    src/world/nationprototype.d
     src/world/resourcemanager.d
     src/world/structure.d
     src/world/structureprototype.d
