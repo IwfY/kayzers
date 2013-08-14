@@ -82,15 +82,15 @@ class UI : Renderer {
 
 		const(Nation) nation = this.client.getCurrentNation();
 		this.renderer.drawTexture(
-				10, this.screenRegion.y + 110,
+				11, this.screenRegion.y + 144,
 				nation.getPrototype().getFlagImageName());
-		this.renderer.drawTexture(10, this.screenRegion.y + 110,
+		this.renderer.drawTexture(10, this.screenRegion.y + 143,
 								   "border_round_30");
-		this.renderer.drawText(44, this.screenRegion.y + 130,
+		this.renderer.drawText(44, this.screenRegion.y + 160,
 							    nation.getName());
 
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
-							    this.screenRegion.y + 130,
+							    this.screenRegion.y + 160,
 							    "Year " ~ text(this.game.getCurrentYear()));
 
 		this.updateWidgets();

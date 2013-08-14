@@ -25,7 +25,7 @@ public class Client {
 		this.game = game;
 
 		this.window = SDL_CreateWindow("Kayzers",
-									   0, 0, 800, 600,
+									   0, 0, 1024, 740,
 									   SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 		if (this.window is null){
 			writeln(SDL_GetError());

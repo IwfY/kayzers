@@ -91,7 +91,7 @@ class RenderHelper {
 		this.textures.registerTexture("cursor",
 									  "resources/img/grid_cursor.png");
 		this.textures.registerTexture("ui_background",
-									  "resources/img/ui_background.png");
+									  "resources/img/ui/ui_background.png");
 		this.textures.registerTexture("button_default",
 									  "resources/img/ui/button_default.png");
 		this.textures.registerTexture("mainmenu_bg",
@@ -277,8 +277,8 @@ class RenderHelper {
 	public void updateScreenRegions() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
-		this.mapRenderer.setScreenRegion(0, 0, windowWidth, windowHeight - 150);
-		this.ui.setScreenRegion(0, windowHeight - 150, windowWidth, 150);
+		this.mapRenderer.setScreenRegion(0, 0, windowWidth, windowHeight - 180);
+		this.ui.setScreenRegion(0, windowHeight - 180, windowWidth, 180);
 		this.mainMenu.setScreenRegion(0, 0, windowWidth, windowHeight);
 	}
 
