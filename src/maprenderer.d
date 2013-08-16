@@ -114,10 +114,11 @@ class MapRenderer : Renderer {
 				cast(double)this.offset.y /
 				cast(double)this.zoom;
 
-		double nearestJ = (position.y -
-				offsetY - 0.5 * tileHeight) * 2.0 / tileHeight;
-		double nearestI = (position.x - offsetX +
-				(nearestJ - 1.0) * 0.5 * tileWidth) / tileWidth;
+		double nearestJ = (tileWidth * (position.y - offsetY) +
+						   tileHeight * (-position.x + offsetX)) /
+						  (tileWidth * tileHeight) - 0.5;
+		double nearestI = (2 * position.x - 2 * offsetX +
+						   nearestJ * tileWidth) / tileWidth - 0.5;
 
 		int x, y;
 		double distance, minDistance;
@@ -188,8 +189,8 @@ class MapRenderer : Renderer {
 				cast(double)this.offset.y /
 				cast(double)this.zoom;
 
-		x = cast(int)(offsetX + i * tileWidth - j * 0.5 * tileWidth);
-		y = cast(int)(offsetY + j * 0.5 * tileHeight);
+		x = cast(int)(offsetX + i * 0.5 * tileWidth - j * 0.5 * tileWidth);
+		y = cast(int)(offsetY + j * 0.5 * tileHeight + i * 0.5 * tileHeight);
 
 		debug(3) {
 			writefln("MapRenderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
@@ -211,21 +212,13 @@ class MapRenderer : Renderer {
 				   "MapRenderer::setZoom Invalid zoom level");
 		}
 		body {
-			int centerIOld, centerJOld, centerINew, centerJNew;
+			int centerIOld, centerJOld;
 			this.getTileAtPixel(
 					new SDL_Point(this.screenRegion.w / 2,
 								  this.screenRegion.h / 2),
 					centerIOld, centerJOld);
 			this.zoom = zoom;
-			this.getTileAtPixel(
-					new SDL_Point(this.screenRegion.w / 2,
-								  this.screenRegion.h / 2),
-					centerINew, centerJNew);
-			// adjust offset
-			this.offset.x += (centerINew - centerIOld) *
-								0.5 * this.tileDimensions.w;
-			this.offset.y += (centerJNew - centerJOld) *
-								0.5 * this.tileDimensions.h;
+			this.panToTile(centerIOld, centerJOld);
 		}
 
 
@@ -314,13 +307,19 @@ class MapRenderer : Renderer {
 	public override void render() {
 		if (this.renderer !is null && this.map !is null) {
 			// get tiles section to draw per frame
-			int iMin, iMax, jMin, jMax, windowWidth, windowHeight;
+			int iMin, iMax, jMin, jMax, devNull, windowWidth, windowHeight;
 			this.getTileAtPixel(
 					new SDL_Point(this.screenRegion.x, this.screenRegion.y),
-					iMin, jMin);
+					iMin, devNull);
 			this.getTileAtPixel(
 					new SDL_Point(this.screenRegion.w, this.screenRegion.h),
-					iMax, jMax);
+					iMax, devNull);
+			this.getTileAtPixel(
+					new SDL_Point(this.screenRegion.w, this.screenRegion.y),
+					devNull, jMin);
+			this.getTileAtPixel(
+					new SDL_Point(this.screenRegion.x, this.screenRegion.h),
+					devNull, jMax);
 			iMin -= 1;
 			jMin -= 1;
 			iMax += 1;
@@ -351,6 +350,39 @@ class MapRenderer : Renderer {
 				const(Position) position = structure.getPosition();
 				this.drawTileIJ(position.i, position.j,
 								prototype.getTileImageName());
+
+				// top neighbor border
+				Rebindable!(const(Structure)) neighbor =
+						this.game.getStructure(position.i, position.j - 1);
+				if (neighbor is null ||
+						neighbor.getNation() != structure.getNation()) {
+					this.drawTileIJ(position.i, position.j,
+								"border_top");
+				}
+				// right neighbor border
+				neighbor =
+						this.game.getStructure(position.i + 1, position.j);
+				if (neighbor is null ||
+						neighbor.getNation() != structure.getNation()) {
+					this.drawTileIJ(position.i, position.j,
+								"border_right");
+				}
+				// bottom neighbor border
+				neighbor =
+						this.game.getStructure(position.i, position.j + 1);
+				if (neighbor is null ||
+						neighbor.getNation() != structure.getNation()) {
+					this.drawTileIJ(position.i, position.j,
+								"border_bottom");
+				}
+				// left neighbor border
+				neighbor =
+						this.game.getStructure(position.i - 1, position.j);
+				if (neighbor is null ||
+						neighbor.getNation() != structure.getNation()) {
+					this.drawTileIJ(position.i, position.j,
+								"border_left");
+				}
 			}
 
 			// selected region

@@ -134,6 +134,9 @@ public class Game {
 	public const(Structure[]) getStructures() const {
 		return this.structureManager.getStructures();
 	}
+	public const(Structure) getStructure(int i, int j) const {
+		return this.structureManager.getStructure(i, j);
+	}
 
 
 	public bool addStructure(string structurePrototypeName,

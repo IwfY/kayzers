@@ -90,6 +90,15 @@ class RenderHelper {
 									  "resources/img/grid_border.png");
 		this.textures.registerTexture("cursor",
 									  "resources/img/grid_cursor.png");
+		this.textures.registerTexture("border_top",
+									  "resources/img/grid_border_top.png");
+		this.textures.registerTexture("border_right",
+									  "resources/img/grid_border_right.png");
+		this.textures.registerTexture("border_bottom",
+									  "resources/img/grid_border_bottom.png");
+		this.textures.registerTexture("border_left",
+									  "resources/img/grid_border_left.png");
+
 		this.textures.registerTexture("ui_background",
 									  "resources/img/ui/ui_background.png");
 		this.textures.registerTexture("button_default",
