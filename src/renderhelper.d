@@ -84,8 +84,8 @@ class RenderHelper {
 
 	public void loadTexturesAndFonts() {
 		//TODO declare general resources in a file
-		this.textures.registerTexture("grass", "resources/img/grass_n.png");
-		this.textures.registerTexture("water", "resources/img/water_n.png");
+		this.textures.registerTexture("grass", "resources/img/grass.png");
+		this.textures.registerTexture("water", "resources/img/water.png");
 		this.textures.registerTexture("border",
 									  "resources/img/grid_border.png");
 		this.textures.registerTexture("cursor",
