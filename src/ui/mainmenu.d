@@ -17,7 +17,7 @@ class MainMenu : Renderer {
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
 	private Widget[] allWidgets;
-	
+
 	public this(Client client, RenderHelper renderer) {
 		super(renderer);
 		this.client = client;
@@ -26,7 +26,7 @@ class MainMenu : Renderer {
 	}
 
 	private void initWidgets() {
-		this.newGameButton = 
+		this.newGameButton =
 				new LabelButton(this.renderer,
 								"newGame",
 								"mainmenu_button",
@@ -44,7 +44,7 @@ class MainMenu : Renderer {
 								"Exit",
 								"std");
 		this.allWidgets ~= this.exitButton;
-		
+
 		this.head = new Label(this.renderer,
 							  "head",
 							  "null",
@@ -76,10 +76,11 @@ class MainMenu : Renderer {
 		if (message == "exit") {
 			this.client.stop();
 		} else if (message == "newGame") {
+			this.client.startGame("Endless Game");
 			this.renderer.setState(RendererState.MAP);
 		}
 	}
-	
+
 	public override void handleEvent(SDL_Event event) {
 		// left mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&

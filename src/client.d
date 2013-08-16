@@ -1,9 +1,11 @@
 module client;
 
 import game;
+import map;
 import renderhelper;
 import world.nation;
 import world.nationprototype;
+import world.scenario;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -19,11 +21,10 @@ public class Client {
 	private SDL_Window *window;
 	private bool active;	// player is active and can interact with the game
 	private bool running;
+	private Scenario[string] scenarios;
 
 
-	public this(Game game) {
-		this.game = game;
-
+	public this() {
 		this.window = SDL_CreateWindow("Kayzers",
 									   0, 0, 1024, 740,
 									   SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
@@ -31,7 +32,9 @@ public class Client {
 			writeln(SDL_GetError());
 		}
 
-		this.renderer = new RenderHelper(this, this.window, this.game.getMap());
+		this.renderer = new RenderHelper(this, this.window);
+
+		this.scenarios = ScenarioLoader.loadScenarios("resources/scenarios");
 	}
 
 
@@ -42,14 +45,27 @@ public class Client {
 	}
 
 
+	public bool startGame(string scenarioName) {
+		if (this.scenarios.get(scenarioName, null) is null) {
+			return false;
+		}
+
+		this.game = new Game(this.scenarios[scenarioName]);
+		this.game.setClient(this);
+		this.game.startNewRound();
+
+		return true;
+	}
+
+
 	public void addStructureHandler(string structureName) {
 		//TODO: if selected region bigger 1x1 --> multiple addStructure calls
 		this.game.addStructure(structureName,
 							   this.currentNation,
 							   this.renderer.getSelectedPosition());
 	}
-	
-	
+
+
 	public const(StructurePrototype[]) getStructurePrototypes() const {
 		return this.game.getStructurePrototypes();
 	}
@@ -69,8 +85,12 @@ public class Client {
 	public const(Game) getGame() const {
 		return this.game;
 	}
-	
-	
+
+	public const(Map) getMap() const {
+		return this.game.getMap();
+	}
+
+
 	public void stop() {
 		this.running = false;
 	}

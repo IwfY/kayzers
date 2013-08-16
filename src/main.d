@@ -24,32 +24,20 @@ int main(string[] args) {
 		writeln(SDL_GetError());
 		return 1;
 	}
-	
+
 	if (TTF_Init() == -1){
 		writeln(TTF_GetError());
 		return 1;
 	}
 
-	Game game;
 	Client client;
-	Map map;
-	map = new Map(args[1]);
-	game = new Game();
-	game.setMap(map);
-	game.addNation("Barcelona");
-	game.startNewRound();
-	
-	client = new Client(game);
-	game.setClient(client);
-
+	client = new Client();
 	client.run();
-	
 	delete client;
-	delete game;
-	
+
 	TTF_Quit();
 	SDL_Quit();
-	
+
 	DerelictSDL2.unload();
 	DerelictSDL2Image.unload();
 	DerelictSDL2ttf.unload();

@@ -12,11 +12,12 @@ import utils;
 
 import derelict.sdl2.sdl;
 
-import std.stdio;
 import std.math;
+import std.stdio;
+import std.typecons;
 
 class MapRenderer : Renderer {
-	private Map map;
+	private Rebindable!(const(Map)) map;
 	private const(Game) game;
 	private Client client;
 	private SDL_Rect *tileDimensions;
@@ -30,12 +31,12 @@ class MapRenderer : Renderer {
 	private bool mousePressed;
 
 
-	public this(Client client, RenderHelper renderer, Map map) {
+	public this(Client client, RenderHelper renderer) {
 		super(renderer);
 		this.client = client;
 		this.game = this.client.getGame();
 		this.renderer = renderer;
-		this.map = map;
+		this.map = this.client.getMap();
 		this.selectedRegion = new SDL_Rect(0, 0);
 		this.offset = new SDL_Point(0, 0);
 		this.mousePosition = new SDL_Point(0, 0);

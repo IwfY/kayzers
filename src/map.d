@@ -10,8 +10,8 @@ public class Map {
 	/** variables *****************************************************/
 
 	private byte[] tiles;
-	private uint width;
-	private uint height;
+	private int width;
+	private int height;
 
 
 	/** methods *******************************************************/
@@ -20,7 +20,7 @@ public class Map {
 		this.loadFromFile(filename);
 	}
 
-	public byte getTile(int x, int y)
+	public const(byte) getTile(int x, int y) const
 		in {
 			assert(x >= 0, "Map::getTile");
 			assert(y >= 0, "Map::getTile");
@@ -31,11 +31,11 @@ public class Map {
 			return this.tiles[x + y * this.width];
 		}
 
-	public uint getWidth() {
+	public const(int) getWidth() const {
 		return this.width;
 	}
 
-	public uint getHeight() {
+	public const(int) getHeight() const {
 		return this.height;
 	}
 

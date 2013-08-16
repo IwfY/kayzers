@@ -23,7 +23,7 @@ import std.string;
 import std.math;
 
 
-static enum RendererState {MAIN_MENU, MAP};
+static enum RendererState {MAIN_MENU, MAP, PAUSE_MENU};
 
 /**
  * interface to the SDL rendering infrastructure
@@ -32,19 +32,19 @@ class RenderHelper {
 	private UI ui;
 	private MapRenderer mapRenderer;
 	private MainMenu mainMenu;
-	
+
 	private RendererState state;
-	
+
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
 	private FontManager fonts;
 	private SDL_Window *window;
 	private TextInput textInput;
 	private Client client;
-	
 
 
-	public this(Client client, SDL_Window *window, Map map) {
+
+	public this(Client client, SDL_Window *window) {
 		this.client = client;
 		this.window = window;
 
@@ -56,19 +56,19 @@ class RenderHelper {
 		if (this.renderer is null) {
 			writeln(SDL_GetError());
 		}
-		
+
 		this.state = RendererState.MAIN_MENU;
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
-		
+
 		this.loadTexturesAndFonts();
 
 		this.textInput = new TextInput();
 
-		this.ui = new UI(this.client, this);
 		this.mainMenu = new MainMenu(this.client, this);
-		this.mapRenderer = new MapRenderer(this.client, this, map);
+
+
 
 		this.updateScreenRegions();
 	}
@@ -79,11 +79,11 @@ class RenderHelper {
 		delete this.fonts;
 		SDL_DestroyRenderer(this.renderer);
 	}
-	
-	
-	
+
+
+
 	public void loadTexturesAndFonts() {
-		//TODO load from file
+		//TODO declare general resources in a file
 		this.textures.registerTexture("grass", "resources/img/grass_n.png");
 		this.textures.registerTexture("water", "resources/img/water_n.png");
 		this.textures.registerTexture("border",
@@ -103,6 +103,18 @@ class RenderHelper {
 		this.textures.registerTexture("null",
 									  "resources/img/ui/null.png");
 
+		//TODO make portable
+		this.fonts.registerFont("std", "/usr/share/fonts/TTF/DejaVuSans.ttf");
+		this.fonts.registerFont("mainMenuHead",
+								"/usr/share/fonts/TTF/DejaVuSans.ttf",
+								80);
+	}
+
+
+	/**
+	 * load all textures that are specific to the started game
+	 **/
+	public void loadGameTextures() {
 		// load textures for structures
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
@@ -132,15 +144,9 @@ class RenderHelper {
 						prototype.getFlagImageName(),
 						prototype.getFlagImage());
 		}
-		
-		//TODO make portable
-		this.fonts.registerFont("std", "/usr/share/fonts/TTF/DejaVuSans.ttf");
-		this.fonts.registerFont("mainMenuHead",
-								"/usr/share/fonts/TTF/DejaVuSans.ttf",
-								80);
 	}
-	
-	
+
+
 	public Rect getTextSize(string text, string fontName) {
 		return this.fonts.getTextSize(text, fontName);
 	}
@@ -176,6 +182,19 @@ class RenderHelper {
 
 
 	public void setState(RendererState state) {
+		// main menu --> map
+		if (this.state == RendererState.MAIN_MENU &&
+				state == RendererState.MAP) {
+			this.loadGameTextures();
+			this.ui = new UI(this.client, this);
+			this.mapRenderer = new MapRenderer(this.client, this);
+		}
+		// map --> main menu
+		else if (this.state == RendererState.MAP &&
+				state == RendererState.MAIN_MENU) {
+			this.ui = null;
+			this.mapRenderer = null;
+		}
 		this.state = state;
 	}
 
@@ -277,8 +296,11 @@ class RenderHelper {
 	public void updateScreenRegions() {
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(this.window, &windowWidth, &windowHeight);
-		this.mapRenderer.setScreenRegion(0, 0, windowWidth, windowHeight - 180);
-		this.ui.setScreenRegion(0, windowHeight - 180, windowWidth, 180);
+		if (this.state == RendererState.MAP) {
+			this.mapRenderer.setScreenRegion(0, 0,
+											 windowWidth, windowHeight - 180);
+			this.ui.setScreenRegion(0, windowHeight - 180, windowWidth, 180);
+		}
 		this.mainMenu.setScreenRegion(0, 0, windowWidth, windowHeight);
 	}
 
@@ -298,7 +320,7 @@ class RenderHelper {
 	public void render() {
 		this.updateScreenRegions();
 		SDL_RenderClear(this.renderer);
-		
+
 		if (this.state == RendererState.MAP) {
 			this.mapRenderer.render();
 			this.ui.render();

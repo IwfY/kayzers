@@ -9,6 +9,7 @@ import world.dynasty;
 import world.language;
 import world.nation;
 import world.nationprototype;
+import world.scenario;
 import world.structure;
 import world.structureprototype;
 
@@ -17,6 +18,7 @@ import std.json;
 import std.stdio;
 
 public class Game {
+	private string name;
 	private Map map;
 	private Client client;
 	private Player[] players;
@@ -26,18 +28,30 @@ public class Game {
 	private StructureManager structureManager;
 	private int currentYear;
 
-	public this() {
+	public this(Scenario scenario) {
 		this.initLanguages();
 		this.initNations();
-
 		this.structureManager = new StructureManager(this);
+
+		this.name = scenario.getName();
+		this.currentYear = scenario.getStartYear();
+		this.map = new Map(scenario.getMapName);
+		foreach (string nationName; scenario.getNationNames()) {
+			this.addNation(nationName);
+		}
+
 	}
 
 	/************************
 	 * Getters and Setters
 	 ************************/
-
-	public Map getMap() {
+	public const(string) getName() const {
+		return this.name;
+	}
+	public void setName(string name) {
+		this.name = name;
+	}
+	public const(Map) getMap() const {
 		return this.map;
 	}
 	public void setMap(Map map) {

@@ -35,6 +35,20 @@ class ScenarioLoader {
 
 		return scenario;
 	}
+
+	public static Scenario[string] loadScenarios(string directory) {
+		Scenario[string] outScenarios;
+
+		foreach (string filename;
+				 dirEntries(directory, "*.json", SpanMode.depth)) {
+			Scenario newScenario = ScenarioLoader.loadScenario(filename);
+			if (newScenario !is null) {
+				outScenarios[newScenario.getName()] = newScenario;
+			}
+		}
+
+		return outScenarios;
+	}
 }
 
 
