@@ -8,5 +8,6 @@
 	"consumeScript" : "",
 	"produceScript" : "",
 	"constructableScript" : "",
-	"progressScript" : ""
+	"progressScript" : "",
+	"nameable" : true
 }

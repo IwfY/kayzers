@@ -36,11 +36,17 @@ class StructureManager {
 				continue;
 			}
 
+			bool nameable = json["nameable"].type == JSON_TYPE.TRUE;
+
 			string[string] structureData;
 			foreach(string s; json.object.keys) {
 				structureData[s] = json[s].str;
 			}
-			this.structurePrototypes ~= new StructurePrototype(structureData);
+
+			StructurePrototype newPrototype =
+					new StructurePrototype(structureData);
+			newPrototype.setNameable(nameable);
+			this.structurePrototypes ~= newPrototype;
 		}
 	}
 
@@ -120,7 +126,7 @@ class StructureManager {
 									nationIn, position)) {
 			return false;
 		}
-		
+
 		// get a non-const nation reference
 		Nation nation = this.game.getNation(nationIn);
 
