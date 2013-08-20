@@ -91,6 +91,22 @@ class MapRenderer : Renderer {
 
 		this.renderer.drawTexture(position, textureName);
 	}
+	
+	
+	/**
+	 * get the number of half tiles that fit horizontally and vertically in the
+	 * screen region (takes zoom level into account)
+	 * 
+	 * i.e. if the offset was (0, 0) return the coordinate of the bottom right
+	 * corner of the map screen region as (iMax, jMax)
+	 **/
+	private void getTileResolution(out int iMax, out int jMax) {
+		iMax = cast(int)(floor(2 * this.screenRegion.w /
+							   (this.tileDimensions.w / this.zoom)));
+		jMax = cast(int)(floor(2 * this.screenRegion.h /
+							   (this.tileDimensions.h / this.zoom)));
+		writefln("getTileResolution %d : %d", iMax, jMax);
+	}
 
 
 	/**
