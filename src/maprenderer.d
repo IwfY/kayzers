@@ -108,17 +108,17 @@ class MapRenderer : Renderer {
 				cast(double)this.zoom;
 
 		double offsetX =
-				cast(double)this.offset.x /
-				cast(double)this.zoom;
+				(cast(double)this.offset.x /
+				cast(double)this.zoom) + 0.5 * tileWidth;
 		double offsetY =
-				cast(double)this.offset.y /
-				cast(double)this.zoom;
+				(cast(double)this.offset.y /
+				cast(double)this.zoom) + 0.5 * tileHeight;
 
 		double nearestJ = (tileWidth * (position.y - offsetY) +
 						   tileHeight * (-position.x + offsetX)) /
-						  (tileWidth * tileHeight) - 0.5;
+						  (tileWidth * tileHeight);
 		double nearestI = (2 * position.x - 2 * offsetX +
-						   nearestJ * tileWidth) / tileWidth - 0.5;
+						   nearestJ * tileWidth) / tileWidth;
 
 		int x, y;
 		double distance, minDistance;
