@@ -3,6 +3,7 @@ module script.script;
 import std.algorithm;
 import std.array;
 import std.conv;
+import std.regex;
 import std.uni;
 
 interface ScriptContext {};
@@ -32,6 +33,12 @@ class MulToken : Token {
 	}
 }
 
+class DivToken : Token {
+	public override double execute(Expression e1, Expression e2) {
+		return e1.execute() / e2.execute();
+	}
+}
+
 /**
  * expressions
  **/
@@ -49,6 +56,7 @@ class Expression {
 
 class Identifier : Expression {
 	private string name;
+	private double value;
 	
 	public this(Script script, string name) {
 		super(script);
@@ -56,16 +64,33 @@ class Identifier : Expression {
 	}
 	
 	public void assign(double value) {
-		assert(false, "Identifier::assign todo");
+		this.value = value;
 	}
 	
 	public double getValue() {
-		assert(false, "Identifier::assign todo");
-		return 0.0;
+		return this.value;
 	}
 	
 	public override double execute() {
 		return this.getValue();
+	}
+}
+
+
+class ResourceIdentifier : Identifier {
+	private string resourceName;
+
+	public this(Script script, string name) {
+		super(script, name);
+	}
+
+	public override void assign(double value) {
+		assert(false, "ResourceIdentifier::assign todo");
+	}
+	
+	public override double getValue() {
+		assert(false, "ResourceIdentifier::assign todo");
+		return 0.0;
 	}
 }
 
@@ -134,7 +159,7 @@ class Script {
 	private Expression[] expressions;
 	private Identifier[string] identifiers;
 	private ScriptContext context;
-	
+
 	public this(ScriptContext context, string scriptString) {
 		this.context = context;
 		this.parseScript(scriptString);
@@ -142,14 +167,99 @@ class Script {
 	
 	private void parseScript(string scriptString) {
 		dchar[] copy = to!(dchar[])(scriptString);
-		dchar[] stripped = array(copy.filter!(x => !x.isWhite));
-		//dchar[] striped = remove!isWhite(copy);
-	}
-	
-	public void parseString(string text) {
+		// remove white spaces
+		string stripped = text(array(copy.filter!(x => !x.isWhite)));
+		string[] splitted = stripped.split(";");
 		
+		foreach (string line; splitted) {
+			this.expressions ~= this.parseString(line);
+		}
 	}
 	
+	public Expression parseString(string text) {
+		auto assignExpression = regex("^(.*?)=(.*?)$", "g");
+		auto numberExpression = regex(`^(\d+?\.?\d+?)$`, "g");
+		auto binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
+
+		// assign statement
+		auto m = match(text, assignExpression);
+		if (m) {
+			Expression tmp = new AssignExpression(
+					this,
+					this.parseIdentifier(m.captures[1]),
+					this.parseString(m.captures[2]));
+			return tmp;
+		}
+
+		// add statement
+		m = match(text, binaryExpression);
+		if (m) {
+			Expression tmp = new BinaryExpression(
+					this,
+					this.parseString(m.captures[1]),
+					this.parseString(m.captures[3]),
+					this.parseToken(m.captures[2]));
+			return tmp;
+		}
+
+		// number statement
+		m = match(text, numberExpression);
+		if (m) {
+			Expression tmp = new Number(
+					this, m.captures[1]);
+			return tmp;
+		}
+
+		return this.parseIdentifier(text);
+	}
+
+
+	public Identifier parseIdentifier(string text) {
+		auto identifierExpression = regex(`^([\w]*?)$`, "g");
+		auto resIdentifierExpression = regex(`^(res\.[\w]*?)$`, "g");
+		auto strIdentifierExpression = regex(`^(str\.[\w]*?)$`, "g");
+
+		// resource identifier
+		auto m = match(text, resIdentifierExpression);
+		if (m) {
+			Identifier tmp = new ResourceIdentifier(
+					this, m.captures[1]);
+			return tmp;
+		}
+
+		// identifier
+		m = match(text, identifierExpression);
+		if (m) {
+			Identifier tmp = new Identifier(
+					this, m.captures[1]);
+			return tmp;
+		}
+		return null;
+	}
+
+
+
+	public Token parseToken(string text) {
+		if (text[0] == '+') {
+			return new AddToken();
+		}
+
+		if (text[0] == '-') {
+			return new SubToken();
+		}
+
+		if (text[0] == '*') {
+			return new MulToken();
+		}
+
+		if (text[0] == '/') {
+			return new DivToken();
+		}
+
+		return null;
+	}
+
+
 	public Identifier getIdentifier(string name) {
 		assert(false, "Script::getIdentifier todo");
 		return null;
