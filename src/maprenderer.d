@@ -54,13 +54,20 @@ class MapRenderer : Renderer {
 	 * pan the map center to the given tile coordinate
 	 **/
 	public void panToTile(int i, int j) {
-		int centerIOld, centerJOld;
-		this.getTileAtPixel(
-				new SDL_Point(this.screenRegion.w / 2, this.screenRegion.h / 2),
-				centerIOld, centerJOld);
-		// adjust offset
-		this.offset.x += (centerIOld - i) * 0.5 * this.tileDimensions.w;
-		this.offset.y += (centerJOld - j) * 0.5 * this.tileDimensions.h;
+		int x1, y1, x2, y2, iCenter, jCenter;
+		this.offset.x = 0;
+		this.offset.y = 0;
+		this.getTopLeftScreenCoordinate(i, j, x1, y1);
+		this.offset.x = -x1;
+		this.offset.y = -y1;
+		this.getTileAtPixel(new SDL_Point(this.screenRegion.w / 2,
+										  this.screenRegion.h / 2),
+							iCenter, jCenter);
+		this.offset.x = 0;
+		this.offset.y = 0;
+		this.getTopLeftScreenCoordinate(iCenter, jCenter, x2, y2);
+		this.offset.x = -x1 + (x2 - x1) * zoom;
+		this.offset.y = -y1 + (y2 - y1) * zoom;
 	}
 
 
@@ -91,12 +98,12 @@ class MapRenderer : Renderer {
 
 		this.renderer.drawTexture(position, textureName);
 	}
-	
-	
+
+
 	/**
 	 * get the number of half tiles that fit horizontally and vertically in the
 	 * screen region (takes zoom level into account)
-	 * 
+	 *
 	 * i.e. if the offset was (0, 0) return the coordinate of the bottom right
 	 * corner of the map screen region as (iMax, jMax)
 	 **/
@@ -409,6 +416,11 @@ class MapRenderer : Renderer {
 			int mouseJ;
 			this.getTileAtPixel(this.mousePosition, mouseI, mouseJ);
 			this.drawTileIJ(mouseI, mouseJ, "border");
+
+			debug(1) {
+				import std.conv;
+				this.renderer.drawText(0, 0, text(mouseI) ~ ":" ~ text(mouseJ));
+			}
 		}
 	}
 }
