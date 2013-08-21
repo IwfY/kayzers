@@ -1,156 +1,15 @@
 module script.script;
 
+import script.expressions;
+import script.scriptcontext;
+import script.token;
+
 import std.algorithm;
 import std.array;
 import std.conv;
 import std.regex;
+import std.stdio;
 import std.uni;
-
-interface ScriptContext {};
-
-/**
- * token
- **/
-class Token {
-	public abstract double execute(Expression e1, Expression e2);
-};
-
-class AddToken : Token {
-	public override double execute(Expression e1, Expression e2) {
-		return e1.execute() + e2.execute();
-	}
-}
-
-class SubToken : Token {
-	public override double execute(Expression e1, Expression e2) {
-		return e1.execute() - e2.execute();
-	}
-}
-
-class MulToken : Token {
-	public override double execute(Expression e1, Expression e2) {
-		return e1.execute() * e2.execute();
-	}
-}
-
-class DivToken : Token {
-	public override double execute(Expression e1, Expression e2) {
-		return e1.execute() / e2.execute();
-	}
-}
-
-/**
- * expressions
- **/
- 
-class Expression {
-	private Script script;
-	
-	public this(Script script) {
-		this.script = script;
-	}
-	
-	public abstract double execute();
-}
-
-
-class Identifier : Expression {
-	private string name;
-	private double value;
-	
-	public this(Script script, string name) {
-		super(script);
-		this.name = name;
-	}
-	
-	public void assign(double value) {
-		this.value = value;
-	}
-	
-	public double getValue() {
-		return this.value;
-	}
-	
-	public override double execute() {
-		return this.getValue();
-	}
-}
-
-
-class ResourceIdentifier : Identifier {
-	private string resourceName;
-
-	public this(Script script, string name) {
-		super(script, name);
-	}
-
-	public override void assign(double value) {
-		assert(false, "ResourceIdentifier::assign todo");
-	}
-	
-	public override double getValue() {
-		assert(false, "ResourceIdentifier::assign todo");
-		return 0.0;
-	}
-}
-
-
-class Number : Expression {
-	private double value;
-	
-	public this(Script script, string text) {
-		super(script);
-		this.value = to!(double)(text);
-	}
-	
-	public override double execute() {
-		return this.value;
-	}
-}
-
-
-/**
- * expression of the form
- * 		Identifier Token Number
- **/
-class BinaryExpression : Expression {
-	private Expression e1;
-	private Expression e2;
-	private Token token;
-	
-	public this(Script script, Expression e1, Expression e2, Token token) {
-		super(script);
-		this.e1 = e1;
-		this.e2 = e2;
-		this.token = token;
-		
-	}
-	
-	public override double execute() {
-		return this.token.execute(e1, e2);
-	}
-}
-
-/**
- * expression of the form:
- * 		Identifier = Expression
- **/
-class AssignExpression : Expression {
-	private Identifier identifier;
-	private Expression expression;
-	
-	public this(Script script, Identifier identifier, Expression expression) {
-		super(script);
-		this.identifier = identifier;
-		this.expression = expression;
-	}
-	
-	public override double execute() {
-		this.identifier.assign(this.expression.execute());
-		return 0.0;
-	}
-}
-
 
 /**
  * class to manage a the script's code and data
@@ -160,25 +19,30 @@ class Script {
 	private Identifier[string] identifiers;
 	private ScriptContext context;
 
-	public this(ScriptContext context, string scriptString) {
-		this.context = context;
+	public this(string scriptString) {
 		this.parseScript(scriptString);
 	}
-	
+
+
 	private void parseScript(string scriptString) {
+		if (scriptString.length == 0) {
+			return;
+		}
+
 		dchar[] copy = to!(dchar[])(scriptString);
 		// remove white spaces
 		string stripped = text(array(copy.filter!(x => !x.isWhite)));
 		string[] splitted = stripped.split(";");
-		
+
 		foreach (string line; splitted) {
 			this.expressions ~= this.parseString(line);
 		}
 	}
-	
+
+
 	public Expression parseString(string text) {
 		auto assignExpression = regex("^(.*?)=(.*?)$", "g");
-		auto numberExpression = regex(`^(\d+?\.?\d+?)$`, "g");
+		auto numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
 		auto binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
 
 		// assign statement
@@ -186,7 +50,7 @@ class Script {
 		if (m) {
 			Expression tmp = new AssignExpression(
 					this,
-					this.parseIdentifier(m.captures[1]),
+					this.getIdentifier(m.captures[1]),
 					this.parseString(m.captures[2]));
 			return tmp;
 		}
@@ -210,7 +74,7 @@ class Script {
 			return tmp;
 		}
 
-		return this.parseIdentifier(text);
+		return this.getIdentifier(text);
 	}
 
 
@@ -260,19 +124,30 @@ class Script {
 	}
 
 
+	/**
+	 * get the identifier - create one if it doesn't exists yet
+	 **/
 	public Identifier getIdentifier(string name) {
-		assert(false, "Script::getIdentifier todo");
-		return null;
+		Identifier tmp = this.identifiers.get(name, null);
+		if (tmp is null) {
+			tmp = this.parseIdentifier(name);
+			if (tmp !is null) {
+				this.identifiers[name] = tmp;
+			}
+		}
+		return tmp;
 	}
-	
+
 	public ScriptContext getContext() {
 		return this.context;
 	}
-	
-	public void execute() {
+
+	public void execute(ScriptContext context) {
+		this.context = context;
 		//TODO empty identifiers array
 		foreach (Expression expression; this.expressions) {
 			expression.execute();
 		}
+		this.context = null;
 	}
 }

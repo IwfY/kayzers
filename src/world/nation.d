@@ -1,12 +1,13 @@
 module world.nation;
 
+import script.scriptcontext;
 import world.character;
 import world.nationprototype;
 import world.resourcemanager;
 
 import std.typecons;
 
-class Nation {
+class Nation : ScriptContext {
 	private Rebindable!(const(NationPrototype)) prototype;
 	private Character ruler;
 	private ResourceManager resources;

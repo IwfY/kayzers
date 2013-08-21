@@ -1,20 +1,20 @@
 module world.resourcemanager;
 
 class ResourceManager {
-	private float[string] resources;
+	private double[string] resources;
 
-	public const(float) getResourceAmount(string resource) const {
+	public const(double) getResourceAmount(string resource) const {
 		if ((resource in this.resources) is null) {
 			return 0.0;
 		}
 		return this.resources[resource];
 	}
 
-	public const(float[string]) getResources() const {
+	public const(double[string]) getResources() const {
 		return this.resources;
 	}
 
-	public void addResource(string resource, float amount) {
+	public void addResource(string resource, double amount) {
 		// is there a resource entry already?
 		if ((resource in this.resources) !is null) {
 			this.resources[resource] += amount;
@@ -23,7 +23,11 @@ class ResourceManager {
 		}
 	}
 
-	public void setResource(string resource, float amount) {
+	public void setResource(string resource, double amount) {
+		debug(2) {
+			import std.stdio;
+			writefln("new resource value: %s -> %f", resource, amount);
+		}
 		this.resources[resource] = amount;
 	}
 }

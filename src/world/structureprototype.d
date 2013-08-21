@@ -6,11 +6,12 @@ class StructurePrototype {
 	private string tileImageName;
 	private string iconImage;
 	private string iconImageName;
-	private string produceScript;
-	private string consumeScript;
-	private string constructableScript;
-	private string progressScript;
 	private bool nameable;
+
+	private string produceScriptString;
+	private string consumeScriptString;
+	private string constructableScriptString;
+	private string progressScriptString;
 
 	public this() {
 
@@ -22,10 +23,10 @@ class StructurePrototype {
 		this.tileImageName = data["tileImageName"];
 		this.iconImage = data["iconImage"];
 		this.iconImageName = data["iconImageName"];
-		this.produceScript = data["produceScript"];
-		this.consumeScript = data["consumeScript"];
-		this.constructableScript = data["constructableScript"];
-		this.progressScript = data["progressScript"];
+		this.produceScriptString = data["produceScript"];
+		this.consumeScriptString = data["consumeScript"];
+		this.constructableScriptString = data["constructableScript"];
+		this.progressScriptString = data["progressScript"];
 		this.nameable = false;
 	}
 
@@ -41,20 +42,20 @@ class StructurePrototype {
 		return this.iconImage;
 	}
 
-	public const(string) getProduceScript() const {
-		return this.produceScript;
+	public const(string) getProduceScriptString() const {
+		return this.produceScriptString;
 	}
 
-	public const(string) getConsumeScript() const {
-		return this.consumeScript;
+	public const(string) getConsumeScriptString() const {
+		return this.consumeScriptString;
 	}
 
-	public const(string) getConstructableScript() const {
-		return this.constructableScript;
+	public const(string) getConstructableScriptString() const {
+		return this.constructableScriptString;
 	}
 
-	public const(string) getProgressScript() const {
-		return this.progressScript;
+	public const(string) getProgressScriptString() const {
+		return this.progressScriptString;
 	}
 
 	public const(string) getTileImageName() const {

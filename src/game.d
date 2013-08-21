@@ -122,12 +122,18 @@ public class Game {
 	}
 
 
+	/**
+	 * method is called every time a new round is started and at the beginning
+	 * of the game
+	 **/
 	public void startNewRound() {
 		++this.currentYear;
 
 		foreach (Nation nation; this.nations) {
 			nation.getResources().setResource("structureToken", 3.0);
 		}
+
+		this.structureManager.runProduceScripts();
 	}
 
 

@@ -1,6 +1,8 @@
 module world.structure;
 
 import position;
+import script.script;
+import script.scriptcontext;
 import world.nation;
 import world.resourcemanager;
 import world.structureprototype;
@@ -10,12 +12,14 @@ import std.typecons;
 /**
  * represents a tile filling structure on the map belonging to one nation
  **/
-class Structure {
+class Structure : ScriptContext {
 	private Rebindable!(const(StructurePrototype)) prototype;
 	private Position position;
 	private Rebindable!(const(Nation)) nation;
 	private Rebindable!(const(Nation)) creatingNation;
 	private ResourceManager resources;
+
+	private Script produceScript;
 
 	public this() {
 		this.resources = new ResourceManager();
@@ -55,5 +59,16 @@ class Structure {
 
 	public ResourceManager getResources() {
 		return this.resources;
+	}
+	public const(ResourceManager) getResources() const {
+		return this.resources;
+	}
+
+	public void runProduceScript() {
+		if (this.produceScript is null) {
+			this.produceScript = new Script(
+					this.prototype.getProduceScriptString());
+		}
+		this.produceScript.execute(this);
 	}
 }

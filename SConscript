@@ -17,7 +17,10 @@ srcFiles = Split("""
     src/structuremanager.d
     src/textinput.d
     src/texturemanager.d
+    src/script/expressions.d
     src/script/script.d
+    src/script/scriptcontext.d
+    src/script/token.d
     src/ui/button.d
     src/ui/label.d
     src/ui/labelbutton.d

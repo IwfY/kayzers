@@ -158,4 +158,14 @@ class StructureManager {
 		}
 		return true;
 	}
+
+
+	/**
+	 * run the produce script on all structures
+	 **/
+	public void runProduceScripts() {
+		foreach (Structure structure; this.structures) {
+			structure.runProduceScript();
+		}
+	}
 }
