@@ -26,7 +26,7 @@ class LabelButton : Widget {
 							   this.bounds, text, fontName, color);
 	}
 
-	public override void render() {
+	public override void draw() {
 		this.button.render();
 		this.label.render();
 	}

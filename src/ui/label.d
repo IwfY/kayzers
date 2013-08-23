@@ -51,8 +51,7 @@ class Label : Widget {
 	public override void click() {
 	}
 
-	public override void render() {
-		super.render();
+	public override void draw() {
 		this.renderer.drawText(this.bounds.x, this.bounds.y,
 							   this.text, this.fontName, this.color);
 	}

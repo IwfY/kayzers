@@ -54,8 +54,7 @@ class InputBox : Widget, Observer {
 		}
 	}
 
-	public override void render() {
-		super.render();
+	public override void draw() {
 		int boundsY = this.bounds.y +
 				(this.bounds.h - this.getTextSize().h) / 2;
 		this.renderer.drawText(this.bounds.x + 5, boundsY,

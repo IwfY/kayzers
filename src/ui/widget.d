@@ -10,6 +10,7 @@ abstract class Widget {
 	protected RenderHelper renderer;
 	protected string name;
 	protected string textureName;
+	private bool hidden;
 	
 	public this(RenderHelper renderer,
 				string name,
@@ -18,6 +19,7 @@ abstract class Widget {
 		this.renderer = renderer;
 		this.name = name;
 		this.textureName = textureName;
+		this.hidden = false;
 		this.bounds = new SDL_Rect(bounds.x, bounds.y, bounds.w, bounds.h);
 	}
 	
@@ -26,14 +28,26 @@ abstract class Widget {
 	}
 
 
-	public void render() {
-		this.renderer.drawTexture(this.bounds, this.textureName);
+	public final void render() {
+		if (!this.hidden) {
+			this.renderer.drawTexture(this.bounds, this.textureName);
+			this.draw();
+		}
 	}
+
+	public abstract void draw();
 	
 	
 	public void setXY(int x, int y) {
 		this.bounds.x = x;
 		this.bounds.y = y;
+	}
+
+	public void hide() {
+		this.hidden = true;
+	}
+	public void unhide() {
+		this.hidden = false;
 	}
 	
 	public void centerHorizontally() {

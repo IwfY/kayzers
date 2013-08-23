@@ -23,6 +23,9 @@ class Button : Widget {
 	override public void click() {
 		this.callback(this.name);
 	}
+
+	public override void draw() {
+	}
 	
 	//public void render() {
 		//this.renderer.drawTexture(this.bounds.x, this.bounds.y,
