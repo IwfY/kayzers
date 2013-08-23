@@ -123,7 +123,7 @@ class UI : Renderer {
 		int structureButtonY = this.screenRegion.y + 40;
 		foreach(Button button; this.structureButtons) {
 			button.setXY(structureButtonX, structureButtonY);
-			structureButtonY += 30;
+			structureButtonX += 30;
 		}
 	}
 

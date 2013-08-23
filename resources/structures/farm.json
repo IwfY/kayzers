@@ -1,0 +1,14 @@
+{
+	"_fileType" : "structure",
+	"name" : "Farm",
+	"tileImageName" : "structure_farm",
+	"tileImage" : "resources/img/structures/farm.png",
+	"iconImageName" : "structure_farm_button",
+	"iconImage" : "resources/img/ui/button_farm.png",
+	"initScript" : "res.jobs = 3;",
+	"consumeScript" : "",
+	"produceScript" : "res.food = 5;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : false
+}
