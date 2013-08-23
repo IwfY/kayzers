@@ -144,7 +144,10 @@ class Script {
 
 	public void execute(ScriptContext context) {
 		this.context = context;
-		//TODO empty identifiers array
+
+		// empty identifiers array
+		this.identifiers = null;
+
 		foreach (Expression expression; this.expressions) {
 			expression.execute();
 		}
