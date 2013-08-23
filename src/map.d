@@ -41,7 +41,7 @@ public class Map {
 
 	private void loadFromFile(string filename) {
 		SDL_Surface *mapSurface = IMG_Load(toStringz(filename));
-		assert(mapSurface !is null);
+		assert(mapSurface !is null, "Map::loadFromFile map file not found");
 
 		this.height = mapSurface.h;
 		this.width = mapSurface.w;

@@ -1,0 +1,14 @@
+{
+	"_fileType" : "structure",
+	"name" : "House",
+	"tileImageName" : "structure_house",
+	"tileImage" : "resources/img/structures/house.png",
+	"iconImageName" : "structure_house_button",
+	"iconImage" : "resources/img/ui/button_house.png",
+	"initScript" : "res.inhabitants = 3; res.jobs = 1;",
+	"consumeScript" : "",
+	"produceScript" : "inhabitantsInc = res.inhabitants * 0.1; res.inhabitants = res.inhabitants + inhabitantsInc; newJobs = inhabitantsInc * 0.1; res.jobs = res.jobs + newJobs; res.workToken = res.inhabitants;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : true
+}

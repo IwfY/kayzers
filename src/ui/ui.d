@@ -109,6 +109,10 @@ class UI : Renderer {
 				this.renderer.drawText(this.screenRegion.x + 20,
 										this.screenRegion.y + 40 + tileDimensions.h + 5,
 										resourceString);
+				// structure name
+				this.renderer.drawText(this.screenRegion.x + 20,
+										this.screenRegion.y + 25,
+										prototype.getName());
 			} else {
 				this.structureImage.setTextureName("null");
 			}
