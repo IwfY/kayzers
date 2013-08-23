@@ -73,12 +73,6 @@ class StructureManager {
 		this.structures = structures;
 	}
 
-	public void addStructure(Structure structure) {
-		const(Position) position = structure.getPosition();
-		this.structures[[position.i, position.j]] = structure;
-	}
-
-
 	public Structure getStructure(int i, int j) {
 		Structure tmp = this.structures.get([i, j], null);
 		return tmp;
@@ -119,6 +113,11 @@ class StructureManager {
 	}
 
 
+	public void addStructure(Structure structure) {
+		const(Position) position = structure.getPosition();
+		this.structures[[position.i, position.j]] = structure;
+	}
+
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nationIn,
 							 Position position) {
@@ -146,6 +145,8 @@ class StructureManager {
 		newStructure.setPosition(position);
 		newStructure.setNation(nation);
 		newStructure.setCreatingNation(nation);
+
+		newStructure.runInitScript();
 
 		// consume resources
 		nation.getResources().addResource("structureToken", -1.0);
