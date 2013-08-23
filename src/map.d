@@ -20,15 +20,15 @@ public class Map {
 		this.loadFromFile(filename);
 	}
 
-	public const(byte) getTile(int x, int y) const
+	public const(byte) getTile(int i, int j) const
 		in {
-			assert(x >= 0, "Map::getTile");
-			assert(y >= 0, "Map::getTile");
-			assert(x < this.width, "Map::getTile");
-			assert(y < this.height, "Map::getTile");
+			assert(i >= 0, "Map::getTile");
+			assert(j >= 0, "Map::getTile");
+			assert(i < this.width, "Map::getTile");
+			assert(j < this.height, "Map::getTile");
 		}
 		body {
-			return this.tiles[x + y * this.width];
+			return this.tiles[i + j * this.width];
 		}
 
 	public const(int) getWidth() const {

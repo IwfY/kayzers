@@ -1,15 +1,19 @@
 module ui.ui;
 
+import client;
 import game;
 import map;
+import position;
+import rect;
+import renderer;
 import renderhelper;
 import utils;
-import client;
-import renderer;
-import ui.widget;
 import ui.button;
+import ui.image;
+import ui.widget;
 import world.nation;
 import world.nationprototype;
+import world.structure;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -21,8 +25,11 @@ import std.string;
 class UI : Renderer {
 	private const(Game) game;
 	private Client client;
+	private const(Map) map;
 	private Widget[] widgets;
 	private Button[] structureButtons;
+	private Image tileImage;
+	private Image structureImage;
 
 
 
@@ -30,6 +37,7 @@ class UI : Renderer {
 		super(renderer);
 		this.client = client;
 		this.game = this.client.getGame();
+		this.map = this.client.getMap();
 		this.renderer = renderer;
 
 		this.initWidgets();
@@ -48,11 +56,54 @@ class UI : Renderer {
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;
 		}
+
+		// selected structure and tile display
+		this.tileImage = new Image(this.renderer,
+									   "",
+									   "null",
+									   new SDL_Rect(0, 0, 20, 20));
+		this.widgets ~= this.tileImage;
+		this.structureImage = new Image(this.renderer,
+									     "",
+									     "null",
+									     new SDL_Rect(0, 0, 20, 20));
+		this.widgets ~= this.structureImage;
 	}
 
 
 	private void updateWidgets() {
-		int structureButtonX = 50;
+		// selected structure and tile display
+		Position selectedPosition = this.renderer.getSelectedPosition();
+		const(Rect) tileDimensions = this.renderer.getTileDimensions();
+		if (selectedPosition !is null) {
+			string textureName =
+				this.renderer.getTextureNameByTileIdentifier(
+					this.map.getTile(selectedPosition.i, selectedPosition.j));
+
+			this.tileImage.setTextureName(textureName);
+			this.tileImage.setBounds(this.screenRegion.x + 20,
+									 this.screenRegion.y + 40,
+									 tileDimensions.w,
+									 tileDimensions.h);
+
+			// structure
+			const(Structure) structure =
+				this.game.getStructure(selectedPosition.i, selectedPosition.j);
+			if (structure !is null) {
+				const(StructurePrototype) prototype = structure.getPrototype();
+				this.structureImage.setTextureName(
+						prototype.getTileImageName());
+				this.structureImage.setBounds(this.screenRegion.x + 20,
+											  this.screenRegion.y + 40,
+											  tileDimensions.w,
+											  tileDimensions.h);
+			} else {
+				this.structureImage.setTextureName("null");
+			}
+		}
+
+		// structure buttons
+		int structureButtonX = 300;
 		int structureButtonY = this.screenRegion.y + 40;
 		foreach(Button button; this.structureButtons) {
 			button.setXY(structureButtonX, structureButtonY);

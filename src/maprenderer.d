@@ -4,6 +4,7 @@ import client;
 import game;
 import map;
 import position;
+import rect;
 import renderer;
 import renderhelper;
 import world.structure;
@@ -20,7 +21,7 @@ class MapRenderer : Renderer {
 	private Rebindable!(const(Map)) map;
 	private const(Game) game;
 	private Client client;
-	private SDL_Rect *tileDimensions;
+	private Rect tileDimensions;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
@@ -41,7 +42,7 @@ class MapRenderer : Renderer {
 		this.offset = new SDL_Point(0, 0);
 		this.mousePosition = new SDL_Point(0, 0);
 		this.screenRegion = new SDL_Rect(0, 0);
-		this.tileDimensions = new SDL_Rect(0, 0);
+		this.tileDimensions = new Rect();
 		this.tileDimensions.w = 120;
 		this.tileDimensions.h = 70;
 		this.zoom = 2;
@@ -113,6 +114,11 @@ class MapRenderer : Renderer {
 		jMax = cast(int)(floor(2 * this.screenRegion.h /
 							   (this.tileDimensions.h / this.zoom)));
 		writefln("getTileResolution %d : %d", iMax, jMax);
+	}
+
+
+	public const(Rect) getTileDimensions() const {
+		return this.tileDimensions;
 	}
 
 

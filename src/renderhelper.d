@@ -18,6 +18,7 @@ import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 import derelict.sdl2.ttf;
 
+import std.conv;
 import std.stdio;
 import std.string;
 import std.math;
@@ -86,6 +87,8 @@ class RenderHelper {
 		//TODO declare general resources in a file
 		this.textures.registerTexture("grass", "resources/img/grass.png");
 		this.textures.registerTexture("water", "resources/img/water.png");
+		this.textures.registerTexture("tile_0", "resources/img/grass.png");
+		this.textures.registerTexture("tile_1", "resources/img/water.png");
 		this.textures.registerTexture("border",
 									  "resources/img/grid_border.png");
 		this.textures.registerTexture("cursor",
@@ -156,13 +159,45 @@ class RenderHelper {
 	}
 
 
+	/**
+	 * get the texture name for a corresponding tile identifier
+	 **/
+	public string getTextureNameByTileIdentifier(byte tile) {
+		return "tile_" ~ text(tile);
+	}
+
+
+	/**
+	 * get the size of a text rendered with a given font
+	 *
+	 * @return Rect r with
+	 * 				r.w ... width
+	 * 				r.h ... height
+	 **/
 	public Rect getTextSize(string text, string fontName) {
 		return this.fonts.getTextSize(text, fontName);
 	}
 
 
+	/**
+	 * get the selected position in the map rendering view
+	 **/
 	public Position getSelectedPosition() {
+		if (this.mapRenderer is null) {
+			return null;
+		}
 		return this.mapRenderer.getSelectedPosition();
+	}
+
+
+	/**
+	 * get the tile dimensions as drawn by the map renderer without zooming
+	 **/
+	public const(Rect) getTileDimensions() const {
+		if (this.mapRenderer is null) {
+			return null;
+		}
+		return this.mapRenderer.getTileDimensions();
 	}
 
 	/**

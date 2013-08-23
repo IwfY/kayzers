@@ -61,6 +61,10 @@ abstract class Widget {
 		this.bounds.w = w;
 		this.bounds.h = h;
 	}
+
+	public void setTextureName(string textureName) {
+		this.textureName = textureName;
+	}
 	
 	public const(SDL_Rect *)getBounds() const {
 		return this.bounds;
