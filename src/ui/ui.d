@@ -13,6 +13,7 @@ import ui.image;
 import ui.widget;
 import world.nation;
 import world.nationprototype;
+import world.resourcemanager;
 import world.structure;
 import world.structureprototype;
 
@@ -97,6 +98,17 @@ class UI : Renderer {
 											  this.screenRegion.y + 40,
 											  tileDimensions.w,
 											  tileDimensions.h);
+				// resource text
+				string resourceString;
+				const(ResourceManager) resources = structure.getResources();
+				foreach (string resourceName; resources.getResources().keys) {
+					resourceString ~= resourceName ~ ": " ~
+							text(resources.getResourceAmount(resourceName)) ~
+							"; ";
+				}
+				this.renderer.drawText(this.screenRegion.x + 20,
+										this.screenRegion.y + 40 + tileDimensions.h + 5,
+										resourceString);
 			} else {
 				this.structureImage.setTextureName("null");
 			}
