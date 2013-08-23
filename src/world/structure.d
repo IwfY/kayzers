@@ -64,6 +64,11 @@ class Structure : ScriptContext {
 		return this.resources;
 	}
 
+	public void runInitScript() {
+		Script initScript = new Script(this.prototype.getInitScriptString());
+		initScript.execute(this);
+	}
+
 	public void runProduceScript() {
 		if (this.produceScript is null) {
 			this.produceScript = new Script(

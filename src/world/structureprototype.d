@@ -8,6 +8,7 @@ class StructurePrototype {
 	private string iconImageName;
 	private bool nameable;
 
+	private string initScriptString;
 	private string produceScriptString;
 	private string consumeScriptString;
 	private string constructableScriptString;
@@ -23,6 +24,7 @@ class StructurePrototype {
 		this.tileImageName = data["tileImageName"];
 		this.iconImage = data["iconImage"];
 		this.iconImageName = data["iconImageName"];
+		this.initScriptString = data["initScript"];
 		this.produceScriptString = data["produceScript"];
 		this.consumeScriptString = data["consumeScript"];
 		this.constructableScriptString = data["constructableScript"];
@@ -40,6 +42,10 @@ class StructurePrototype {
 
 	public const(string) getIconImage() const {
 		return this.iconImage;
+	}
+
+	public const(string) getInitScriptString() const {
+		return this.initScriptString;
 	}
 
 	public const(string) getProduceScriptString() const {

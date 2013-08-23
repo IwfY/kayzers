@@ -5,7 +5,7 @@
 	"tileImage" : "resources/img/structures/city.png",
 	"iconImageName" : "structure_city_button",
 	"iconImage" : "resources/img/ui/button_city.png",
-	"initScript" : "",
+	"initScript" : "res.inhabitants = 50; res.jobs = 10;",
 	"consumeScript" : "",
 	"produceScript" : "res.age = res.age + 1; res.inhabitants = res.inhabitants + 1; res.inhabitants = res.inhabitants * 1.2; newJobs = res.age * 0.1; res.jobs = res.jobs + newJobs;",
 	"constructableScript" : "",
