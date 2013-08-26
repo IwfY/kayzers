@@ -24,6 +24,14 @@ class Nation : ScriptContext {
 		this.ruler = ruler;
 	}
 
+	// convenience methods to implement ScriptContext
+	public Nation getNation() {
+		return this;
+	}
+	public const(Nation) getNation() const {
+		return this;
+	}
+
 	public ResourceManager getResources() {
 		return this.resources;
 	}

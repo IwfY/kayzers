@@ -15,7 +15,7 @@ import std.typecons;
 class Structure : ScriptContext {
 	private Rebindable!(const(StructurePrototype)) prototype;
 	private Position position;
-	private Rebindable!(const(Nation)) nation;
+	private Nation nation;
 	private Rebindable!(const(Nation)) creatingNation;
 	private ResourceManager resources;
 
@@ -43,10 +43,13 @@ class Structure : ScriptContext {
 		this.position = position;
 	}
 
+	public Nation getNation() {
+		return this.nation;
+	}
 	public const(Nation) getNation() const {
 		return this.nation;
 	}
-	public void setNation(const(Nation) nation) {
+	public void setNation(Nation nation) {
 		this.nation = nation;
 	}
 

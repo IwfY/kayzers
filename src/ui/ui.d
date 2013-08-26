@@ -147,6 +147,7 @@ class UI : Renderer {
 	public override void render() {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 
+		// nation flag and name
 		const(Nation) nation = this.client.getCurrentNation();
 		this.renderer.drawTexture(
 				11, this.screenRegion.y + 144,
@@ -155,6 +156,17 @@ class UI : Renderer {
 								   "border_round_30");
 		this.renderer.drawText(44, this.screenRegion.y + 160,
 							    nation.getName());
+
+		// resource text
+		string resourceString;
+		const(ResourceManager) resources = nation.getResources();
+		foreach (string resourceName; resources.getResources().keys) {
+			resourceString ~= resourceName ~ ": " ~
+					text(resources.getResourceAmount(resourceName)) ~
+					"; ";
+		}
+		this.renderer.drawText(200, this.screenRegion.y + 160,
+								resourceString);
 
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
 							    this.screenRegion.y + 160,

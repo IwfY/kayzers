@@ -3,6 +3,7 @@ module script.expressions;
 import script.script;
 import script.scriptcontext;
 import script.token;
+import world.nation;
 import world.resourcemanager;
 
 import std.conv;
@@ -64,6 +65,32 @@ class ResourceIdentifier : Identifier {
 	public override double getValue() {
 		ScriptContext context = this.script.getContext();
 		const(ResourceManager) resources = context.getResources();
+
+		return resources.getResourceAmount(this.resourceName);
+	}
+}
+
+
+class GlobalResourceIdentifier : Identifier {
+	private string resourceName;
+
+	public this(Script script, string name) {
+		super(script, name);
+		this.resourceName = name[5..name.length];
+	}
+
+	public override void assign(double value) {
+		ScriptContext context = this.script.getContext();
+		Nation nation = context.getNation();
+		ResourceManager resources = nation.getResources();
+
+		return resources.setResource(this.resourceName, value);
+	}
+
+	public override double getValue() {
+		ScriptContext context = this.script.getContext();
+		const(Nation) nation = context.getNation();
+		const(ResourceManager) resources = nation.getResources();
 
 		return resources.getResourceAmount(this.resourceName);
 	}

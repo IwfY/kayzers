@@ -41,9 +41,9 @@ class Script {
 
 
 	public Expression parseString(string text) {
-		auto assignExpression = regex("^(.*?)=(.*?)$", "g");
-		auto numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
-		auto binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
+		Regex!(char) assignExpression = regex("^(.*?)=(.*?)$", "g");
+		Regex!(char) numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
+		Regex!(char) binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
 
 		// assign statement
 		auto m = match(text, assignExpression);
@@ -79,14 +79,22 @@ class Script {
 
 
 	public Identifier parseIdentifier(string text) {
-		auto identifierExpression = regex(`^([\w]*?)$`, "g");
-		auto resIdentifierExpression = regex(`^(res\.[\w]*?)$`, "g");
-		auto strIdentifierExpression = regex(`^(str\.[\w]*?)$`, "g");
+		Regex!(char) identifierExpression = regex(`^([\w]*?)$`, "g");
+		Regex!(char) resIdentifierExpression = regex(`^(res\.[\w]*?)$`, "g");
+		Regex!(char) globIdentifierExpression = regex(`^(glob\.[\w]*?)$`, "g");
 
 		// resource identifier
 		auto m = match(text, resIdentifierExpression);
 		if (m) {
 			Identifier tmp = new ResourceIdentifier(
+					this, m.captures[1]);
+			return tmp;
+		}
+
+		// nation global resource identifier
+		m = match(text, globIdentifierExpression);
+		if (m) {
+			Identifier tmp = new GlobalResourceIdentifier(
 					this, m.captures[1]);
 			return tmp;
 		}
