@@ -1,6 +1,7 @@
 module structuremanager;
 
 import game;
+import map;
 import position;
 import world.nation;
 import world.structure;
@@ -102,6 +103,10 @@ class StructureManager {
 								  const(Nation) nation,
 								  Position position) const {
 		if (!this.isTileEmpty(position)) {
+			return false;
+		}
+		const(Map) map = this.game.getMap();
+		if (!map.isLand(position.i, position.j)) {
 			return false;
 		}
 

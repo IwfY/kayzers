@@ -6,6 +6,7 @@ import derelict.sdl2.image;
 import std.stdio;
 import std.string;
 
+
 public class Map {
 	/** variables *****************************************************/
 
@@ -13,6 +14,9 @@ public class Map {
 	private int width;
 	private int height;
 
+	/** constants *****************************************************/
+	public static byte LAND = 0;
+	public static byte WATER = 1;
 
 	/** methods *******************************************************/
 
@@ -39,6 +43,19 @@ public class Map {
 		return this.height;
 	}
 
+	/**
+	 * check if requested tile is a land tile
+	 **/
+	public const(bool) isLand(int i, int j) const {
+		if (this.getTile(i, j) == Map.LAND) {
+			return true;
+		}
+
+		return false;
+	}
+
+
+
 	private void loadFromFile(string filename) {
 		SDL_Surface *mapSurface = IMG_Load(toStringz(filename));
 		assert(mapSurface !is null, "Map::loadFromFile map file not found");
@@ -59,9 +76,9 @@ public class Map {
 		for(int i = 0; i < this.height * this.width; ++i) {
 			//tiles ~= *cast(byte*)(pixelPointer);
 			if (*cast(byte*)(pixelPointer) == 0) {	// land
-				this.tiles ~= 0;
+				this.tiles ~= Map.LAND;
 			} else {								// water
-				this.tiles ~= 1;
+				this.tiles ~= Map.WATER;
 			}
 			pixelPointer += mapSurface.format.BytesPerPixel;
 		}
