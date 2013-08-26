@@ -48,6 +48,9 @@ class MapRenderer : Renderer {
 		this.zoom = 2;
 		this.mousePressed = false;
 		this.mousePressedPosition = new SDL_Point(0, 0);
+
+		// center map
+		this.panToTile(this.map.getWidth() / 2, this.map.getHeight() / 2);
 	}
 
 
