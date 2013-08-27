@@ -10,6 +10,7 @@ import world.language;
 import world.nation;
 import world.nationprototype;
 import world.scenario;
+import world.settlementcreator;
 import world.structure;
 import world.structureprototype;
 
@@ -38,6 +39,10 @@ public class Game {
 		this.map = new Map(scenario.getMapName);
 		foreach (string nationName; scenario.getNationNames()) {
 			this.addNation(nationName);
+		}
+
+		foreach (Nation nation; this.nations) {
+			SettlementCreator.create(this, nation);
 		}
 
 	}
@@ -136,7 +141,9 @@ public class Game {
 		this.structureManager.runProduceScripts();
 	}
 
-
+	public StructureManager getStructureManager() {
+		return this.structureManager;
+	}
 	public const(Structure[]) getStructures() const {
 		return this.structureManager.getStructures();
 	}
