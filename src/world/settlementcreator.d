@@ -49,10 +49,11 @@ class SettlementCreator {
 		nation.getResources().setResource("structureToken", 2);
 		Position farmPosition = new Position(position.i + 1, position.j);
 
-		if (structureManager.canBuildStructure("House", nation, position) &&
-				structureManager.canBuildStructure(
-						"Farm", nation, farmPosition)) {
-			structureManager.addStructure("House", nation, position);
+		if (structureManager.isTileEmpty(position) &&
+				structureManager.isTileEmpty(farmPosition) &&
+				map.isLand(position.i, position.j) &&
+				map.isLand(position.i + 1, position.j)) {
+			structureManager.addStructure("House", nation, position, true);
 			structureManager.addStructure("Farm", nation, farmPosition);
 			const(Structure) house = structureManager.getStructure(position);
 			nation.setSeat(house);

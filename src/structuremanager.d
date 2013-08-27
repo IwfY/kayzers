@@ -10,6 +10,7 @@ import world.structureprototype;
 import std.file;
 import std.json;
 import std.stdio;
+import std.typecons;
 
 class StructureManager {
 	private StructurePrototype[] structurePrototypes;
@@ -87,10 +88,10 @@ class StructureManager {
 	}
 
 
-	private bool isTileEmpty(int i, int j) const {
+	public bool isTileEmpty(int i, int j) const {
 		return (this.getStructure(i, j) is null);
 	}
-	private bool isTileEmpty(Position position) const {
+	public bool isTileEmpty(Position position) const {
 		return this.isTileEmpty(position.i, position.j);
 	}
 
@@ -102,14 +103,40 @@ class StructureManager {
 	public bool canBuildStructure(string structurePrototypeName,
 								  const(Nation) nation,
 								  Position position) const {
+		// is there a structure already?
 		if (!this.isTileEmpty(position)) {
 			return false;
 		}
+
+		// is it a land tile?
 		const(Map) map = this.game.getMap();
 		if (!map.isLand(position.i, position.j)) {
 			return false;
 		}
 
+		// neighbouring structure?
+		Tuple!(int, int) neighbourLocations[];
+		neighbourLocations ~= Tuple!(int, int)(0, -1); // top
+		neighbourLocations ~= Tuple!(int, int)(1, 0); // right
+		neighbourLocations ~= Tuple!(int, int)(0, 1); // bottom
+		neighbourLocations ~= Tuple!(int, int)(-1, 0); // left
+		bool foundNeighbour = false;
+		foreach(Tuple!(int, int) location; neighbourLocations) {
+			if (this.getStructure(position.i + location[0],
+								  position.j + location[1]) !is null) {
+				if (this.getStructure(position.i + location[0],
+								  position.j + location[1]).getNation() ==
+							nation) {
+					foundNeighbour = true;
+					break;
+				}
+			}
+		}
+		if (!foundNeighbour) {
+			return false;
+		}
+
+		// enough resources
 		if (!nation.getResources().getResourceAmount("structureToken") >= 1.0) {
 			return false;
 		}
@@ -123,11 +150,17 @@ class StructureManager {
 		this.structures[[position.i, position.j]] = structure;
 	}
 
+	/**
+	 * add structure for a given nation to the game
+	 *
+	 * @param force: if force is true don't check for build requirements
+	 **/
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nationIn,
-							 Position position) {
-		if (!this.canBuildStructure(structurePrototypeName,
-									nationIn, position)) {
+							 Position position,
+							 bool force=false) {
+		if (!force && !this.canBuildStructure(structurePrototypeName,
+											  nationIn, position)) {
 			return false;
 		}
 
