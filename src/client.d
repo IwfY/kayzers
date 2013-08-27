@@ -79,6 +79,7 @@ public class Client {
 	}
 	public void setCurrentNation(const(Nation) currentNation) {
 		this.currentNation = currentNation;
+		this.renderer.notifyNationChanged();
 	}
 
 

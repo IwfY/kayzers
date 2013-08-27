@@ -11,6 +11,7 @@ import texturemanager;
 import utils;
 import ui.mainmenu;
 import ui.ui;
+import world.nation;
 import world.nationprototype;
 import world.structureprototype;
 
@@ -232,6 +233,8 @@ class RenderHelper {
 			this.loadGameTextures();
 			this.ui = new UI(this.client, this);
 			this.mapRenderer = new MapRenderer(this.client, this);
+			this.state = state;
+			this.notifyNationChanged();
 		}
 		// map --> main menu
 		else if (this.state == RendererState.MAP &&
@@ -374,5 +377,15 @@ class RenderHelper {
 
 		// update screen
 		SDL_RenderPresent(this.renderer);
+	}
+
+	/**
+	 * method is called if active nation changes
+	 **/
+	public void notifyNationChanged() {
+		if (this.state == RendererState.MAP) {
+			const(Nation) currentNation = this.client.getCurrentNation();
+			this.mapRenderer.panToTile(currentNation.getSeat().getPosition());
+		}
 	}
 }

@@ -5,6 +5,7 @@ import map;
 import position;
 import structuremanager;
 import world.nation;
+import world.structure;
 
 import std.random;
 
@@ -53,6 +54,8 @@ class SettlementCreator {
 						"Farm", nation, farmPosition)) {
 			structureManager.addStructure("House", nation, position);
 			structureManager.addStructure("Farm", nation, farmPosition);
+			const(Structure) house = structureManager.getStructure(position);
+			nation.setSeat(house);
 
 			debug(1) {
 				import std.stdio;

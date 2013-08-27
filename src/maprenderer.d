@@ -7,6 +7,7 @@ import position;
 import rect;
 import renderer;
 import renderhelper;
+import world.nation;
 import world.structure;
 import world.structureprototype;
 import utils;
@@ -26,7 +27,7 @@ class MapRenderer : Renderer {
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
-	private SDL_Rect *selectedRegion;	// in tile coordinates (i, j)
+	private Rect selectedRegion;	// in tile coordinates (i, j)
 	private SDL_Point *mousePosition;
 	private SDL_Point *mousePressedPosition;
 	private bool mousePressed;
@@ -38,19 +39,15 @@ class MapRenderer : Renderer {
 		this.game = this.client.getGame();
 		this.renderer = renderer;
 		this.map = this.client.getMap();
-		this.selectedRegion = new SDL_Rect(0, 0);
+		this.selectedRegion = new Rect();
 		this.offset = new SDL_Point(0, 0);
 		this.mousePosition = new SDL_Point(0, 0);
-		this.screenRegion = new SDL_Rect(0, 0);
 		this.tileDimensions = new Rect();
 		this.tileDimensions.w = 120;
 		this.tileDimensions.h = 70;
 		this.zoom = 2;
 		this.mousePressed = false;
 		this.mousePressedPosition = new SDL_Point(0, 0);
-
-		// center map
-		this.panToTile(this.map.getWidth() / 2, this.map.getHeight() / 2);
 	}
 
 
@@ -70,8 +67,11 @@ class MapRenderer : Renderer {
 		this.offset.x = 0;
 		this.offset.y = 0;
 		this.getTopLeftScreenCoordinate(iCenter, jCenter, x2, y2);
-		this.offset.x = -x1 + (x2 - x1) * zoom;
-		this.offset.y = -y1 + (y2 - y1) * zoom;
+		this.offset.x = -x1 + (x2 - x1) * this.zoom;
+		this.offset.y = -y1 + (y2 - y1) * this.zoom;
+	}
+	public void panToTile(const(Position) position) {
+		this.panToTile(position.i, position.j);
 	}
 
 
@@ -426,6 +426,7 @@ class MapRenderer : Renderer {
 			this.getTileAtPixel(this.mousePosition, mouseI, mouseJ);
 			this.drawTileIJ(mouseI, mouseJ, "border");
 
+			// draw mouse tile coordinate on screen
 			debug(1) {
 				import std.conv;
 				this.renderer.drawText(0, 0, text(mouseI) ~ ":" ~ text(mouseJ));

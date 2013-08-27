@@ -3,6 +3,7 @@ module world.nation;
 import script.scriptcontext;
 import world.character;
 import world.nationprototype;
+import world.structure;
 import world.resourcemanager;
 
 import std.typecons;
@@ -11,6 +12,12 @@ class Nation : ScriptContext {
 	private Rebindable!(const(NationPrototype)) prototype;
 	private Character ruler;
 	private ResourceManager resources;
+	private Rebindable!(const(Structure)) seat;
+
+	invariant() {
+		assert(this.seat is null || this.seat.getNation() == this,
+			   "Nation::invariant seat is not of nation");
+	}
 
 	public this(const(NationPrototype) nationPrototype) {
 		this.prototype = nationPrototype;
@@ -22,6 +29,13 @@ class Nation : ScriptContext {
 	}
 	public void setRuler(Character ruler) {
 		this.ruler = ruler;
+	}
+
+	public const(Structure) getSeat() const {
+		return this.seat;
+	}
+	public void setSeat(const(Structure) seat) {
+		this.seat = seat;
 	}
 
 	// convenience methods to implement ScriptContext
