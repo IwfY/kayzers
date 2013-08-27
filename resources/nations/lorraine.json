@@ -1,0 +1,9 @@
+{
+	"_fileType" : "nation",
+	"name" : "Lorraine",
+	"language" : "French",
+	"flagImage" : "resources/img/flags/lorraine.png",
+	"flagImageName" : "flag_lorraine",
+	"canBuild" : [],
+	"canNotBuild" : []
+}

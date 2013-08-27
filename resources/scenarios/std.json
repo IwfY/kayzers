@@ -2,6 +2,6 @@
 	"_fileType" : "scenario",
 	"name" : "Endless Game",
 	"map" : "resources/img/map_big.png",
-	"nations" : ["Barcelona"],
+	"nations" : ["Barcelona", "Lorraine"],
 	"startYear" : 1
 }
