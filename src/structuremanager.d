@@ -144,12 +144,6 @@ class StructureManager {
 		return true;
 	}
 
-
-	public void addStructure(Structure structure) {
-		const(Position) position = structure.getPosition();
-		this.structures[[position.i, position.j]] = structure;
-	}
-
 	/**
 	 * add structure for a given nation to the game
 	 *
@@ -190,11 +184,45 @@ class StructureManager {
 		nation.getResources().addResource("structureToken", -1.0);
 
 		this.structures[[position.i, position.j]] = newStructure;
+		nation.addStructure(newStructure);
+
 		debug(1) {
 			writefln("Game::addStructure Add structure %s at position (%d, %d) for nation %s",
 					 prototype.getName(), position.i, position.j,
 					 nation.getName());
 		}
+		return true;
+	}
+
+
+	/**
+	 * check if a structure can be removed from the map
+	 **/
+	public bool canRemoveStructure(int i, int j) {
+		Structure structure = this.getStructure(i, j);
+		Nation nation = structure.getNation();
+		if (structure is null) {
+			return false;
+		}
+
+		// nation seats can not be removed
+		if (nation.getSeat() == structure) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	public bool removeStructure(int i, int j) {
+		if (!this.canRemoveStructure(i, j)) {
+			return false;
+		}
+		Structure structure = this.getStructure(i, j);
+		this.structures[[i, j]] = null;
+		Nation nation = structure.getNation();
+		nation.removeStructure(structure);
+
 		return true;
 	}
 
