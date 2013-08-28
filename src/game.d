@@ -155,8 +155,10 @@ public class Game {
 			nation.getResources().setResource("structureToken", 3.0);
 		}
 
+		this.structureManager.runConsumeScripts();
 		this.structureManager.runProduceScripts();
 	}
+
 
 	public StructureManager getStructureManager() {
 		return this.structureManager;

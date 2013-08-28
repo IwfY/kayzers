@@ -235,4 +235,13 @@ class StructureManager {
 			structure.runProduceScript();
 		}
 	}
+
+	/**
+	 * run the consume script on all structures
+	 **/
+	public void runConsumeScripts() {
+		foreach (Structure structure; this.structures) {
+			structure.runConsumeScript();
+		}
+	}
 }

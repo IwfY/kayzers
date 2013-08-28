@@ -44,6 +44,8 @@ class Script {
 		Regex!(char) assignExpression = regex("^(.*?)=(.*?)$", "g");
 		Regex!(char) numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
 		Regex!(char) binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
+		Regex!(char) consumeExpression =
+				regex(`^consume\(res\.(\w*?),(\d+?(\.\d+?)?)\)$`, "g");
 
 		// assign statement
 		auto m = match(text, assignExpression);
@@ -71,6 +73,14 @@ class Script {
 		if (m) {
 			Expression tmp = new Number(
 					this, m.captures[1]);
+			return tmp;
+		}
+
+		// consume statement
+		m = match(text, consumeExpression);
+		if (m) {
+			Expression tmp = new ConsumeExpression(
+					this, m.captures[1], m.captures[2]);
 			return tmp;
 		}
 

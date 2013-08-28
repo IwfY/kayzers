@@ -97,6 +97,26 @@ class GlobalResourceIdentifier : Identifier {
 }
 
 
+class ConsumeExpression : Expression {
+	private string resourceName;
+	private double amount;
+
+	public this(Script script, string name, string amount) {
+		super(script);
+		this.resourceName = name;
+		this.amount = to!(double)(amount);
+	}
+
+	public override double execute() {
+		ScriptContext context = this.script.getContext();
+		Nation nation = context.getNation();
+
+		return nation.consume(resourceName, amount);
+	}
+
+}
+
+
 class Number : Expression {
 	private double value;
 

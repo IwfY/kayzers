@@ -19,6 +19,7 @@ class Structure : ScriptContext {
 	private Rebindable!(const(Nation)) creatingNation;
 	private ResourceManager resources;
 
+	private Script consumeScript;
 	private Script produceScript;
 
 	public this() {
@@ -70,6 +71,15 @@ class Structure : ScriptContext {
 	public void runInitScript() {
 		Script initScript = new Script(this.prototype.getInitScriptString());
 		initScript.execute(this);
+	}
+
+
+	public void runConsumeScript() {
+		if (this.consumeScript is null) {
+			this.consumeScript = new Script(
+					this.prototype.getConsumeScriptString());
+		}
+		this.consumeScript.execute(this);
 	}
 
 	public void runProduceScript() {
