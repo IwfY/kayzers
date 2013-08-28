@@ -1,5 +1,6 @@
 module world.nation;
 
+import color;
 import script.scriptcontext;
 import world.character;
 import world.nationprototype;
@@ -13,6 +14,7 @@ class Nation : ScriptContext {
 	private Character ruler;
 	private ResourceManager resources;
 	private Rebindable!(const(Structure)) seat;
+	private Color color;
 
 	invariant() {
 		assert(this.seat is null || this.seat.getNation() == this,
@@ -22,6 +24,7 @@ class Nation : ScriptContext {
 	public this(const(NationPrototype) nationPrototype) {
 		this.prototype = nationPrototype;
 		this.resources = new ResourceManager();
+		this.color = new Color();
 	}
 
 	public const(Character) getRuler() const {
@@ -36,6 +39,13 @@ class Nation : ScriptContext {
 	}
 	public void setSeat(const(Structure) seat) {
 		this.seat = seat;
+	}
+
+	public const(Color) getColor() const {
+		return this.color;
+	}
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	// convenience methods to implement ScriptContext

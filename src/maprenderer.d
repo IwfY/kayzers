@@ -1,6 +1,7 @@
 module maprenderer;
 
 import client;
+import color;
 import game;
 import map;
 import position;
@@ -17,6 +18,8 @@ import derelict.sdl2.sdl;
 import std.math;
 import std.stdio;
 import std.typecons;
+
+static enum Border {BORDER_TOP, BORDER_RIGHT, BORDER_BOTTOM, BORDER_LEFT};
 
 class MapRenderer : Renderer {
 	private Rebindable!(const(Map)) map;
@@ -95,12 +98,51 @@ class MapRenderer : Renderer {
 		SDL_Rect *position = new SDL_Rect();
 		this.getTopLeftScreenCoordinate(i, j, position.x, position.y);
 
-		position.w = cast(int)(
-			ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom));
-		position.h = cast(int)(
-			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
+		position.w = cast(int)(round(
+			ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom)));
+		position.h = cast(int)(round(
+			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom)));
 
 		this.renderer.drawTexture(position, textureName);
+	}
+
+
+	private void drawBorder(int i, int j, Border border, const(Color) color) {
+		int x, y;
+		int tileWidth = cast(int)(round(
+				cast(double)this.tileDimensions.w /
+				cast(double)this.zoom));
+		int tileHeight = cast(int)(round(
+				cast(double)this.tileDimensions.h /
+				cast(double)this.zoom));
+
+		this.getTopLeftScreenCoordinate(i, j, x, y);
+
+		if (border == Border.BORDER_TOP) {
+			this.renderer.drawLine(x + cast(int)(0.5 * tileWidth),
+									y + 1,
+									x + tileWidth - 1,
+									y + cast(int)(0.5 * tileHeight),
+									color);
+		} else if (border == Border.BORDER_RIGHT) {
+			this.renderer.drawLine(x + tileWidth - 1,
+									y + cast(int)(0.5 * tileHeight),
+									x + cast(int)(0.5 * tileWidth),
+									y + tileHeight - 1,
+									color);
+		} else if (border == Border.BORDER_BOTTOM) {
+			this.renderer.drawLine(x + cast(int)(0.5 * tileWidth),
+									y + tileHeight - 1,
+									x + 1,
+									y + cast(int)(0.5 * tileHeight),
+									color);
+		} else if (border == Border.BORDER_LEFT) {
+			this.renderer.drawLine(x + 1,
+									y + cast(int)(0.5 * tileHeight),
+									x + cast(int)(0.5 * tileWidth),
+									y + 1,
+									color);
+		}
 	}
 
 
@@ -221,8 +263,10 @@ class MapRenderer : Renderer {
 				cast(double)this.offset.y /
 				cast(double)this.zoom;
 
-		x = cast(int)(offsetX + i * 0.5 * tileWidth - j * 0.5 * tileWidth);
-		y = cast(int)(offsetY + j * 0.5 * tileHeight + i * 0.5 * tileHeight);
+		x = cast(int)(round(
+				offsetX + i * 0.5 * tileWidth - j * 0.5 * tileWidth));
+		y = cast(int)(round(
+				offsetY + j * 0.5 * tileHeight + i * 0.5 * tileHeight));
 
 		debug(3) {
 			writefln("MapRenderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
@@ -366,9 +410,9 @@ class MapRenderer : Renderer {
 					int x, y;
 					byte tile = this.map.getTile(i, j);
 					string textureName;
-					if (tile == 0) {
+					if (tile == Map.LAND) {
 						textureName = "grass";
-					} else if (tile == 1) {
+					} else if (tile == Map.WATER) {
 						textureName = "water";
 					}
 
@@ -380,40 +424,48 @@ class MapRenderer : Renderer {
 			foreach (const(Structure) structure; this.game.getStructures()) {
 				const(StructurePrototype) prototype = structure.getPrototype();
 				const(Position) position = structure.getPosition();
+				const(Nation) nation = structure.getNation();
+				const(Color) color = nation.getColor();
 				this.drawTileIJ(position.i, position.j,
 								prototype.getTileImageName());
+				int x, y;
+				this.getTopLeftScreenCoordinate(position.i, position.j, x, y);
 
 				// top neighbor border
 				Rebindable!(const(Structure)) neighbor =
 						this.game.getStructure(position.i, position.j - 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
-					this.drawTileIJ(position.i, position.j,
-								"border_top");
+					this.drawBorder(position.i, position.j,
+									Border.BORDER_TOP,
+									color);
 				}
 				// right neighbor border
 				neighbor =
 						this.game.getStructure(position.i + 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
-					this.drawTileIJ(position.i, position.j,
-								"border_right");
+					this.drawBorder(position.i, position.j,
+									Border.BORDER_RIGHT,
+									color);
 				}
 				// bottom neighbor border
 				neighbor =
 						this.game.getStructure(position.i, position.j + 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
-					this.drawTileIJ(position.i, position.j,
-								"border_bottom");
+					this.drawBorder(position.i, position.j,
+									Border.BORDER_BOTTOM,
+									color);
 				}
 				// left neighbor border
 				neighbor =
 						this.game.getStructure(position.i - 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
-					this.drawTileIJ(position.i, position.j,
-								"border_left");
+					this.drawBorder(position.i, position.j,
+									Border.BORDER_LEFT,
+									color);
 				}
 			}
 

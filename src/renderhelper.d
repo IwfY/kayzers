@@ -1,6 +1,7 @@
 module renderhelper;
 
 import client;
+import color;
 import fontmanager;
 import map;
 import maprenderer;
@@ -323,6 +324,17 @@ class RenderHelper {
 
 
 	/**
+	 * draw a line with the given color to the renderer
+	 **/
+	public void drawLine(int x1, int y1, int x2, int y2, const(Color) color) {
+		SDL_SetRenderDrawBlendMode(this.renderer, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawColor(this.renderer,
+							   color.r, color.g, color.b, color.a);
+		SDL_RenderDrawLine(this.renderer, x1, y1, x2, y2);
+	}
+
+
+	/**
 	 * get the rectangular region of the screen
 	 **/
 	public SDL_Rect *getScreenRegion() {
@@ -366,6 +378,8 @@ class RenderHelper {
 
 	public void render() {
 		this.updateScreenRegions();
+
+		SDL_SetRenderDrawColor(this.renderer, 0, 0, 0, 255);	// set black
 		SDL_RenderClear(this.renderer);
 
 		if (this.state == RendererState.MAP) {

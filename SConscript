@@ -1,5 +1,6 @@
 srcFiles = Split("""
     src/client.d
+    src/color.d
     src/fontmanager.d
     src/game.d
     src/ui/inputbox.d

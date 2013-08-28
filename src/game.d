@@ -1,6 +1,7 @@
 module game;
 
 import client;
+import color;
 import map;
 import player;
 import position;
@@ -17,6 +18,7 @@ import world.structureprototype;
 import std.file;
 import std.json;
 import std.stdio;
+import std.random;
 
 public class Game {
 	private string name;
@@ -28,6 +30,14 @@ public class Game {
 	private Language[] languages;
 	private StructureManager structureManager;
 	private int currentYear;
+
+	private static Color[] nationColors = [
+		new Color(63, 56, 190),
+		new Color(234, 205, 44),
+		new Color(56, 125, 44),
+		new Color(115, 57, 164),
+		new Color(164, 57, 130)
+];
 
 	public this(Scenario scenario) {
 		this.initLanguages();
@@ -41,8 +51,15 @@ public class Game {
 			this.addNation(nationName);
 		}
 
+		int i = 0;
+		randomShuffle(this.nationColors);
 		foreach (Nation nation; this.nations) {
+			// create settlement
 			SettlementCreator.create(this, nation);
+			// set nation color
+			nation.setColor(this.nationColors[i % nationColors.length]);
+
+			++i;
 		}
 
 	}

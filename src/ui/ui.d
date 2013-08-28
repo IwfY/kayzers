@@ -52,7 +52,7 @@ class UI : Renderer {
 			Button button = new Button(this.renderer,
 									   structurePrototype.getName(),
 									   structurePrototype.getIconImageName(),
-									   new SDL_Rect(0, 0, 20, 20),
+									   new SDL_Rect(0, 0, 30, 30),
 									   &this.client.addStructureHandler);
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;
@@ -123,7 +123,7 @@ class UI : Renderer {
 		int structureButtonY = this.screenRegion.y + 40;
 		foreach(Button button; this.structureButtons) {
 			button.setXY(structureButtonX, structureButtonY);
-			structureButtonX += 30;
+			structureButtonX += 40;
 		}
 	}
 
