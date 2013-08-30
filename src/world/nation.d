@@ -111,7 +111,7 @@ class Nation : ScriptContext {
 
 		// consume from structures
 		// iterate over structures randomly
-		auto random = Random();
+		Random random = Random(unpredictableSeed);
 		foreach (Structure structure; randomCover(this.structures, random)) {
 			double localAvailable = structure.getResources().
 					getResourceAmount(resourceName);

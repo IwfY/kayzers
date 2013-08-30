@@ -9,6 +9,7 @@ import world.structureprototype;
 
 import std.file;
 import std.json;
+import std.random;
 import std.stdio;
 import std.typecons;
 
@@ -231,8 +232,10 @@ class StructureManager {
 	 * run the produce script on all structures
 	 **/
 	public void runProduceScripts() {
-		foreach (Structure structure; this.structures) {
-			structure.runProduceScript();
+		Random random = Random(unpredictableSeed);
+		int[2][] keys = this.structures.keys;
+		foreach (int[2] key; randomCover(keys, random)) {
+			structures[key].runProduceScript();
 		}
 	}
 
@@ -240,8 +243,10 @@ class StructureManager {
 	 * run the consume script on all structures
 	 **/
 	public void runConsumeScripts() {
-		foreach (Structure structure; this.structures) {
-			structure.runConsumeScript();
+		Random random = Random(unpredictableSeed);
+		int[2][] keys = this.structures.keys;
+		foreach (int[2] key; randomCover(keys, random)) {
+			structures[key].runConsumeScript();
 		}
 	}
 }
