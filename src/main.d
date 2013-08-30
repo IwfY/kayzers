@@ -11,11 +11,6 @@ import std.stdio;
 import std.string;
 
 int main(string[] args) {
-	if (args.length < 2) {
-		writeln("open: ./kayzers <<image>>");
-		return 0;
-	}
-
 	DerelictSDL2.load();
 	DerelictSDL2Image.load();
 	DerelictSDL2ttf.load();

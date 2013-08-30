@@ -151,7 +151,7 @@ class RenderHelper {
 				 this.client.getNationPrototypes()) {
 			debug(2) {
 				writefln("load texture(s) for nation %s",
-						 nationPrototype.getName());
+						 prototype.getName());
 			}
 			bool success =
 				this.textures.registerTexture(
