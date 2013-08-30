@@ -13,7 +13,7 @@ import std.typecons;
  * represents a tile filling structure on the map belonging to one nation
  **/
 class Structure : ScriptContext {
-	private Rebindable!(const(StructurePrototype)) prototype;
+	private StructurePrototype prototype;
 	private Position position;
 	private Nation nation;
 	private Rebindable!(const(Nation)) creatingNation;
@@ -33,7 +33,7 @@ class Structure : ScriptContext {
 	public const(StructurePrototype) getPrototype() const {
 		return this.prototype;
 	}
-	public void setPrototype(const(StructurePrototype) prototype) {
+	public void setPrototype(StructurePrototype prototype) {
 		this.prototype = prototype;
 	}
 
@@ -69,24 +69,15 @@ class Structure : ScriptContext {
 	}
 
 	public void runInitScript() {
-		Script initScript = new Script(this.prototype.getInitScriptString());
-		initScript.execute(this);
+		this.prototype.runInitScript(this);
 	}
 
 
 	public void runConsumeScript() {
-		if (this.consumeScript is null) {
-			this.consumeScript = new Script(
-					this.prototype.getConsumeScriptString());
-		}
-		this.consumeScript.execute(this);
+		this.prototype.runConsumeScript(this);
 	}
 
 	public void runProduceScript() {
-		if (this.produceScript is null) {
-			this.produceScript = new Script(
-					this.prototype.getProduceScriptString());
-		}
-		this.produceScript.execute(this);
+		this.prototype.runProduceScript(this);
 	}
 }

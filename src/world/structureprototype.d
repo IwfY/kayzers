@@ -1,5 +1,8 @@
 module world.structureprototype;
 
+import script.script;
+import script.scriptcontext;
+
 class StructurePrototype {
 	private string name;
 	private string tileImage;
@@ -8,11 +11,12 @@ class StructurePrototype {
 	private string iconImageName;
 	private bool nameable;
 
-	private string initScriptString;
-	private string produceScriptString;
-	private string consumeScriptString;
 	private string constructableScriptString;
 	private string progressScriptString;
+
+	private Script initScript;
+	private Script produceScript;
+	private Script consumeScript;
 
 	public this() {
 
@@ -24,12 +28,13 @@ class StructurePrototype {
 		this.tileImageName = data["tileImageName"];
 		this.iconImage = data["iconImage"];
 		this.iconImageName = data["iconImageName"];
-		this.initScriptString = data["initScript"];
-		this.produceScriptString = data["produceScript"];
-		this.consumeScriptString = data["consumeScript"];
 		this.constructableScriptString = data["constructableScript"];
 		this.progressScriptString = data["progressScript"];
 		this.nameable = false;
+
+		this.initScript = new Script(data["initScript"]);
+		this.produceScript = new Script(data["produceScript"]);
+		this.consumeScript = new Script(data["consumeScript"]);
 	}
 
 	public const(string) getName() const {
@@ -42,18 +47,6 @@ class StructurePrototype {
 
 	public const(string) getIconImage() const {
 		return this.iconImage;
-	}
-
-	public const(string) getInitScriptString() const {
-		return this.initScriptString;
-	}
-
-	public const(string) getProduceScriptString() const {
-		return this.produceScriptString;
-	}
-
-	public const(string) getConsumeScriptString() const {
-		return this.consumeScriptString;
 	}
 
 	public const(string) getConstructableScriptString() const {
@@ -76,5 +69,17 @@ class StructurePrototype {
 	}
 	public void setNameable(bool nameable) {
 		this.nameable = nameable;
+	}
+
+	public void runInitScript(ScriptContext context) {
+		this.initScript.execute(context);
+	}
+
+	public void runProduceScript(ScriptContext context) {
+		this.produceScript.execute(context);
+	}
+
+	public void runConsumeScript(ScriptContext context) {
+		this.consumeScript.execute(context);
 	}
 }

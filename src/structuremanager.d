@@ -162,7 +162,7 @@ class StructureManager {
 		Nation nation = this.game.getNation(nationIn);
 
 
-		const(StructurePrototype) prototype =
+		StructurePrototype prototype =
 				this.getStructurePrototypeByName(structurePrototypeName);
 		if (prototype is null) {
 			debug(1) {
