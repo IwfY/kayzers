@@ -77,43 +77,56 @@ class UI : Renderer {
 		Position selectedPosition = this.renderer.getSelectedPosition();
 		const(Rect) tileDimensions = this.renderer.getTileDimensions();
 		if (selectedPosition !is null) {
-			string textureName =
-				this.renderer.getTextureNameByTileIdentifier(
-					this.map.getTile(selectedPosition.i, selectedPosition.j));
+			bool isOnMap = this.map.isPositionInMap(selectedPosition.i,
+													selectedPosition.j);
+			if (isOnMap) {
+				byte tile = this.map.getTile(selectedPosition.i,
+											 selectedPosition.j);
+				string textureName =
+					this.renderer.getTextureNameByTileIdentifier(tile);
 
-			this.tileImage.setTextureName(textureName);
-			this.tileImage.setBounds(this.screenRegion.x + 20,
-									 this.screenRegion.y + 40,
-									 tileDimensions.w,
-									 tileDimensions.h);
+				this.tileImage.setTextureName(textureName);
+				this.tileImage.setBounds(this.screenRegion.x + 20,
+										 this.screenRegion.y + 40,
+										 tileDimensions.w,
+										 tileDimensions.h);
 
-			// structure
-			const(Structure) structure =
-				this.game.getStructure(selectedPosition.i, selectedPosition.j);
-			if (structure !is null) {
-				const(StructurePrototype) prototype = structure.getPrototype();
-				this.structureImage.setTextureName(
-						prototype.getTileImageName());
-				this.structureImage.setBounds(this.screenRegion.x + 20,
-											  this.screenRegion.y + 40,
-											  tileDimensions.w,
-											  tileDimensions.h);
-				// resource text
-				string resourceString;
-				const(ResourceManager) resources = structure.getResources();
-				foreach (string resourceName; resources.getResources().keys) {
-					resourceString ~= resourceName ~ ": " ~
+				// structure
+				const(Structure) structure =
+					this.game.getStructure(selectedPosition.i,
+										   selectedPosition.j);
+				if (structure !is null) {
+					const(StructurePrototype) prototype =
+							structure.getPrototype();
+					this.structureImage.setTextureName(
+							prototype.getTileImageName());
+					this.structureImage.setBounds(this.screenRegion.x + 20,
+												  this.screenRegion.y + 40,
+												  tileDimensions.w,
+												  tileDimensions.h);
+					// resource text
+					string resourceString;
+					const(ResourceManager) resources =
+							structure.getResources();
+					foreach (string resourceName;
+							 resources.getResources().keys) {
+						resourceString ~= resourceName ~ ": " ~
 							text(resources.getResourceAmount(resourceName)) ~
 							"; ";
+					}
+					this.renderer.drawText(
+							this.screenRegion.x + 20,
+							this.screenRegion.y + 40 + tileDimensions.h + 5,
+							resourceString);
+					// structure name
+					this.renderer.drawText(this.screenRegion.x + 20,
+											this.screenRegion.y + 25,
+											prototype.getName());
+				} else {
+					this.structureImage.setTextureName("null");
 				}
-				this.renderer.drawText(this.screenRegion.x + 20,
-										this.screenRegion.y + 40 + tileDimensions.h + 5,
-										resourceString);
-				// structure name
-				this.renderer.drawText(this.screenRegion.x + 20,
-										this.screenRegion.y + 25,
-										prototype.getName());
 			} else {
+				this.tileImage.setTextureName("null");
 				this.structureImage.setTextureName("null");
 			}
 		}
@@ -168,6 +181,7 @@ class UI : Renderer {
 		this.renderer.drawText(200, this.screenRegion.y + 160,
 								resourceString);
 
+		// year
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
 							    this.screenRegion.y + 160,
 							    "Year " ~ text(this.game.getCurrentYear()));

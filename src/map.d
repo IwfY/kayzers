@@ -43,6 +43,18 @@ public class Map {
 		return this.height;
 	}
 
+
+	/**
+	 * check if given position is within map bounds
+	 **/
+	public bool isPositionInMap(int i, int j) const {
+		if (j >= 0 && i >= 0 && i < this.width && j < this.height) {
+			return true;
+		}
+
+		return false;
+	}
+
 	/**
 	 * check if requested tile is a land tile
 	 **/
