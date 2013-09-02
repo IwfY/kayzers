@@ -338,6 +338,26 @@ class MapRenderer : Renderer {
 						cast(int)(this.map.getWidth() / 2),
 						cast(int)(this.map.getHeight() / 2));
 			}
+			// selected region WASD
+			else if (event.key.keysym.sym == SDLK_w) {
+				this.selectedRegion.y -= 1;
+			} else if (event.key.keysym.sym == SDLK_d) {
+				this.selectedRegion.x += 1;
+			} else if (event.key.keysym.sym == SDLK_s) {
+				this.selectedRegion.y += 1;
+			} else if (event.key.keysym.sym == SDLK_a) {
+				this.selectedRegion.x -= 1;
+			}
+			// map offset - array keys
+			else if (event.key.keysym.sym == SDLK_UP) {
+				this.offset.y += 3 * this.tileDimensions.h * this.zoom;
+			} else if (event.key.keysym.sym == SDLK_RIGHT) {
+				this.offset.x -= 2 * this.tileDimensions.w * this.zoom;
+			} else if (event.key.keysym.sym == SDLK_DOWN) {
+				this.offset.y -= 3 * this.tileDimensions.h * this.zoom;
+			} else if (event.key.keysym.sym == SDLK_LEFT) {
+				this.offset.x += 2 * this.tileDimensions.w * this.zoom;
+			}
 		}
 
 		// right mouse down
