@@ -25,8 +25,8 @@ class SettlementCreator {
 		bool done = false;
 		int i, j;
 		while (!done && tries < maxTries) {
-			i = uniform(0, map.getWidth());
-			j = uniform(0, map.getHeight());
+			i = uniform(1, map.getWidth() - 1);
+			j = uniform(1, map.getHeight() - 1);
 
 			done = SettlementCreator.create(
 					game, nation, new Position(i, j));
