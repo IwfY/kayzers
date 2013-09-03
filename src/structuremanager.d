@@ -39,7 +39,7 @@ class StructureManager {
 				continue;
 			}
 
-			bool nameable = json["nameable"].type == JSON_TYPE.TRUE;
+			bool nameable = (json["nameable"].type == JSON_TYPE.TRUE);
 
 			string[string] structureData;
 			foreach(string s; json.object.keys) {

@@ -1,0 +1,14 @@
+{
+	"_fileType" : "structure",
+	"name" : "Mill",
+	"tileImageName" : "structure_mill",
+	"tileImage" : "resources/img/structures/mill.png",
+	"iconImageName" : "structure_mill_button",
+	"iconImage" : "resources/img/ui/button_mill.png",
+	"initScript" : "",
+	"consumeScript" : "a = 0.5 * consume(res.workToken, 2); b = 0.5 * consume(res.grain, 5); res.consumeSatisfaction = a + b;",
+	"produceScript" : "res.flour = res.consumeSatisfaction * 3;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : false
+}

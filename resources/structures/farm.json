@@ -6,8 +6,8 @@
 	"iconImageName" : "structure_farm_button",
 	"iconImage" : "resources/img/ui/button_farm.png",
 	"initScript" : "res.jobs = 3;",
-	"consumeScript" : "res.consumeSatisfaction = consume(res.workToken, 2);",
-	"produceScript" : "res.food = 5;",
+	"consumeScript" : "res.consumeSatisfaction = consume(res.workToken, 4);",
+	"produceScript" : "res.grain = 5 * res.consumeSatisfaction;",
 	"constructableScript" : "",
 	"progressScript" : "",
 	"nameable" : false

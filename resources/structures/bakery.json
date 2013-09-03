@@ -1,0 +1,14 @@
+{
+	"_fileType" : "structure",
+	"name" : "Bakery",
+	"tileImageName" : "structure_bakery",
+	"tileImage" : "resources/img/structures/bakery.png",
+	"iconImageName" : "structure_bakery_button",
+	"iconImage" : "resources/img/ui/button_bakery.png",
+	"initScript" : "",
+	"consumeScript" : "a = 0.5 * consume(res.workToken, 2); b = 0.5 * consume(res.flour, 5); res.consumeSatisfaction = a + b;",
+	"produceScript" : "res.food = res.consumeSatisfaction * 3;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : false
+}
