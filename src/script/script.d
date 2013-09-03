@@ -80,7 +80,7 @@ class Script {
 		m = match(text, consumeExpression);
 		if (m) {
 			Expression tmp = new ConsumeExpression(
-					this, m.captures[1], m.captures[2]);
+					this, m.captures[1], this.parseString(m.captures[2]));
 			return tmp;
 		}
 

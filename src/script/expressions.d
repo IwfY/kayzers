@@ -99,19 +99,20 @@ class GlobalResourceIdentifier : Identifier {
 
 class ConsumeExpression : Expression {
 	private string resourceName;
-	private double amount;
+	private Expression amountExpression;
 
-	public this(Script script, string name, string amount) {
+	public this(Script script, string name, Expression amountExpression) {
 		super(script);
 		this.resourceName = name;
-		this.amount = to!(double)(amount);
+		this.amountExpression = amountExpression;
 	}
 
 	public override double execute() {
 		ScriptContext context = this.script.getContext();
 		Nation nation = context.getNation();
+		double amount = this.amountExpression.execute();
 
-		return nation.consume(resourceName, amount);
+		return nation.consume(this.resourceName, amount);
 	}
 
 }
