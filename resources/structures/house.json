@@ -5,7 +5,7 @@
 	"tileImage" : "resources/img/structures/house.png",
 	"iconImageName" : "structure_house_button",
 	"iconImage" : "resources/img/ui/button_house.png",
-	"initScript" : "res.inhabitants = 3;",
+	"initScript" : "res.inhabitants = 3;res.food = 3;",
 	"consumeScript" : "res.consumeSatisfaction = consume(res.food, res.inhabitants);",
 	"produceScript" : "a = res.consumeSatisfaction - 0.3; a = a * 0.2; inhabitantsInc = res.inhabitants * a; res.inhabitants = res.inhabitants + inhabitantsInc; res.workToken = res.inhabitants;",
 	"constructableScript" : "",

@@ -7,7 +7,7 @@
 	"iconImage" : "resources/img/ui/button_bakery.png",
 	"initScript" : "",
 	"consumeScript" : "a = 0.5 * consume(res.workToken, 2); b = 0.5 * consume(res.flour, 5); res.consumeSatisfaction = a + b;",
-	"produceScript" : "res.food = res.consumeSatisfaction * 3;",
+	"produceScript" : "res.food = res.consumeSatisfaction * 10;",
 	"constructableScript" : "",
 	"progressScript" : "",
 	"nameable" : false
