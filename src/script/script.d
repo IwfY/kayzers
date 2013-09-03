@@ -43,9 +43,9 @@ class Script {
 	public Expression parseString(string text) {
 		Regex!(char) assignExpression = regex("^(.*?)=(.*?)$", "g");
 		Regex!(char) numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
-		Regex!(char) binaryExpression = regex(`^(.*?)([\+|-|\*|/])(.*?)$`, "g");
+		Regex!(char) binaryExpression = regex(`^(.*?)([\+|\-|\*|/])(.*?)$`, "g");
 		Regex!(char) consumeExpression =
-				regex(`^consume\(res\.(\w*?),(\d+?(\.\d+?)?)\)$`, "g");
+				regex(`^consume\(res\.(\w*?),(.+?)\)$`, "g");
 
 		// assign statement
 		auto m = match(text, assignExpression);
@@ -80,7 +80,8 @@ class Script {
 		m = match(text, consumeExpression);
 		if (m) {
 			Expression tmp = new ConsumeExpression(
-					this, m.captures[1], this.parseString(m.captures[2]));
+					this, m.captures[1],
+					this.parseString(m.captures[2]));
 			return tmp;
 		}
 
