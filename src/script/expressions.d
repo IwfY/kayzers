@@ -114,7 +114,6 @@ class ConsumeExpression : Expression {
 
 		return nation.consume(this.resourceName, amount);
 	}
-
 }
 
 
@@ -170,6 +169,34 @@ class AssignExpression : Expression {
 
 	public override double execute() {
 		this.identifier.assign(this.expression.execute());
+		return 0.0;
+	}
+}
+
+
+/**
+ * expression of the form:
+ * 		if (condition) action
+ **/
+class IfExpression : Expression {
+	private Expression condition;
+	private Expression action;
+
+	public this(Script script, Expression condition, Expression action) {
+		super(script);
+		this.condition = condition;
+		this.action = action;
+	}
+
+	public override double execute() {
+				import std.stdio;
+		writeln("IfExpr expression ex");
+		if (this.condition.execute() != 0.0) {
+
+			writeln("IfExpr expression true");
+			this.action.execute();
+		}
+		writeln("IfExpr expression ex finished");
 		return 0.0;
 	}
 }

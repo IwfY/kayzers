@@ -46,9 +46,21 @@ class Script {
 		Regex!(char) binaryExpression = regex(`^(.*?)([\+|\-|\*|/])(.*?)$`, "g");
 		Regex!(char) consumeExpression =
 				regex(`^consume\(res\.(\w*?),(.+?)\)$`, "g");
+		Regex!(char) ifExpression =
+				regex(`^if\((.*?)\)(.+?)$`, "g");
+
+		// if expression
+		auto m = match(text, ifExpression);
+		if (m) {
+			Expression tmp = new IfExpression(
+					this,
+					this.parseString(m.captures[1]),
+					this.parseString(m.captures[2]));
+			return tmp;
+		}
 
 		// assign statement
-		auto m = match(text, assignExpression);
+		m = match(text, assignExpression);
 		if (m) {
 			Expression tmp = new AssignExpression(
 					this,
