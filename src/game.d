@@ -163,6 +163,9 @@ public class Game {
 	public StructureManager getStructureManager() {
 		return this.structureManager;
 	}
+	public const(StructureManager) getStructureManager() const {
+		return this.structureManager;
+	}
 	public const(Structure[]) getStructures() const {
 		return this.structureManager.getStructures();
 	}

@@ -2,6 +2,7 @@ module renderhelper;
 
 import client;
 import color;
+import constants;
 import fontmanager;
 import map;
 import maprenderer;
@@ -91,9 +92,9 @@ class RenderHelper {
 		this.textures.registerTexture("water", "resources/img/water.png");
 		this.textures.registerTexture("tile_0", "resources/img/grass.png");
 		this.textures.registerTexture("tile_1", "resources/img/water.png");
-		this.textures.registerTexture("border",
+		this.textures.registerTexture("mouseTile",
 									  "resources/img/grid_border.png");
-		this.textures.registerTexture("cursor",
+		this.textures.registerTexture("selectedTile",
 									  "resources/img/grid_cursor.png");
 		this.textures.registerTexture("border_top",
 									  "resources/img/grid_border_top.png");
@@ -114,7 +115,7 @@ class RenderHelper {
 									  "resources/img/ui/mainmenu_button.png");
 		this.textures.registerTexture("border_round_30",
 									  "resources/img/ui/border_round_30.png");
-		this.textures.registerTexture("null",
+		this.textures.registerTexture(NULL_TEXTURE,
 									  "resources/img/ui/null.png");
 
 		//TODO make portable

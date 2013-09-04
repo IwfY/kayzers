@@ -4,6 +4,8 @@ import client;
 import color;
 import game;
 import map;
+import maplayer;
+import maplayers;
 import position;
 import rect;
 import renderer;
@@ -26,13 +28,15 @@ class MapRenderer : Renderer {
 	private const(Game) game;
 	private Client client;
 	private Rect tileDimensions;
+	private MapLayer[int] mapLayers;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
 	private Rect selectedRegion;	// in tile coordinates (i, j)
-	private SDL_Point *mousePosition;
-	private SDL_Point *mousePressedPosition;
+	private Position mousePosition;
+	private SDL_Point *mouseCoordinate;
+	private SDL_Point *mousePressedCoordinate;
 	private bool mousePressed;
 
 
@@ -44,13 +48,23 @@ class MapRenderer : Renderer {
 		this.map = this.client.getMap();
 		this.selectedRegion = new Rect();
 		this.offset = new SDL_Point(0, 0);
-		this.mousePosition = new SDL_Point(0, 0);
+		this.mouseCoordinate = new SDL_Point(0, 0);
+		this.mousePosition = new Position(0, 0);
 		this.tileDimensions = new Rect();
 		this.tileDimensions.w = 120;
 		this.tileDimensions.h = 70;
 		this.zoom = 2;
 		this.mousePressed = false;
-		this.mousePressedPosition = new SDL_Point(0, 0);
+		this.mousePressedCoordinate = new SDL_Point(0, 0);
+		this.mapLayers[0] = new TileMapLayer(this.map,
+											 this.map.getWidth(),
+											 this.map.getHeight());
+		this.mapLayers[1] = new StructureMapLayer(
+				this.game.getStructureManager(),
+				this.map.getWidth(), this.map.getHeight());
+		this.mapLayers[2] = new MarkerMapLayer(
+				this.selectedRegion, this.mousePosition,
+				this.map.getWidth(), this.map.getHeight());
 	}
 
 
@@ -363,11 +377,12 @@ class MapRenderer : Renderer {
 		// right mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_RIGHT) {
-			if (rectContainsPoint(this.screenRegion, this.mousePosition)) {
+			if (rectContainsPoint(this.screenRegion, this.mouseCoordinate)) {
+				// start panning
 				this.mousePressed = true;
 			}
-			this.mousePressedPosition.x = event.button.x;
-			this.mousePressedPosition.y = event.button.y;
+			this.mousePressedCoordinate.x = event.button.x;
+			this.mousePressedCoordinate.y = event.button.y;
 		}
 		// right mouse up
 		else if (event.type == SDL_MOUSEBUTTONUP &&
@@ -377,24 +392,25 @@ class MapRenderer : Renderer {
 		// left mouse down
 		else if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_LEFT) {
-			this.mousePosition.x = event.button.x;
-			this.mousePosition.y = event.button.y;
-			if (rectContainsPoint(this.screenRegion, this.mousePosition)) {
-				this.getTileAtPixel(this.mousePosition,
+			this.mouseCoordinate.x = event.button.x;
+			this.mouseCoordinate.y = event.button.y;
+			if (rectContainsPoint(this.screenRegion, this.mouseCoordinate)) {
+				// select tile
+				this.getTileAtPixel(this.mouseCoordinate,
 									this.selectedRegion.x,
 									this.selectedRegion.y);
 			}
 		}
 		// mouse motion
 		else if (event.type == SDL_MOUSEMOTION) {
-			this.mousePosition.x = event.motion.x;
-			this.mousePosition.y = event.motion.y;
+			this.mouseCoordinate.x = event.motion.x;
+			this.mouseCoordinate.y = event.motion.y;
 			if (this.mousePressed) {
 				this.moveOffset(
-						event.motion.x - this.mousePressedPosition.x,
-						event.motion.y - this.mousePressedPosition.y);
-				this.mousePressedPosition.x = event.motion.x;
-				this.mousePressedPosition.y = event.motion.y;
+						event.motion.x - this.mousePressedCoordinate.x,
+						event.motion.y - this.mousePressedCoordinate.y);
+				this.mousePressedCoordinate.x = event.motion.x;
+				this.mousePressedCoordinate.y = event.motion.y;
 			}
 		}
 	}
@@ -402,6 +418,10 @@ class MapRenderer : Renderer {
 
 	public override void render() {
 		if (this.renderer !is null && this.map !is null) {
+			// mouse marker
+			this.getTileAtPixel(this.mouseCoordinate,
+								this.mousePosition.i, this.mousePosition.j);
+
 			// get tiles section to draw per frame
 			int iMin, iMax, jMin, jMax, devNull, windowWidth, windowHeight;
 			this.getTileAtPixel(
@@ -425,18 +445,16 @@ class MapRenderer : Renderer {
 			iMax = max!int(min!int(iMax, this.map.getWidth() - 1), 0);
 			jMax = max!int(min!int(jMax, this.map.getHeight() - 1), 0);
 
-			for (uint i = iMin; i <= iMax; ++i) {
-				for (uint j = jMin; j <= jMax; ++j) {
-					int x, y;
-					byte tile = this.map.getTile(i, j);
-					string textureName;
-					if (tile == Map.LAND) {
-						textureName = "grass";
-					} else if (tile == Map.WATER) {
-						textureName = "water";
-					}
 
-					this.drawTileIJ(i, j, textureName);
+			// render tiles
+			int[] mapLayerKeys = this.mapLayers.keys.sort;
+			foreach (int key; mapLayerKeys) {
+				for (uint i = iMin; i <= iMax; ++i) {
+					for (uint j = jMin; j <= jMax; ++j) {
+						string textureName =
+								this.mapLayers[key].getTextureName(i, j);
+						this.drawTileIJ(i, j, textureName);
+					}
 				}
 			}
 
@@ -446,8 +464,6 @@ class MapRenderer : Renderer {
 				const(Position) position = structure.getPosition();
 				const(Nation) nation = structure.getNation();
 				const(Color) color = nation.getColor();
-				this.drawTileIJ(position.i, position.j,
-								prototype.getTileImageName());
 				int x, y;
 				this.getTopLeftScreenCoordinate(position.i, position.j, x, y);
 
@@ -489,19 +505,15 @@ class MapRenderer : Renderer {
 				}
 			}
 
-			// selected region
-			this.drawTileIJ(selectedRegion.x, selectedRegion.y, "cursor");
 
-			// mouse marker
-			int mouseI;
-			int mouseJ;
-			this.getTileAtPixel(this.mousePosition, mouseI, mouseJ);
-			this.drawTileIJ(mouseI, mouseJ, "border");
 
 			// draw mouse tile coordinate on screen
 			debug(1) {
 				import std.conv;
-				this.renderer.drawText(0, 0, text(mouseI) ~ ":" ~ text(mouseJ));
+				this.renderer.drawText(
+						0, 0,
+						text(this.mousePosition.i) ~ ":" ~
+							text(this.mousePosition.j));
 			}
 		}
 	}
