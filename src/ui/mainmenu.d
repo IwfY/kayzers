@@ -17,10 +17,12 @@ class MainMenu : Renderer {
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
 	private Widget[] allWidgets;
+	private Widget mouseOverWidget;	// reference to widget under mouse
 
 	public this(Client client, RenderHelper renderer) {
 		super(renderer);
 		this.client = client;
+		this.mouseOverWidget = null;
 
 		this.initWidgets();
 	}
@@ -30,6 +32,7 @@ class MainMenu : Renderer {
 				new LabelButton(this.renderer,
 								"newGame",
 								"mainmenu_button",
+								"mainmenu_button_hover",
 								new SDL_Rect(0, 0, 200, 50),
 								&this.mainMenuCallbackHandler,
 								"New Game",
@@ -39,6 +42,7 @@ class MainMenu : Renderer {
 				new LabelButton(this.renderer,
 								"exit",
 								"mainmenu_button",
+								"mainmenu_button_hover",
 								new SDL_Rect(0, 0, 200, 50),
 								&this.mainMenuCallbackHandler,
 								"Exit",
@@ -91,6 +95,32 @@ class MainMenu : Renderer {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
 				}
+			}
+		}
+		// mouse motion --> hover effects
+		else if (event.type == SDL_MOUSEMOTION) {
+			SDL_Point *mousePosition =
+					new SDL_Point(event.button.x, event.button.y);
+			bool widgetMouseOver = false; // is there a widget under the mouse?
+			foreach (Widget widget; this.allWidgets) {
+				if (widget.isPointInBounds(mousePosition)) {
+					widgetMouseOver = true;
+					if (this.mouseOverWidget is null) {
+						this.mouseOverWidget = widget;
+						this.mouseOverWidget.mouseEnter();
+						break;
+					} else if (this.mouseOverWidget != widget) {
+						this.mouseOverWidget.mouseLeave();
+						this.mouseOverWidget = widget;
+						this.mouseOverWidget.mouseEnter();
+						break;
+					}
+				}
+			}
+			// no widget under mouse but there was one before
+			if (!widgetMouseOver && this.mouseOverWidget !is null) {
+				this.mouseOverWidget.mouseLeave();
+				this.mouseOverWidget = null;
 			}
 		}
 	}

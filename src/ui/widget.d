@@ -28,7 +28,12 @@ abstract class Widget {
 	}
 
 
-	public final void render() {
+	public const(bool) isHidden() const {
+		return this.hidden;
+	}
+
+
+	public void render() {
 		if (!this.hidden) {
 			this.renderer.drawTexture(this.bounds, this.textureName);
 			this.draw();
@@ -70,5 +75,12 @@ abstract class Widget {
 		return this.bounds;
 	}
 	
-	abstract public void click();
+	public void click() {
+	}
+
+	public void mouseEnter() {
+	}
+
+	public void mouseLeave() {
+	}
 }

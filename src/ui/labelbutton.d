@@ -3,24 +3,25 @@ module ui.labelbutton;
 import renderhelper;
 import ui.button;
 import ui.label;
-import ui.widget;
+import ui.hoverwidget;
 
 import derelict.sdl2.sdl;
 
-class LabelButton : Widget {
+class LabelButton : HoverWidget {
 	private Button button;
 	private Label label;
 
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
+				string hoverTextureName,
 				SDL_Rect *bounds,
 				void delegate(string) callback,
 				string text,
 				string fontName,
 				SDL_Color *color = null) {
-		super(renderer, name, textureName, bounds);
-		this.button = new Button(this.renderer, this.name, this.textureName,
+		super(renderer, name, textureName, hoverTextureName, bounds);
+		this.button = new Button(this.renderer, this.name, "null", "null",
 								 this.bounds, callback);
 		this.label = new Label(this.renderer, this.name, "null",
 							   this.bounds, text, fontName, color);

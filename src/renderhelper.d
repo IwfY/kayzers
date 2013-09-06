@@ -113,6 +113,8 @@ class RenderHelper {
 									  "resources/img/ui/mainmenu_bg.png");
 		this.textures.registerTexture("mainmenu_button",
 									  "resources/img/ui/mainmenu_button.png");
+		this.textures.registerTexture("mainmenu_button_hover",
+				"resources/img/ui/mainmenu_button_hover.png");
 		this.textures.registerTexture("border_round_30",
 									  "resources/img/ui/border_round_30.png");
 		this.textures.registerTexture(NULL_TEXTURE,

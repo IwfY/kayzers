@@ -52,6 +52,7 @@ class UI : Renderer {
 			Button button = new Button(this.renderer,
 									   structurePrototype.getName(),
 									   structurePrototype.getIconImageName(),
+									   "null",
 									   new SDL_Rect(0, 0, 30, 30),
 									   &this.client.addStructureHandler);
 		   this.structureButtons ~= button;
