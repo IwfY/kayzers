@@ -91,7 +91,9 @@ class RenderHelper {
 		this.textures.registerTexture("grass", "resources/img/grass.png");
 		this.textures.registerTexture("water", "resources/img/water.png");
 		this.textures.registerTexture("tile_0", "resources/img/grass.png");
+		this.textures.registerTexture("tile_0_2", "resources/img/grass_2.png");
 		this.textures.registerTexture("tile_1", "resources/img/water.png");
+		this.textures.registerTexture("tile_1_2", "resources/img/water.png");
 		this.textures.registerTexture("mouseTile",
 									  "resources/img/grid_border.png");
 		this.textures.registerTexture("selectedTile",

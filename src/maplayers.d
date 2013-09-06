@@ -6,8 +6,11 @@ import maplayer;
 import position;
 import rect;
 import structuremanager;
+import utils;
 import world.structure;
 import world.structureprototype;
+
+import std.conv;
 
 class TileMapLayer : MapLayer {
 	private const(Map) map;
@@ -19,11 +22,10 @@ class TileMapLayer : MapLayer {
 
 	public override string getTextureName(int i, int j) {
 		byte tile = this.map.getTile(i, j);
-		string textureName;
-		if (tile == Map.LAND) {
-			textureName = "grass";
-		} else if (tile == Map.WATER) {
-			textureName = "water";
+		string textureName = "tile_" ~ text(tile);
+
+		if (hash(i, j, 0.8)) {
+			textureName ~= "_2";
 		}
 
 		return textureName;

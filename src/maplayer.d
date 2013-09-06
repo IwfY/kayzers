@@ -1,8 +1,8 @@
 module maplayer;
 
 abstract class MapLayer {
-	private int width;
-	private int height;
+	protected int width;
+	protected int height;
 	
 	public this(int width, int height) {
 		this.width = width;

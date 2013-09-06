@@ -35,3 +35,21 @@ bool rectContainsPoint(SDL_Rect *rect, SDL_Point *point) {
 	
 	return true;
 }
+
+/**
+ * get a pseudo randomly distributed hash for two numbers
+ **/
+bool hash(int i, int j, float falseRatio=0.5) {
+	int n1 = (((i + 5) * 991) & 255);
+	n1 ^= n1 << 16;
+	n1 ^= n1 >> 7;
+
+	int n2 = (((j + 9) * 1171) & 255);
+	n2 ^= n2 << 9;
+	n2 ^= n2 >> 13;
+
+	int n3 = n1 + n2;
+	n3 = n3 % 991;
+
+	return (n3 > (falseRatio * 991));
+}
