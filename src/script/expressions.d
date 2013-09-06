@@ -189,14 +189,9 @@ class IfExpression : Expression {
 	}
 
 	public override double execute() {
-				import std.stdio;
-		writeln("IfExpr expression ex");
 		if (this.condition.execute() != 0.0) {
-
-			writeln("IfExpr expression true");
 			this.action.execute();
 		}
-		writeln("IfExpr expression ex finished");
 		return 0.0;
 	}
 }
