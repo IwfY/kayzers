@@ -14,17 +14,31 @@ import std.conv;
 
 class TileMapLayer : MapLayer {
 	private const(Map) map;
-	
+
+	// map that defines when to use an alternative tile texture
+	private byte[] tileAlterationMap;
+
 	public this(const(Map) map, int width, int height) {
 		super(width, height);
 		this.map = map;
+		this.tileAlterationMap.length = this.width * this.height;
+		this.buildTileAlterationMap();
+	}
+
+	private void buildTileAlterationMap() {
+		for (int i = 0; i < this.width; ++i) {
+			for (int j = 0; j < this.height; ++j) {
+				this.tileAlterationMap[i * this.width + j] =
+						cast(byte)(hash(i, j, 0.8));
+			}
+		}
 	}
 
 	public override string getTextureName(int i, int j) {
 		byte tile = this.map.getTile(i, j);
 		string textureName = "tile_" ~ text(tile);
 
-		if (hash(i, j, 0.8)) {
+		if (this.tileAlterationMap[i * this.width + j] != 0) {
 			textureName ~= "_2";
 		}
 
@@ -59,7 +73,7 @@ class StructureMapLayer : MapLayer {
 class MarkerMapLayer : MapLayer {
 	private const(Rect) selectedRegion;
 	private const(Position) mousePosition;
-	
+
 	public this(const(Rect) selectedRegion,	const(Position) mousePosition,
 				int width, int height) {
 		super(width, height);
