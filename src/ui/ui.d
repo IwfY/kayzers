@@ -10,6 +10,7 @@ import renderhelper;
 import utils;
 import ui.button;
 import ui.image;
+import ui.popupbutton;
 import ui.widget;
 import world.nation;
 import world.nationprototype;
@@ -28,7 +29,8 @@ class UI : Renderer {
 	private Client client;
 	private const(Map) map;
 	private Widget[] widgets;
-	private Button[] structureButtons;
+	private Widget mouseOverWidget;	// reference to widget under mouse
+	private PopupButton[] structureButtons;
 	private Image tileImage;
 	private Image structureImage;
 
@@ -49,12 +51,15 @@ class UI : Renderer {
 		// structure buttons
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
-			Button button = new Button(this.renderer,
-									   structurePrototype.getName(),
-									   structurePrototype.getIconImageName(),
-									   "null",
-									   new SDL_Rect(0, 0, 30, 30),
-									   &this.client.addStructureHandler);
+			PopupButton button = new PopupButton(
+					this.renderer,
+					structurePrototype.getName(),
+					structurePrototype.getIconImageName(),
+					"null",
+					new SDL_Rect(0, 0, 30, 30),
+					&this.client.addStructureHandler,
+					structurePrototype.getName(),
+					"std");
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;
 		}
@@ -135,7 +140,7 @@ class UI : Renderer {
 		// structure buttons
 		int structureButtonX = 300;
 		int structureButtonY = this.screenRegion.y + 40;
-		foreach(Button button; this.structureButtons) {
+		foreach(PopupButton button; this.structureButtons) {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 40;
 		}
@@ -153,6 +158,32 @@ class UI : Renderer {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
 				}
+			}
+		}
+		// mouse motion --> hover effects
+		else if (event.type == SDL_MOUSEMOTION) {
+			SDL_Point *mousePosition =
+					new SDL_Point(event.button.x, event.button.y);
+			bool widgetMouseOver = false; // is there a widget under the mouse?
+			foreach (Widget widget; this.widgets) {
+				if (widget.isPointInBounds(mousePosition)) {
+					widgetMouseOver = true;
+					if (this.mouseOverWidget is null) {
+						this.mouseOverWidget = widget;
+						this.mouseOverWidget.mouseEnter();
+						break;
+					} else if (this.mouseOverWidget != widget) {
+						this.mouseOverWidget.mouseLeave();
+						this.mouseOverWidget = widget;
+						this.mouseOverWidget.mouseEnter();
+						break;
+					}
+				}
+			}
+			// no widget under mouse but there was one before
+			if (!widgetMouseOver && this.mouseOverWidget !is null) {
+				this.mouseOverWidget.mouseLeave();
+				this.mouseOverWidget = null;
 			}
 		}
 	}

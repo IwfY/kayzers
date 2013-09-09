@@ -107,6 +107,9 @@ class RenderHelper {
 		this.textures.registerTexture("border_left",
 									  "resources/img/grid_border_left.png");
 
+		this.textures.registerTexture("ui_popup_background",
+									  "resources/img/ui/mainmenu_button.png");
+
 		this.textures.registerTexture("ui_background",
 									  "resources/img/ui/ui_background.png");
 		this.textures.registerTexture("button_default",

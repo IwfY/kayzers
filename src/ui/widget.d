@@ -6,6 +6,7 @@ import renderhelper;
 import derelict.sdl2.sdl;
 
 abstract class Widget {
+	// bounds sets scale for drawing and serves as hit box for interaction
 	protected SDL_Rect *bounds;
 	protected RenderHelper renderer;
 	protected string name;

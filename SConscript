@@ -31,6 +31,7 @@ srcFiles = Split("""
     src/ui/label.d
     src/ui/labelbutton.d
     src/ui/mainmenu.d
+    src/ui/popupbutton.d
     src/ui/ui.d
     src/ui/widget.d
     src/world/character.d

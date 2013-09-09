@@ -8,8 +8,8 @@ import ui.hoverwidget;
 import derelict.sdl2.sdl;
 
 class LabelButton : HoverWidget {
-	private Button button;
-	private Label label;
+	protected Button button;
+	protected Label label;
 
 	public this(RenderHelper renderer,
 				string name,

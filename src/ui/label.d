@@ -11,6 +11,8 @@ import derelict.sdl2.sdl;
 class Label : Widget {
 	private string text;
 	private string fontName;
+	// x and y of padding mark the distance of text to widget border
+	private Rect padding;
 	private SDL_Color *color;
 
 	public this(RenderHelper renderer,
@@ -28,11 +30,12 @@ class Label : Widget {
 		} else {
 			this.color = color;
 		}
+		this.padding = new Rect();
 
 		// set width and height to actual bounds of rendered text
 		Rect boundsRect = this.getTextSize();
-		this.bounds.w = boundsRect.w;
-		this.bounds.h = boundsRect.h;
+		this.bounds.w = boundsRect.w + 2 * this.padding.x;
+		this.bounds.h = boundsRect.h + 2 * this.padding.y;
 	}
 
 
@@ -48,11 +51,22 @@ class Label : Widget {
 	}
 
 
+	public void setPadding(int x, int y) {
+		this.padding.x = x;
+		this.padding.y = y;
+
+		Rect boundsRect = this.getTextSize();
+		this.bounds.w = boundsRect.w + 2 * this.padding.x;
+		this.bounds.h = boundsRect.h + 2 * this.padding.y;
+	}
+
+
 	public override void click() {
 	}
 
 	public override void draw() {
-		this.renderer.drawText(this.bounds.x, this.bounds.y,
+		this.renderer.drawText(this.bounds.x + this.padding.x,
+							   this.bounds.y + this.padding.y,
 							   this.text, this.fontName, this.color);
 	}
 }
