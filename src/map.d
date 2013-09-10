@@ -1,5 +1,7 @@
 module map;
 
+import utils;
+
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
@@ -17,11 +19,13 @@ public class Map {
 	/** constants *****************************************************/
 	public static byte LAND = 0;
 	public static byte WATER = 1;
+	public static byte MOUNTAIN = 2;
 
 	/** methods *******************************************************/
 
 	public this(string filename) {
 		this.loadFromFile(filename);
+		this.addMountains();
 	}
 
 	public const(byte) getTile(int i, int j) const
@@ -33,6 +37,17 @@ public class Map {
 		}
 		body {
 			return this.tiles[i + j * this.width];
+		}
+
+	private void setTile(int i, int j, byte value)
+		in {
+			assert(i >= 0, "Map::setTile");
+			assert(j >= 0, "Map::setTile");
+			assert(i < this.width, "Map::setTile");
+			assert(j < this.height, "Map::setTile");
+		}
+		body {
+			this.tiles[i + j * this.width] = value;
 		}
 
 	public const(int) getWidth() const {
@@ -66,6 +81,18 @@ public class Map {
 		return false;
 	}
 
+
+	private void addMountains() {
+		for (int i = 0; i < this.width; ++i) {
+			for (int j = 0; j < this.height; ++j) {
+				if (this.isLand(i, j)) {
+					if (hash(i - 3, j + 15, 0.95)) {
+						this.setTile(i, j, Map.MOUNTAIN);
+					}
+				}
+			}
+		}
+	}
 
 
 	private void loadFromFile(string filename) {
