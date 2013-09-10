@@ -1,6 +1,7 @@
 module ui.ui;
 
 import client;
+import constants;
 import game;
 import map;
 import position;
@@ -55,25 +56,25 @@ class UI : Renderer {
 					this.renderer,
 					structurePrototype.getName(),
 					structurePrototype.getIconImageName(),
-					"null",
+					NULL_TEXTURE,
 					new SDL_Rect(0, 0, 30, 30),
 					&this.client.addStructureHandler,
 					structurePrototype.getName(),
-					"std");
+					STD_FONT);
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;
 		}
 
 		// selected structure and tile display
 		this.tileImage = new Image(this.renderer,
-									   "",
-									   "null",
-									   new SDL_Rect(0, 0, 20, 20));
+								   "",
+								   NULL_TEXTURE,
+								   new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.tileImage;
 		this.structureImage = new Image(this.renderer,
-									     "",
-									     "null",
-									     new SDL_Rect(0, 0, 20, 20));
+									    "",
+									    NULL_TEXTURE,
+									    new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.structureImage;
 	}
 
@@ -129,11 +130,11 @@ class UI : Renderer {
 											this.screenRegion.y + 25,
 											prototype.getName());
 				} else {
-					this.structureImage.setTextureName("null");
+					this.structureImage.setTextureName(NULL_TEXTURE);
 				}
 			} else {
-				this.tileImage.setTextureName("null");
-				this.structureImage.setTextureName("null");
+				this.tileImage.setTextureName(NULL_TEXTURE);
+				this.structureImage.setTextureName(NULL_TEXTURE);
 			}
 		}
 

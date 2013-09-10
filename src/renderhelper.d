@@ -126,7 +126,7 @@ class RenderHelper {
 									  "resources/img/ui/null.png");
 
 		//TODO make portable
-		this.fonts.registerFont("std", "/usr/share/fonts/TTF/DejaVuSans.ttf");
+		this.fonts.registerFont(STD_FONT, "/usr/share/fonts/TTF/DejaVuSans.ttf");
 		this.fonts.registerFont("mainMenuHead",
 								"/usr/share/fonts/TTF/DejaVuSans.ttf",
 								80);
@@ -257,7 +257,7 @@ class RenderHelper {
 
 	public void drawText(const int x, const int y,
 						 const(string) text,
-						 const(string) fontName = "std",
+						 const(string) fontName = STD_FONT,
 						 SDL_Color *color = null)
 		in {
 			TTF_Font *ttf = this.fonts.getFont(fontName);
@@ -276,6 +276,39 @@ class RenderHelper {
 
 			SDL_FreeSurface(surface);
 			SDL_DestroyTexture(texture);
+		}
+
+	/**
+	 * draw multiple lines of text
+	 *
+	 * @param x, y: top left position of first line of text
+	 * @param text: string array of text lines
+	 * @param fontName: identifier of font to use
+	 * @param lineHeight: height of a line relative to font size
+	 * 		a value of 1.0 means no space between consecutive lines
+	 * @param color: color to draw in
+	 **/
+	public void drawTextMultiline(
+			const int x, const int y,
+			const(string[]) text,
+			const(string) fontName = STD_FONT,
+			const(double) lineHeight = 1.2,
+			SDL_Color *color = null)
+		in {
+			TTF_Font *ttf = this.fonts.getFont(fontName);
+			assert(ttf !is null, "Renderer::drawText: font is null");
+		}
+		body {
+			if (color is null) {
+				color = new SDL_Color(255, 255, 255);
+			}
+			int fontHeight = this.fonts.getFontHeight(fontName);
+
+			for (int i = 0; i < text.length; ++i) {
+				this.drawText(
+						x, y + cast(int)(i * fontHeight * lineHeight),
+						text[i], fontName, color);
+			}
 		}
 
 

@@ -64,7 +64,24 @@ class FontManager {
 	}
 
 
+	public int getFontHeight(const string fontName) {
+		Font tmp = this.fonts.get(fontName, null);
+
+		if (tmp !is null) {
+			return TTF_FontHeight(tmp.font);
+		}
+
+		return 0;
+	}
+
+
 	public TTF_Font *getFont(const string fontName) {
-		return this.fonts[fontName].font;
+		Font tmp = this.fonts.get(fontName, null);
+
+		if (tmp !is null) {
+			return tmp.font;
+		}
+
+		return null;
 	}
 }

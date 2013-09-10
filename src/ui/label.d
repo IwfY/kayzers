@@ -7,9 +7,11 @@ import ui.widget;
 
 import derelict.sdl2.sdl;
 
+import std.array;
+
 
 class Label : Widget {
-	private string text;
+	private string[] text;
 	private string fontName;
 	// x and y of padding mark the distance of text to widget border
 	private Rect padding;
@@ -19,11 +21,11 @@ class Label : Widget {
 				string name,
 				string textureName,
 				SDL_Rect *bounds,
-				string text,
+				string textIn,
 				string fontName,
 				SDL_Color *color = null) {
 		super(renderer, name, textureName, bounds);
-		this.text = text;
+		this.text = textIn.split("\n");
 		this.fontName = fontName;
 		if (color is null) {
 			this.color = new SDL_Color(255, 255, 255);
@@ -40,7 +42,21 @@ class Label : Widget {
 
 
 	private Rect getTextSize() {
-		return this.renderer.getTextSize(this.text, this.fontName);
+		int maxWidth = 0;
+		int lineHeight = 0;
+		foreach (string line; this.text) {
+			Rect size = this.renderer.getTextSize(line, this.fontName);
+			if (size.w > maxWidth) {
+				maxWidth = size.w;
+			}
+			lineHeight = size.h;
+		}
+		Rect result = new Rect();
+		result.w = maxWidth;
+		result.h = cast(int)(lineHeight + lineHeight * 0.2) *
+				cast(int)this.text.length;
+
+		return result;
 	}
 
 
@@ -65,8 +81,9 @@ class Label : Widget {
 	}
 
 	public override void draw() {
-		this.renderer.drawText(this.bounds.x + this.padding.x,
-							   this.bounds.y + this.padding.y,
-							   this.text, this.fontName, this.color);
+		this.renderer.drawTextMultiline(
+				this.bounds.x + this.padding.x,
+				this.bounds.y + this.padding.y,
+				this.text, this.fontName, 1.2, this.color);
 	}
 }
