@@ -5,6 +5,7 @@ import script.scriptcontext;
 
 class StructurePrototype {
 	private string name;
+	private string popupText;
 	private string tileImage;
 	private string tileImageName;
 	private string iconImage;
@@ -24,6 +25,7 @@ class StructurePrototype {
 
 	public this(string[string] data) {
 		this.name = data["name"];
+		this.popupText = data["popupText"];
 		this.tileImage = data["tileImage"];
 		this.tileImageName = data["tileImageName"];
 		this.iconImage = data["iconImage"];
@@ -39,6 +41,10 @@ class StructurePrototype {
 
 	public const(string) getName() const {
 		return this.name;
+	}
+
+	public const(string) getPopupText() const {
+		return this.popupText;
 	}
 
 	public const(string) getTileImage() const {

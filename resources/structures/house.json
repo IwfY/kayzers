@@ -1,6 +1,7 @@
 {
 	"_fileType" : "structure",
 	"name" : "House",
+	"popupText" : "House\nPeople live here.",
 	"tileImageName" : "structure_house",
 	"tileImage" : "resources/img/structures/house.png",
 	"iconImageName" : "structure_house_button",

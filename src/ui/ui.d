@@ -59,7 +59,7 @@ class UI : Renderer {
 					NULL_TEXTURE,
 					new SDL_Rect(0, 0, 30, 30),
 					&this.client.addStructureHandler,
-					structurePrototype.getName(),
+					structurePrototype.getPopupText(),
 					STD_FONT);
 		   this.structureButtons ~= button;
 		   this.widgets ~= button;

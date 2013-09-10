@@ -1,6 +1,7 @@
 {
 	"_fileType" : "structure",
 	"name" : "Mill",
+	"popupText" : "",
 	"tileImageName" : "structure_mill",
 	"tileImage" : "resources/img/structures/mill.png",
 	"iconImageName" : "structure_mill_button",

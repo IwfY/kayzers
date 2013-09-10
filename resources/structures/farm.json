@@ -1,6 +1,7 @@
 {
 	"_fileType" : "structure",
 	"name" : "Farm",
+	"popupText" : "",
 	"tileImageName" : "structure_farm",
 	"tileImage" : "resources/img/structures/farm.png",
 	"iconImageName" : "structure_farm_button",

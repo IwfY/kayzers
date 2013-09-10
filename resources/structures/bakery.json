@@ -1,6 +1,7 @@
 {
 	"_fileType" : "structure",
 	"name" : "Bakery",
+	"popupText" : "",
 	"tileImageName" : "structure_bakery",
 	"tileImage" : "resources/img/structures/bakery.png",
 	"iconImageName" : "structure_bakery_button",
