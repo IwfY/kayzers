@@ -56,9 +56,11 @@ class TextInput : Observable {
 					this.stop();
 				} else if (event.key.keysym.sym == SDLK_BACKSPACE) {
 					dstring tmp = toUTF32(this.textInput);
-					tmp.length = tmp.length - 1;
-					this.textInput = toUTF8(tmp);
-					this.notifyObservers();
+					if (tmp.length > 0) {
+						tmp.length = tmp.length - 1;
+						this.textInput = toUTF8(tmp);
+						this.notifyObservers();
+					}
 				}
 			}
 		}
