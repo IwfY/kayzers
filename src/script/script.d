@@ -59,6 +59,19 @@ class Script {
 			return tmp;
 		}
 
+		// consume statement
+		m = match(text, consumeExpression);
+		if (m) {
+			debug(script) {
+				writefln("Script::parseString new consumeExpression %s, %s",
+						 m.captures[1], m.captures[2]);
+			}
+			Expression tmp = new ConsumeExpression(
+					this, m.captures[1],
+					this.parseString(m.captures[2]));
+			return tmp;
+		}
+
 		// assign statement
 		m = match(text, assignExpression);
 		if (m) {
@@ -85,15 +98,6 @@ class Script {
 		if (m) {
 			Expression tmp = new Number(
 					this, m.captures[1]);
-			return tmp;
-		}
-
-		// consume statement
-		m = match(text, consumeExpression);
-		if (m) {
-			Expression tmp = new ConsumeExpression(
-					this, m.captures[1],
-					this.parseString(m.captures[2]));
 			return tmp;
 		}
 

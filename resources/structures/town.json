@@ -1,0 +1,15 @@
+{
+	"_fileType" : "structure",
+	"name" : "Town",
+	"popupText" : "Town\nPeople live here.",
+	"tileImageName" : "structure_house",
+	"tileImage" : "resources/img/structures/house.png",
+	"iconImageName" : "structure_house_button",
+	"iconImage" : "resources/img/ui/button_house.png",
+	"initScript" : "res.inhabitants = 10; res.vegFood = 8; res.meatFood = 2; res.consumeSatisfaction = 1;",
+	"consumeScript" : "a = consume(res.vegFood, res.inhabitants * 0.8); a = a * 0.5; b = consume(res.meatFood, res.inhabitants * 0.2);b = b * 0.5; res.consumeSatisfaction = a + b;",
+	"produceScript" : "tax = res.inhabitants * 1; glob.gold = glob.gold  + tax; a = res.consumeSatisfaction - 0.3; a = a * 0.2; inhabitantsInc = res.inhabitants * a; res.inhabitants = res.inhabitants + inhabitantsInc; res.workToken = res.inhabitants;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : false
+}

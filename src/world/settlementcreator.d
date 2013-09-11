@@ -51,9 +51,9 @@ class SettlementCreator {
 
 		if (structureManager.isTileEmpty(position) &&
 				structureManager.isTileEmpty(farmPosition) &&
-				map.isLand(position.i, position.j) &&
-				map.isLand(position.i + 1, position.j)) {
-			structureManager.addStructure("House", nation, position, true);
+				map.isBuildable(position.i, position.j) &&
+				map.isBuildable(position.i + 1, position.j)) {
+			structureManager.addStructure("Town", nation, position, true);
 			structureManager.addStructure("Farm", nation, farmPosition);
 			const(Structure) house = structureManager.getStructure(position);
 			nation.setSeat(house);

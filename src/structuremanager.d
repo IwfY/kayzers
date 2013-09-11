@@ -238,6 +238,10 @@ class StructureManager {
 		Random random = Random(unpredictableSeed);
 		int[2][] keys = this.structures.keys;
 		foreach (int[2] key; randomCover(keys, random)) {
+			debug(script) {
+				writefln("Script::runProduceScripts run produce script for %s",
+						 structures[key].getPrototype().getName());
+			}
 			structures[key].runProduceScript();
 		}
 	}
@@ -249,6 +253,10 @@ class StructureManager {
 		Random random = Random(unpredictableSeed);
 		int[2][] keys = this.structures.keys;
 		foreach (int[2] key; randomCover(keys, random)) {
+			debug(script) {
+				writefln("Script::runConsumeScripts run consume script for %s",
+						 structures[key].getPrototype().getName());
+			}
 			structures[key].runConsumeScript();
 		}
 	}

@@ -1,14 +1,14 @@
 {
 	"_fileType" : "structure",
 	"name" : "Farm",
-	"popupText" : "",
+	"popupText" : "Farm\nProduces vegetable food.",
 	"tileImageName" : "structure_farm",
 	"tileImage" : "resources/img/structures/farm.png",
 	"iconImageName" : "structure_farm_button",
 	"iconImage" : "resources/img/ui/button_farm.png",
-	"initScript" : "res.jobs = 3;",
+	"initScript" : "res.jobs = 3; res.consumeSatisfaction = 0.5;",
 	"consumeScript" : "res.consumeSatisfaction = consume(res.workToken, 3);",
-	"produceScript" : "res.grain = 5 * res.consumeSatisfaction;",
+	"produceScript" : "res.vegFood = 5 * res.consumeSatisfaction;",
 	"constructableScript" : "",
 	"progressScript" : "",
 	"nameable" : false

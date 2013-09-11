@@ -158,8 +158,14 @@ public class Game {
 			nation.getResources().setResource("structureToken", 3.0);
 		}
 
-		this.structureManager.runConsumeScripts();
+		debug(script) {
+			writeln("Game::startNewRound run produce script");
+		}
 		this.structureManager.runProduceScripts();
+		debug(script) {
+			writeln("Game::startNewRound run consume script");
+		}
+		this.structureManager.runConsumeScripts();
 	}
 
 

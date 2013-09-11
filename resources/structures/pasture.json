@@ -1,0 +1,15 @@
+{
+	"_fileType" : "structure",
+	"name" : "Pasture",
+	"popupText" : "Pasture\nProduces meat.",
+	"tileImageName" : "structure_pasture",
+	"tileImage" : "resources/img/structures/pasture.png",
+	"iconImageName" : "structure_pasture_button",
+	"iconImage" : "resources/img/ui/button_pasture.png",
+	"initScript" : "res.jobs = 3; res.vegFood = 1;",
+	"consumeScript" : "a = consume(res.workToken, 3) * 0.5; b = consume(res.vegFood, 1) * 0.5; res.consumeSatisfaction = a + b;",
+	"produceScript" : "res.meatFood = 4 * res.consumeSatisfaction;",
+	"constructableScript" : "",
+	"progressScript" : "",
+	"nameable" : false
+}
