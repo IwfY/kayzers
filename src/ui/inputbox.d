@@ -9,6 +9,8 @@ import ui.widget;
 
 import derelict.sdl2.sdl;
 
+import std.datetime;
+
 
 class InputBox : Widget, Observer {
 	private string *text;
@@ -79,6 +81,12 @@ class InputBox : Widget, Observer {
 		int boundsY = this.bounds.y +
 				(this.bounds.h - this.getTextSize().h) / 2;
 		string printText = *(this.text);
+		if (this.textInputServer.isReading()) {
+			SysTime time = Clock.currTime();
+			if (time.fracSec.msecs < 500) {
+				printText ~= "|";
+			}
+		}
 		this.renderer.drawText(this.bounds.x + 5, boundsY,
 							   printText,
 							   this.fontName, this.color);
