@@ -12,6 +12,7 @@ import textinput;
 import texturemanager;
 import utils;
 import ui.mainmenu;
+import ui.textinputrenderer;
 import ui.ui;
 import world.nation;
 import world.nationprototype;
@@ -27,7 +28,11 @@ import std.string;
 import std.math;
 
 
-static enum RendererState {MAIN_MENU, MAP, PAUSE_MENU};
+static enum RendererState {
+	MAIN_MENU,
+	MAP,
+	INPUT_POPUP,
+	PAUSE_MENU};
 
 /**
  * interface to the SDL rendering infrastructure
@@ -36,8 +41,10 @@ class RenderHelper {
 	private UI ui;
 	private MapRenderer mapRenderer;
 	private MainMenu mainMenu;
+	private TextInputRenderer textInputRenderer;
 
 	private RendererState state;
+	private RendererState lastState;
 
 	private SDL_Renderer *renderer;
 	private TextureManager textures;
@@ -46,6 +53,9 @@ class RenderHelper {
 	private TextInput textInput;
 	private Client client;
 
+//DEBUGGING
+	private string test;
+//DEBUGGING END
 
 
 	public this(Client client, SDL_Window *window) {
@@ -62,6 +72,7 @@ class RenderHelper {
 		}
 
 		this.state = RendererState.MAIN_MENU;
+		this.lastState = RendererState.MAIN_MENU;
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
@@ -71,8 +82,11 @@ class RenderHelper {
 		this.textInput = new TextInput();
 
 		this.mainMenu = new MainMenu(this.client, this);
+		this.textInputRenderer = new TextInputRenderer(this);
 
-
+		//DEBUGGING
+		this.textInputRenderer.setTextPointer(&(this.test));
+		//DEBUGGING END
 
 		this.updateScreenRegions();
 	}
@@ -239,10 +253,13 @@ class RenderHelper {
 	}
 
 
-	public void setState(RendererState state) {
+	public void setState(RendererState newState) {
+		// save old state
+		this.lastState = this.state;
+
 		// main menu --> map
 		if (this.state == RendererState.MAIN_MENU &&
-				state == RendererState.MAP) {
+				newState == RendererState.MAP) {
 			this.loadGameTextures();
 			this.ui = new UI(this.client, this);
 			this.mapRenderer = new MapRenderer(this.client, this);
@@ -251,11 +268,20 @@ class RenderHelper {
 		}
 		// map --> main menu
 		else if (this.state == RendererState.MAP &&
-				state == RendererState.MAIN_MENU) {
+				newState == RendererState.MAIN_MENU) {
 			this.ui = null;
 			this.mapRenderer = null;
 		}
-		this.state = state;
+
+		this.state = newState;
+	}
+
+
+	/**
+	 * set state to the stored old state
+	 **/
+	public void restoreState() {
+		this.setState(this.lastState);
 	}
 
 
@@ -406,6 +432,8 @@ class RenderHelper {
 			this.ui.setScreenRegion(0, windowHeight - 180, windowWidth, 180);
 		}
 		this.mainMenu.setScreenRegion(0, 0, windowWidth, windowHeight);
+		this.textInputRenderer.setScreenRegion(
+				200, 100, windowWidth - 400, windowHeight - 200);
 	}
 
 
@@ -415,6 +443,8 @@ class RenderHelper {
 			this.ui.handleEvent(event);
 		} else if (this.state == RendererState.MAIN_MENU) {
 			this.mainMenu.handleEvent(event);
+		} else if (this.state == RendererState.INPUT_POPUP) {
+			this.textInputRenderer.handleEvent(event);
 		}
 
 		this.textInput.handleEvent(event);
@@ -432,6 +462,8 @@ class RenderHelper {
 			this.ui.render();
 		} else if (this.state == RendererState.MAIN_MENU) {
 			this.mainMenu.render();
+		} else if (this.state == RendererState.INPUT_POPUP) {
+			this.textInputRenderer.render();
 		}
 
 		// update screen

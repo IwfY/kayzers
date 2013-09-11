@@ -50,7 +50,6 @@ class TextInput : Observable {
 				this.notifyObservers();
 			}
 			// key down
-			//TODO: catch backspace
 			else if (event.type == SDL_KEYDOWN) {
 				// input stop
 				if (event.key.keysym.sym == SDLK_RETURN) {

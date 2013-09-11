@@ -16,6 +16,7 @@ class MainMenu : Renderer {
 	private Label head;
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
+	private LabelButton settingsButton;
 	private Widget[] allWidgets;
 	private Widget mouseOverWidget;	// reference to widget under mouse
 
@@ -38,6 +39,16 @@ class MainMenu : Renderer {
 								"New Game",
 								"std");
 		this.allWidgets ~= this.newGameButton;
+		this.settingsButton =
+				new LabelButton(this.renderer,
+								"settings",
+								"mainmenu_button",
+								"mainmenu_button_hover",
+								new SDL_Rect(0, 0, 200, 50),
+								&this.mainMenuCallbackHandler,
+								"DEBUG",
+								"std");
+		this.allWidgets ~= this.settingsButton;
 		this.exitButton =
 				new LabelButton(this.renderer,
 								"exit",
@@ -62,6 +73,8 @@ class MainMenu : Renderer {
 	private void updateWidgets() {
 		this.newGameButton.setXY(0, 200);
 		this.newGameButton.centerHorizontally();
+		this.settingsButton.setXY(0, 400);
+		this.settingsButton.centerHorizontally();
 		this.exitButton.setXY(0, 500);
 		this.exitButton.centerHorizontally();
 		this.head.setXY(0, 10);
@@ -82,6 +95,8 @@ class MainMenu : Renderer {
 		} else if (message == "newGame") {
 			this.client.startGame("Endless Game");
 			this.renderer.setState(RendererState.MAP);
+		} else if (message == "settings") {
+			this.renderer.setState(RendererState.INPUT_POPUP);
 		}
 	}
 
