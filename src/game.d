@@ -79,6 +79,9 @@ public class Game {
 	public void setMap(Map map) {
 		this.map = map;
 	}
+	public void setMapTile(int i, int j, byte value) {
+		this.map.setTile(i, j, value);
+	}
 
 	public Nation[] getNations() {
 		return this.nations;

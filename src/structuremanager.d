@@ -111,7 +111,7 @@ class StructureManager {
 
 		// is it a land tile?
 		const(Map) map = this.game.getMap();
-		if (!map.isLand(position.i, position.j)) {
+		if (!map.isBuildable(position.i, position.j)) {
 			return false;
 		}
 
@@ -162,7 +162,6 @@ class StructureManager {
 		// get a non-const nation reference
 		Nation nation = this.game.getNation(nationIn);
 
-
 		StructurePrototype prototype =
 				this.getStructurePrototypeByName(structurePrototypeName);
 		if (prototype is null) {
@@ -173,6 +172,10 @@ class StructureManager {
 			return false;
 		}
 
+		// convert map tile to land
+		this.game.setMapTile(position.i, position.j, Map.LAND);
+
+		// initialize new structure
 		Structure newStructure = new Structure();
 		newStructure.setPrototype(prototype);
 		newStructure.setPosition(position);
