@@ -8,7 +8,7 @@
 	"iconImage" : "resources/img/ui/button_farm.png",
 	"initScript" : "res.jobs = 3; res.consumeSatisfaction = 0.5;",
 	"consumeScript" : "res.consumeSatisfaction = consume(res.workToken, 3);",
-	"produceScript" : "res.vegFood = 5 * res.consumeSatisfaction;",
+	"produceScript" : "produce(res.vegFood, 5 * res.consumeSatisfaction);",
 	"constructableScript" : "",
 	"progressScript" : "",
 	"nameable" : false

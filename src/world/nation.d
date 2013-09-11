@@ -126,4 +126,12 @@ class Nation : ScriptContext {
 
 		return (consumed / amount);
 	}
+
+
+	public double produce(ScriptContext context,
+						  string resourceName,
+						  double amount) {
+		context.getResources().addResource(resourceName, amount);
+		return 1.0;
+	}
 }

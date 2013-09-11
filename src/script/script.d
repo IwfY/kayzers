@@ -46,6 +46,8 @@ class Script {
 		Regex!(char) binaryExpression = regex(`^(.*?)([\+|\-|\*|/])(.*?)$`, "g");
 		Regex!(char) consumeExpression =
 				regex(`^consume\(res\.(\w*?),(.+?)\)$`, "g");
+		Regex!(char) produceExpression =
+				regex(`^produce\(res\.(\w*?),(.+?)\)$`, "g");
 		Regex!(char) ifExpression =
 				regex(`^if\((.*?)\)(.+?)$`, "g");
 
@@ -67,6 +69,19 @@ class Script {
 						 m.captures[1], m.captures[2]);
 			}
 			Expression tmp = new ConsumeExpression(
+					this, m.captures[1],
+					this.parseString(m.captures[2]));
+			return tmp;
+		}
+
+		// produce statement
+		m = match(text, produceExpression);
+		if (m) {
+			debug(script) {
+				writefln("Script::parseString new produceExpression %s, %s",
+						 m.captures[1], m.captures[2]);
+			}
+			Expression tmp = new ProduceExpression(
 					this, m.captures[1],
 					this.parseString(m.captures[2]));
 			return tmp;

@@ -117,6 +117,26 @@ class ConsumeExpression : Expression {
 }
 
 
+class ProduceExpression : Expression {
+	private string resourceName;
+	private Expression amountExpression;
+
+	public this(Script script, string name, Expression amountExpression) {
+		super(script);
+		this.resourceName = name;
+		this.amountExpression = amountExpression;
+	}
+
+	public override double execute() {
+		ScriptContext context = this.script.getContext();
+		Nation nation = context.getNation();
+		double amount = this.amountExpression.execute();
+
+		return nation.produce(context, this.resourceName, amount);
+	}
+}
+
+
 class Number : Expression {
 	private double value;
 
