@@ -57,7 +57,7 @@ class UI : Renderer {
 					structurePrototype.getName(),
 					structurePrototype.getIconImageName(),
 					NULL_TEXTURE,
-					new SDL_Rect(0, 0, 30, 30),
+					new SDL_Rect(0, 0, 35, 35),
 					&this.client.addStructureHandler,
 					structurePrototype.getPopupText(),
 					STD_FONT);
@@ -140,10 +140,10 @@ class UI : Renderer {
 
 		// structure buttons
 		int structureButtonX = 300;
-		int structureButtonY = this.screenRegion.y + 40;
+		int structureButtonY = this.screenRegion.y + 30;
 		foreach(PopupButton button; this.structureButtons) {
 			button.setXY(structureButtonX, structureButtonY);
-			structureButtonX += 40;
+			structureButtonX += 45;
 		}
 	}
 
