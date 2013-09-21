@@ -1,5 +1,7 @@
 module utils;
 
+import rect;
+
 import derelict.sdl2.sdl;
 
 import std.math;
@@ -32,7 +34,19 @@ bool rectContainsPoint(SDL_Rect *rect, SDL_Point *point) {
 	if (point.x > rect.x + rect.w || point.y > rect.y + rect.h) {
 		return false;
 	}
-	
+
+	return true;
+}
+
+
+bool rectContainsPoint(Rect rect, SDL_Point *point) {
+	if (point.x < rect.x || point.y < rect.y) {
+		return false;
+	}
+	if (point.x > rect.x + rect.w || point.y > rect.y + rect.h) {
+		return false;
+	}
+
 	return true;
 }
 
