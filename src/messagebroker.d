@@ -53,7 +53,9 @@ class MessageBroker {
 		}
 
 		foreach (Observer observer; list) {
-			observer.notify(message);
+			if (observer !is null) {
+				observer.notify(message);
+			}
 		}
 	}
 }
@@ -81,14 +83,20 @@ unittest {
 
 	MessageBroker mb = new MessageBroker();
 	A a = new A();
+	A b = new A();
 	mb.register(a, "event");
+	mb.register(b, "event");
 	assert(a.i == 1);
 	mb.notify("event");
 	assert(a.i == 2);
 	mb.notify("other_event");
 	assert(a.i == 2);
 
+	delete b;
+	assert(b is null);
+	mb.notify("event");
+
 	mb.unregister(a, "event");
 	mb.notify("event");
-	assert(a.i == 2);
+	assert(a.i == 3);
 }
