@@ -3,10 +3,12 @@ module ui.maprenderer;
 import client;
 import color;
 import map;
-import ui.maplayer;
-import ui.maplayers;
+import messagebroker;
+import observer;
 import position;
 import rect;
+import ui.maplayer;
+import ui.maplayers;
 import ui.renderer;
 import ui.renderhelper;
 import world.nation;
@@ -22,7 +24,7 @@ import std.typecons;
 
 static enum Border {BORDER_TOP, BORDER_RIGHT, BORDER_BOTTOM, BORDER_LEFT};
 
-class MapRenderer : Renderer {
+class MapRenderer : Renderer, Observer {
 	private Rebindable!(const(Map)) map;
 	private Rect tileDimensions;
 	private MapLayer[int] mapLayers;
@@ -35,10 +37,14 @@ class MapRenderer : Renderer {
 	private SDL_Point *mouseCoordinate;
 	private SDL_Point *mousePressedCoordinate;
 	private bool mousePressed;
+	private MessageBroker messageBroker;
 
 
-	public this(Client client, RenderHelper renderer) {
+	public this(Client client, RenderHelper renderer,
+				MessageBroker messageBroker) {
 		super(client, renderer);
+		this.messageBroker = messageBroker;
+
 		this.map = this.client.getMap();
 		this.selectedPosition = new Position();
 		this.offset = new SDL_Point(0, 0);
@@ -59,6 +65,23 @@ class MapRenderer : Renderer {
 		this.mapLayers[2] = new MarkerMapLayer(
 				this.selectedPosition, this.mousePosition,
 				this.map.getWidth(), this.map.getHeight());
+
+		this.messageBroker.register(this, "nationChanged");
+	}
+
+
+	public ~this() {
+		this.messageBroker.unregister(this, "nationChanged");
+	}
+
+
+	public override void notify(string message) {
+		// active nation changed
+		if (message == "nationChanged") {
+			// pan to new nation's seat
+			const(Nation) currentNation = this.client.getCurrentNation();
+			this.panToTile(currentNation.getSeat().getPosition());
+		}
 	}
 
 
@@ -86,6 +109,10 @@ class MapRenderer : Renderer {
 	}
 
 
+	/**
+	 * draw tile at given screen coordinate
+	 * takes zoom level into account for tile dimension
+	 **/
 	private void drawTile(int x, int y, string textureName) {
 		SDL_Rect *position = new SDL_Rect();
 		position.x = x;

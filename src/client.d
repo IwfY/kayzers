@@ -2,6 +2,7 @@ module client;
 
 import game;
 import map;
+import messagebroker;
 import position;
 import ui.renderer;
 import ui.rendererfactory;
@@ -22,9 +23,10 @@ public class Client {
 	private Rebindable!(const(Nation)) currentNation;
 	private Renderer renderer;
 	private SDL_Window *window;
-	private bool active;	// player is active and can interact with the game
+	private bool gameActive;
 	private bool running;
 	private Scenario[string] scenarios;
+	private MessageBroker messageBroker;
 
 
 	public this() {
@@ -35,8 +37,11 @@ public class Client {
 			writeln(SDL_GetError());
 		}
 
+		this.messageBroker = new MessageBroker();
+		this.gameActive = false;
+
 		this.renderer = RendererFactory.makeRenderInfrastructure(
-				this, this.window);
+				this, this.window, this.messageBroker);
 
 		this.scenarios = ScenarioLoader.loadScenarios("resources/scenarios");
 	}
@@ -58,7 +63,23 @@ public class Client {
 		this.game.setClient(this);
 		this.game.startNewRound();
 
+		this.gameActive = true;
+		this.messageBroker.notify("gameStarted");
+		this.messageBroker.notify("nationChanged");
+
 		return true;
+	}
+
+	public void stopGame() {
+		this.gameActive = false;
+		this.messageBroker.notify("gameStopped");
+	}
+
+	/**
+	 * returns true if a game is active
+	 **/
+	public bool isGameActive() {
+		return this.gameActive;
 	}
 
 
@@ -75,7 +96,7 @@ public class Client {
 	}
 	public void setCurrentNation(const(Nation) currentNation) {
 		this.currentNation = currentNation;
-		//this.renderer.notifyNationChanged();
+		this.messageBroker.notify("nationChanged");
 	}
 
 

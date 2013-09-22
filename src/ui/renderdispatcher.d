@@ -1,6 +1,7 @@
 module ui.renderdispatcher;
 
 import client;
+import messagebroker;
 import rect;
 import ui.ingamerenderer;
 import ui.mainmenu;
@@ -17,14 +18,17 @@ class RenderDispatcher : Renderer {
 	private RenderState renderState;
 
 
-	public this(Client client, RenderHelper renderer) {
+	public this(Client client, RenderHelper renderer,
+				MessageBroker messageBroker) {
 		super(client, renderer);
 		
 		this.renderState = new RenderState();
 
 		this.mainMenu = new MainMenu(
 				this.client, this.renderer, this.renderState);
-		this.inGameRenderer = new InGameRenderer(this.client, this.renderer);
+
+		this.inGameRenderer = new InGameRenderer(
+				this.client, this.renderer, messageBroker);
 	}
 	
 	
