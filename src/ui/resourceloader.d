@@ -1,10 +1,13 @@
-module resourceloader;
+module ui.resourceloader;
 
 import client;
 import constants;
-import renderhelper;
+import ui.renderhelper;
+import world.nationprototype;
+import world.structureprototype;
 
 import std.stdio;
+import std.string;
 
 class ResourceLoader {
 	public static void loadTexturesAndFonts(RenderHelper renderer) {
@@ -87,7 +90,7 @@ class ResourceLoader {
 
 		// load textures for nations
 		foreach (const(NationPrototype) prototype;
-				 this.client.getNationPrototypes()) {
+				 client.getNationPrototypes()) {
 			debug(2) {
 				writefln("load texture(s) for nation %s",
 						 prototype.getName());
@@ -98,7 +101,7 @@ class ResourceLoader {
 			assert (success,
 					format("ResourceLoader::loadGameTextures " ~
 						   "couldn't load texture %s.'",
-						   structurePrototype.getIconImage()));
+						   prototype.getFlagImage()));
 		}
 	}
 }

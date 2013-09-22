@@ -92,7 +92,7 @@ class StructureManager {
 	public bool isTileEmpty(int i, int j) const {
 		return (this.getStructure(i, j) is null);
 	}
-	public bool isTileEmpty(Position position) const {
+	public bool isTileEmpty(const(Position) position) const {
 		return this.isTileEmpty(position.i, position.j);
 	}
 
@@ -103,7 +103,7 @@ class StructureManager {
 	 **/
 	public bool canBuildStructure(string structurePrototypeName,
 								  const(Nation) nation,
-								  Position position) const {
+								  const(Position) position) const {
 		// is there a structure already?
 		if (!this.isTileEmpty(position)) {
 			return false;
@@ -152,7 +152,7 @@ class StructureManager {
 	 **/
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nationIn,
-							 Position position,
+							 const(Position) position,
 							 bool force=false) {
 		if (!force && !this.canBuildStructure(structurePrototypeName,
 											  nationIn, position)) {
@@ -178,7 +178,7 @@ class StructureManager {
 		// initialize new structure
 		Structure newStructure = new Structure();
 		newStructure.setPrototype(prototype);
-		newStructure.setPosition(position);
+		newStructure.setPosition(new Position(position.i, position.j));
 		newStructure.setNation(nation);
 		newStructure.setCreatingNation(nation);
 

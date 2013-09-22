@@ -1,4 +1,4 @@
-module texturemanager;
+module ui.texturemanager;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;

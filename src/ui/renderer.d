@@ -1,16 +1,20 @@
-module renderer;
+module ui.renderer;
 
-import renderhelper;
+import client;
+import rect;
+import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 
 class Renderer {
+	protected Client client;
 	protected RenderHelper renderer;
-	protected SDL_Rect *screenRegion;
+	protected Rect screenRegion;
 
-	public this(RenderHelper renderer) {
+	public this(Client client, RenderHelper renderer) {
+		this.client = client;
 		this.renderer = renderer;
-		this.screenRegion = new SDL_Rect(0, 0);
+		this.screenRegion = new Rect();
 	}
 	
 	public void setScreenRegion(int x, int y, int w, int h) {

@@ -1,12 +1,13 @@
-module maplayers;
+module ui.maplayers;
 
+import client;
 import constants;
 import map;
-import maplayer;
 import position;
 import rect;
 import structuremanager;
 import utils;
+import ui.maplayer;
 import world.structure;
 import world.structureprototype;
 
@@ -48,16 +49,16 @@ class TileMapLayer : MapLayer {
 
 
 class StructureMapLayer : MapLayer {
-	private const(StructureManager) structureManager;
+	private const(Client) client;
 
-	public this(const(StructureManager) structureManager,
+	public this(const(Client) client,
 				int width, int height) {
 		super(width, height);
-		this.structureManager = structureManager;
+		this.client = client;
 	}
 
 	public override string getTextureName(int i, int j) {
-		const(Structure) structure = this.structureManager.getStructure(i, j);
+		const(Structure) structure = this.client.getStructure(i, j);
 		if (structure !is null) {
 			const(StructurePrototype) prototype = structure.getPrototype();
 			if (prototype !is null) {
@@ -71,13 +72,13 @@ class StructureMapLayer : MapLayer {
 
 
 class MarkerMapLayer : MapLayer {
-	private const(Rect) selectedRegion;
+	private const(Position) selectedPosition;
 	private const(Position) mousePosition;
 
-	public this(const(Rect) selectedRegion,	const(Position) mousePosition,
+	public this(const(Position) selectedPosition, const(Position) mousePosition,
 				int width, int height) {
 		super(width, height);
-		this.selectedRegion = selectedRegion;
+		this.selectedPosition = selectedPosition;
 		this.mousePosition = mousePosition;
 	}
 
@@ -85,7 +86,7 @@ class MarkerMapLayer : MapLayer {
 		if ((i == this.mousePosition.i) && (j == this.mousePosition.j)) {
 			return "mouseTile";
 		}
-		if ((i == this.selectedRegion.x) && (j == this.selectedRegion.y)) {
+		if ((i == this.selectedPosition.i) && (j == this.selectedPosition.j)) {
 			return "selectedTile";
 		}
 		return NULL_TEXTURE;

@@ -2,8 +2,10 @@ module ui.textinputrenderer;
 
 import client;
 import constants;
-import renderer;
-import renderhelper;
+import textinput;
+import ui.renderer;
+import ui.renderhelper;
+import ui.renderstate;
 import ui.labelbutton;
 import ui.inputbox;
 import ui.widget;
@@ -16,12 +18,17 @@ class TextInputRenderer : Renderer {
 	private Widget mouseOverWidget;	// reference to widget under mouse
 	private InputBox inputBox;
 	private LabelButton okButton;
+	private TextInput textInputServer;
+	private RenderState renderState;
 	
 	private string *textPointer;
 
 
-	public this(RenderHelper renderer) {
-		super(renderer);
+	public this(Client client, RenderHelper renderer, RenderState renderState) {
+		super(client, renderer);
+		
+		this.renderState = renderState;
+		this.textInputServer = new TextInput();
 
 		this.initWidgets();
 	}
@@ -29,7 +36,8 @@ class TextInputRenderer : Renderer {
 
 	private void initWidgets() {
 		this.inputBox = new InputBox(
-				this.renderer, "inputBox", "mainmenu_button",
+				this.renderer, this.textInputServer,
+				"inputBox", "mainmenu_button",
 				new SDL_Rect(this.screenRegion.x, this.screenRegion.y, 200, 30),
 				STD_FONT);
 		this.allWidgets ~= this.inputBox;
@@ -49,12 +57,11 @@ class TextInputRenderer : Renderer {
 
 	public void setTextPointer(string *textPointer) {
 		this.inputBox.setTextPointer(textPointer);
-		
 	}
 
 
 	private void okButtonCallback(string message) {
-		this.renderer.restoreState();
+		this.renderState.restoreState();
 		// set pointers to zero
 		this.inputBox.setTextPointer(null);
 	}

@@ -1,4 +1,4 @@
-module fontmanager;
+module ui.fontmanager;
 
 import rect;
 

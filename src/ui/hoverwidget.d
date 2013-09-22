@@ -1,7 +1,7 @@
 module ui.hoverwidget;
 
 import utils;
-import renderhelper;
+import ui.renderhelper;
 import ui.widget;
 
 import derelict.sdl2.sdl;

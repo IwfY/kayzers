@@ -2,9 +2,9 @@ module ui.inputbox;
 
 import observer;
 import rect;
-import renderhelper;
 import textinput;
 import utils;
+import ui.renderhelper;
 import ui.widget;
 
 import derelict.sdl2.sdl;
@@ -19,6 +19,7 @@ class InputBox : Widget, Observer {
 	private TextInput textInputServer;
 
 	public this(RenderHelper renderer,
+				TextInput textInputServer,
 				string name,
 				string textureName,
 				SDL_Rect *bounds,
@@ -32,7 +33,7 @@ class InputBox : Widget, Observer {
 			this.color = color;
 		}
 
-		this.textInputServer = this.renderer.getTextInputServer();
+		this.textInputServer = textInputServer;
 	}
 
 

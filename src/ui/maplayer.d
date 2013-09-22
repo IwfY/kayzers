@@ -1,4 +1,4 @@
-module maplayer;
+module ui.maplayer;
 
 abstract class MapLayer {
 	protected int width;

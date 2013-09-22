@@ -1,15 +1,14 @@
-module maprenderer;
+module ui.maprenderer;
 
 import client;
 import color;
-import game;
 import map;
-import maplayer;
-import maplayers;
+import ui.maplayer;
+import ui.maplayers;
 import position;
 import rect;
-import renderer;
-import renderhelper;
+import ui.renderer;
+import ui.renderhelper;
 import world.nation;
 import world.structure;
 import world.structureprototype;
@@ -25,15 +24,13 @@ static enum Border {BORDER_TOP, BORDER_RIGHT, BORDER_BOTTOM, BORDER_LEFT};
 
 class MapRenderer : Renderer {
 	private Rebindable!(const(Map)) map;
-	private const(Game) game;
-	private Client client;
 	private Rect tileDimensions;
 	private MapLayer[int] mapLayers;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
-	private Rect selectedRegion;	// in tile coordinates (i, j)
+	private Position selectedPosition;	// in tile coordinates (i, j)
 	private Position mousePosition;
 	private SDL_Point *mouseCoordinate;
 	private SDL_Point *mousePressedCoordinate;
@@ -41,12 +38,9 @@ class MapRenderer : Renderer {
 
 
 	public this(Client client, RenderHelper renderer) {
-		super(renderer);
-		this.client = client;
-		this.game = this.client.getGame();
-		this.renderer = renderer;
+		super(client, renderer);
 		this.map = this.client.getMap();
-		this.selectedRegion = new Rect();
+		this.selectedPosition = new Position();
 		this.offset = new SDL_Point(0, 0);
 		this.mouseCoordinate = new SDL_Point(0, 0);
 		this.mousePosition = new Position(0, 0);
@@ -60,10 +54,10 @@ class MapRenderer : Renderer {
 											 this.map.getWidth(),
 											 this.map.getHeight());
 		this.mapLayers[1] = new StructureMapLayer(
-				this.game.getStructureManager(),
+				this.client,
 				this.map.getWidth(), this.map.getHeight());
 		this.mapLayers[2] = new MarkerMapLayer(
-				this.selectedRegion, this.mousePosition,
+				this.selectedPosition, this.mousePosition,
 				this.map.getWidth(), this.map.getHeight());
 	}
 
@@ -329,8 +323,8 @@ class MapRenderer : Renderer {
 	}
 
 
-	public Position getSelectedPosition() {
-		return new Position(this.selectedRegion.x, this.selectedRegion.y);
+	public const(Position) getSelectedPosition() const {
+		return this.selectedPosition;
 	}
 
 
@@ -354,13 +348,13 @@ class MapRenderer : Renderer {
 			}
 			// selected region WASD
 			else if (event.key.keysym.sym == SDLK_w) {
-				this.selectedRegion.y -= 1;
+				this.selectedPosition.j -= 1;
 			} else if (event.key.keysym.sym == SDLK_d) {
-				this.selectedRegion.x += 1;
+				this.selectedPosition.i += 1;
 			} else if (event.key.keysym.sym == SDLK_s) {
-				this.selectedRegion.y += 1;
+				this.selectedPosition.j += 1;
 			} else if (event.key.keysym.sym == SDLK_a) {
-				this.selectedRegion.x -= 1;
+				this.selectedPosition.i -= 1;
 			}
 			// map offset - array keys
 			else if (event.key.keysym.sym == SDLK_UP) {
@@ -397,8 +391,8 @@ class MapRenderer : Renderer {
 			if (rectContainsPoint(this.screenRegion, this.mouseCoordinate)) {
 				// select tile
 				this.getTileAtPixel(this.mouseCoordinate,
-									this.selectedRegion.x,
-									this.selectedRegion.y);
+									this.selectedPosition.i,
+									this.selectedPosition.j);
 			}
 		}
 		// mouse motion
@@ -459,7 +453,7 @@ class MapRenderer : Renderer {
 			}
 
 			// draw structures
-			foreach (const(Structure) structure; this.game.getStructures()) {
+			foreach (const(Structure) structure; this.client.getStructures()) {
 				const(StructurePrototype) prototype = structure.getPrototype();
 				const(Position) position = structure.getPosition();
 				const(Nation) nation = structure.getNation();
@@ -469,7 +463,7 @@ class MapRenderer : Renderer {
 
 				// top neighbor border
 				Rebindable!(const(Structure)) neighbor =
-						this.game.getStructure(position.i, position.j - 1);
+						this.client.getStructure(position.i, position.j - 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -478,7 +472,7 @@ class MapRenderer : Renderer {
 				}
 				// right neighbor border
 				neighbor =
-						this.game.getStructure(position.i + 1, position.j);
+						this.client.getStructure(position.i + 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -487,7 +481,7 @@ class MapRenderer : Renderer {
 				}
 				// bottom neighbor border
 				neighbor =
-						this.game.getStructure(position.i, position.j + 1);
+						this.client.getStructure(position.i, position.j + 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -496,7 +490,7 @@ class MapRenderer : Renderer {
 				}
 				// left neighbor border
 				neighbor =
-						this.game.getStructure(position.i - 1, position.j);
+						this.client.getStructure(position.i - 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,

@@ -2,10 +2,13 @@ module client;
 
 import game;
 import map;
-import renderhelper;
+import position;
+import ui.renderer;
+import ui.rendererfactory;
 import world.nation;
 import world.nationprototype;
 import world.scenario;
+import world.structure;
 import world.structureprototype;
 
 import derelict.sdl2.sdl;
@@ -17,7 +20,7 @@ import std.typecons;
 public class Client {
 	private Game game;
 	private Rebindable!(const(Nation)) currentNation;
-	private RenderHelper renderer;
+	private Renderer renderer;
 	private SDL_Window *window;
 	private bool active;	// player is active and can interact with the game
 	private bool running;
@@ -32,7 +35,8 @@ public class Client {
 			writeln(SDL_GetError());
 		}
 
-		this.renderer = new RenderHelper(this, this.window);
+		this.renderer = RendererFactory.makeRenderInfrastructure(
+				this, this.window);
 
 		this.scenarios = ScenarioLoader.loadScenarios("resources/scenarios");
 	}
@@ -58,14 +62,6 @@ public class Client {
 	}
 
 
-	public void addStructureHandler(string structureName) {
-		//TODO: if selected region bigger 1x1 --> multiple addStructure calls
-		this.game.addStructure(structureName,
-							   this.currentNation,
-							   this.renderer.getSelectedPosition());
-	}
-
-
 	public const(StructurePrototype[]) getStructurePrototypes() const {
 		return this.game.getStructurePrototypes();
 	}
@@ -79,16 +75,29 @@ public class Client {
 	}
 	public void setCurrentNation(const(Nation) currentNation) {
 		this.currentNation = currentNation;
-		this.renderer.notifyNationChanged();
+		//this.renderer.notifyNationChanged();
 	}
 
 
-	public const(Game) getGame() const {
-		return this.game;
+	public bool addStructure(string structurePrototypeName,
+							 const(Nation) nation,
+							 const(Position) position) {
+		return this.game.addStructure(structurePrototypeName, nation, position);
+	}
+
+	public const(Structure[]) getStructures() const {
+		return this.game.getStructures();
+	}
+	public const(Structure) getStructure(int i, int j) const {
+		return this.game.getStructure(i, j);
 	}
 
 	public const(Map) getMap() const {
 		return this.game.getMap();
+	}
+
+	public const(int) getCurrentYear() const {
+		return this.game.getCurrentYear();
 	}
 
 

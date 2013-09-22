@@ -1,8 +1,8 @@
 module ui.popupbutton;
 
-import renderhelper;
 import ui.labelbutton;
 import ui.hoverwidget;
+import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 

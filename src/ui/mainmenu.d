@@ -1,29 +1,29 @@
 module ui.mainmenu;
 
 import client;
-import renderer;
-import renderhelper;
 import ui.button;
-import ui.inputbox;
 import ui.label;
 import ui.labelbutton;
+import ui.renderer;
+import ui.renderhelper;
+import ui.renderstate;
 import ui.widget;
 
 import derelict.sdl2.sdl;
 
 class MainMenu : Renderer {
-	private Client client;
 	private Label head;
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
 	private LabelButton settingsButton;
 	private Widget[] allWidgets;
 	private Widget mouseOverWidget;	// reference to widget under mouse
+	private RenderState renderState;
 
-	public this(Client client, RenderHelper renderer) {
-		super(renderer);
-		this.client = client;
+	public this(Client client, RenderHelper renderer, RenderState renderState) {
+		super(client, renderer);
 		this.mouseOverWidget = null;
+		this.renderState = renderState;
 
 		this.initWidgets();
 	}
@@ -82,7 +82,7 @@ class MainMenu : Renderer {
 	}
 
 	public override void render() {
-		this.updateWidgets;
+		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
 		foreach (Widget widget; this.allWidgets) {
 			widget.render();
@@ -94,9 +94,9 @@ class MainMenu : Renderer {
 			this.client.stop();
 		} else if (message == "newGame") {
 			this.client.startGame("Endless Game");
-			this.renderer.setState(RendererState.MAP);
+			this.renderState.setState(Modus.IN_GAME);
 		} else if (message == "settings") {
-			this.renderer.setState(RendererState.INPUT_POPUP);
+			//this.renderer.setState(RendererState.INPUT_POPUP);
 		}
 	}
 

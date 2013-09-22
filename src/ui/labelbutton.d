@@ -1,9 +1,10 @@
 module ui.labelbutton;
 
-import renderhelper;
+import rect;
 import ui.button;
 import ui.label;
 import ui.hoverwidget;
+import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 
@@ -42,7 +43,7 @@ class LabelButton : HoverWidget {
 	}
 
 	public override void centerHorizontally() {
-		SDL_Rect *screenRegion = this.renderer.getScreenRegion();
+		Rect screenRegion = this.renderer.getScreenRegion();
 		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
 
 		this.button.centerHorizontally();

@@ -1,9 +1,9 @@
 module ui.label;
 
 import rect;
-import renderhelper;
 import utils;
 import ui.widget;
+import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 

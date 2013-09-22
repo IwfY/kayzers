@@ -1,7 +1,8 @@
 module ui.widget;
 
+import rect;
 import utils;
-import renderhelper;
+import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 
@@ -57,7 +58,7 @@ abstract class Widget {
 	}
 	
 	public void centerHorizontally() {
-		SDL_Rect *screenRegion = this.renderer.getScreenRegion();
+		Rect screenRegion = this.renderer.getScreenRegion();
 		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
 	}
 

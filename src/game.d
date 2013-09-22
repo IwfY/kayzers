@@ -185,7 +185,7 @@ public class Game {
 
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nation,
-							 Position position) {
+							 const(Position) position) {
 		return this.structureManager.addStructure(structurePrototypeName,
 												  nation,
 												  position);

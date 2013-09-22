@@ -1,11 +1,10 @@
-module renderhelper;
+module ui.renderhelper;
 
 import color;
 import constants;
-import fontmanager;
+import ui.fontmanager;
 import rect;
-import textinput;
-import texturemanager;
+import ui.texturemanager;
 import utils;
 
 import derelict.sdl2.sdl;
@@ -25,11 +24,6 @@ class RenderHelper {
 	private TextureManager textures;
 	private FontManager fonts;
 	private SDL_Window *window;
-	private TextInput textInput;
-
-//DEBUGGING
-	private string test;
-//DEBUGGING END
 
 
 	public this(SDL_Window *window) {
@@ -43,18 +37,10 @@ class RenderHelper {
 		if (this.renderer is null) {
 			writeln(SDL_GetError());
 		}
-		
+
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
-
-		this.textInput = new TextInput();
-		
-		this.textInputRenderer = new TextInputRenderer(this);
-
-		//DEBUGGING
-		this.textInputRenderer.setTextPointer(&(this.test));
-		//DEBUGGING END
 	}
 
 
@@ -94,6 +80,10 @@ class RenderHelper {
 	 **/
 	public bool registerTexture(const string textureName,
 							    const string filename) {
+		debug(2) {
+			writefln("RenderHelper::registerTexture %s as %s",
+					 filename, textureName);
+		}
 		return this.textures.registerTexture(textureName, filename);
 	}
 
@@ -103,10 +93,12 @@ class RenderHelper {
 	 *
 	 * @param fontName key to the font manager
 	 * @param filename path to the font to load
+	 * @param textSize font height in pixel
 	 **/
-	public bool registerFont(const string fontName,
-							 const string filename) {
-		return this.fonts.registerFont(fontName, filename);
+	public bool registerFont(string fontName,
+							 string filename,
+							 const int textSize = 12) {
+		return this.fonts.registerFont(fontName, filename, textSize);
 	}
 
 
@@ -176,6 +168,10 @@ class RenderHelper {
 		this.drawTexture(x, y, texture);
 	}
 
+	public void drawTexture(const(Rect) dest, const string textureName) {
+		this.drawTexture(dest.x, dest.y, dest.w, dest.h, textureName);
+	}
+
 	public void drawTexture(int x, int y, int w, int h,
 						    const string textureName) {
 		SDL_Rect *position = new SDL_Rect();
@@ -224,8 +220,7 @@ class RenderHelper {
 	 **/
 	public void drawLine(int x1, int y1, int x2, int y2, const(Color) color) {
 		SDL_SetRenderDrawBlendMode(this.renderer, SDL_BLENDMODE_BLEND);
-		SDL_SetRenderDrawColor(this.renderer,
-							   color.r, color.g, color.b, color.a);
+		this.setDrawColor(color.r, color.g, color.b, color.a);
 		SDL_RenderDrawLine(this.renderer, x1, y1, x2, y2);
 	}
 
@@ -242,8 +237,18 @@ class RenderHelper {
 		return region;
 	}
 
+	public void setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a=255) {
+		SDL_SetRenderDrawColor(this.renderer, r, g, b, a);
+	}
 
-	public TextInput getTextInputServer() {
-		return this.textInput;
+	/**
+	 * clear the screen
+	 **/
+	public void clear() {
+		SDL_RenderClear(this.renderer);
+	}
+	
+	public void  renderPresent() {
+		SDL_RenderPresent(this.renderer);
 	}
 }

@@ -2,16 +2,16 @@ module ui.ui;
 
 import client;
 import constants;
-import game;
 import map;
 import position;
 import rect;
-import renderer;
-import renderhelper;
 import utils;
 import ui.button;
 import ui.image;
+import ui.maprenderer;
 import ui.popupbutton;
+import ui.renderer;
+import ui.renderhelper;
 import ui.widget;
 import world.nation;
 import world.nationprototype;
@@ -26,23 +26,21 @@ import std.stdio;
 import std.string;
 
 class UI : Renderer {
-	private const(Game) game;
-	private Client client;
 	private const(Map) map;
 	private Widget[] widgets;
 	private Widget mouseOverWidget;	// reference to widget under mouse
 	private PopupButton[] structureButtons;
 	private Image tileImage;
 	private Image structureImage;
+	private const(MapRenderer) mapRenderer;
 
 
 
-	public this(Client client, RenderHelper renderer) {
-		super(renderer);
-		this.client = client;
-		this.game = this.client.getGame();
+	public this(Client client, RenderHelper renderer,
+				const(MapRenderer) mapRenderer) {
+		super(client, renderer);
+		this.mapRenderer = mapRenderer;
 		this.map = this.client.getMap();
-		this.renderer = renderer;
 
 		this.initWidgets();
 	}
@@ -58,7 +56,7 @@ class UI : Renderer {
 					structurePrototype.getIconImageName(),
 					NULL_TEXTURE,
 					new SDL_Rect(0, 0, 35, 35),
-					&this.client.addStructureHandler,
+					&this.addStructureHandler,
 					structurePrototype.getPopupText(),
 					STD_FONT);
 		   this.structureButtons ~= button;
@@ -81,8 +79,9 @@ class UI : Renderer {
 
 	private void updateWidgets() {
 		// selected structure and tile display
-		Position selectedPosition = this.renderer.getSelectedPosition();
-		const(Rect) tileDimensions = this.renderer.getTileDimensions();
+		const(Position) selectedPosition =
+				this.mapRenderer.getSelectedPosition();
+		const(Rect) tileDimensions = this.mapRenderer.getTileDimensions();
 		if (selectedPosition !is null) {
 			bool isOnMap = this.map.isPositionInMap(selectedPosition.i,
 													selectedPosition.j);
@@ -100,8 +99,8 @@ class UI : Renderer {
 
 				// structure
 				const(Structure) structure =
-					this.game.getStructure(selectedPosition.i,
-										   selectedPosition.j);
+					this.client.getStructure(selectedPosition.i,
+											 selectedPosition.j);
 				if (structure !is null) {
 					const(StructurePrototype) prototype =
 							structure.getPrototype();
@@ -145,6 +144,13 @@ class UI : Renderer {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
+	}
+
+
+	public void addStructureHandler(string structureName) {
+		this.client.addStructure(structureName,
+							     this.client.getCurrentNation(),
+							     this.mapRenderer.getSelectedPosition());
 	}
 
 
@@ -217,7 +223,7 @@ class UI : Renderer {
 		// year
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
 							    this.screenRegion.y + 160,
-							    "Year " ~ text(this.game.getCurrentYear()));
+							    "Year " ~ text(this.client.getCurrentYear()));
 
 		this.updateWidgets();
 
