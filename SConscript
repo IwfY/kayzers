@@ -3,8 +3,10 @@ srcFiles = Split("""
     src/color.d
     src/constants.d
     src/game.d
+    src/list.d
     src/main.d
     src/map.d
+    src/messagebroker.d
     src/observable.d
     src/observer.d
     src/player.d
@@ -72,7 +74,7 @@ dPath = ['/usr/include/d',
 
 env = Environment()
 env.Append(DPATH   = dPath)
-env.Append(DFLAGS  = ['-debug=3'])
+env.Append(DFLAGS  = ['-debug=3', '-unittest'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)
 default = env.Program(target = 'kayzers', source = srcFiles)

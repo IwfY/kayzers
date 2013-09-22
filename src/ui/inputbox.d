@@ -61,7 +61,7 @@ class InputBox : Widget, Observer {
 		}
 	}
 
-	public override void notify() {
+	public override void notify(string message) {
 		if (this.text is null) {
 			return;
 		}

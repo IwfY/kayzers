@@ -1,5 +1,5 @@
 module observer;
 
 interface Observer {
-	public void notify();
+	public void notify(string message);
 }
