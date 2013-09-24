@@ -138,7 +138,7 @@ public class Map {
 		//TODO check byte format of image
 		for(int i = 0; i < this.height * this.width; ++i) {
 			//tiles ~= *cast(byte*)(pixelPointer);
-			if (*cast(byte*)(pixelPointer) == 0) {	// land
+			if (*cast(ubyte*)(pixelPointer) == 0) {	// land
 				this.tiles ~= Map.LAND;
 			} else {								// water
 				this.tiles ~= Map.WATER;
