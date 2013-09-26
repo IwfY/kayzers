@@ -7,6 +7,7 @@ import messagebroker;
 import observer;
 import position;
 import rect;
+import ui.cloudrenderer;
 import ui.maplayer;
 import ui.maplayers;
 import ui.renderer;
@@ -28,6 +29,7 @@ class MapRenderer : Renderer, Observer {
 	private Rebindable!(const(Map)) map;
 	private Rect tileDimensions;
 	private MapLayer[int] mapLayers;
+	private CloudRenderer cloudRenderer;
 
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
@@ -65,6 +67,8 @@ class MapRenderer : Renderer, Observer {
 		this.mapLayers[2] = new MarkerMapLayer(
 				this.selectedPosition, this.mousePosition,
 				this.map.getWidth(), this.map.getHeight());
+		this.cloudRenderer = new CloudRenderer(
+				this.client, this.renderer, this, this.map);
 
 		this.messageBroker.register(this, "nationChanged");
 	}
@@ -72,6 +76,7 @@ class MapRenderer : Renderer, Observer {
 
 	public ~this() {
 		this.messageBroker.unregister(this, "nationChanged");
+		delete this.cloudRenderer;
 	}
 
 
@@ -92,7 +97,7 @@ class MapRenderer : Renderer, Observer {
 		int x1, y1, x2, y2, iCenter, jCenter;
 		this.offset.x = 0;
 		this.offset.y = 0;
-		this.getTopLeftScreenCoordinate(i, j, x1, y1);
+		this.getTopLeftTileCoordinate(i, j, x1, y1);
 		this.offset.x = -x1;
 		this.offset.y = -y1;
 		this.getTileAtPixel(new SDL_Point(this.screenRegion.w / 2,
@@ -100,7 +105,7 @@ class MapRenderer : Renderer, Observer {
 							iCenter, jCenter);
 		this.offset.x = 0;
 		this.offset.y = 0;
-		this.getTopLeftScreenCoordinate(iCenter, jCenter, x2, y2);
+		this.getTopLeftTileCoordinate(iCenter, jCenter, x2, y2);
 		this.offset.x = -x1 + (x2 - x1) * this.zoom;
 		this.offset.y = -y1 + (y2 - y1) * this.zoom;
 	}
@@ -131,7 +136,7 @@ class MapRenderer : Renderer, Observer {
 
 	private void drawTileIJ(int i, int j, string textureName) {
 		SDL_Rect *position = new SDL_Rect();
-		this.getTopLeftScreenCoordinate(i, j, position.x, position.y);
+		this.getTopLeftTileCoordinate(i, j, position.x, position.y);
 
 		position.w = cast(int)(round(
 			ceil(cast(double)this.tileDimensions.w / cast(double)this.zoom)));
@@ -151,7 +156,7 @@ class MapRenderer : Renderer, Observer {
 				cast(double)this.tileDimensions.h /
 				cast(double)this.zoom));
 
-		this.getTopLeftScreenCoordinate(i, j, x, y);
+		this.getTopLeftTileCoordinate(i, j, x, y);
 
 		if (border == Border.BORDER_TOP) {
 			this.renderer.drawLine(x + cast(int)(0.5 * tileWidth),
@@ -232,7 +237,7 @@ class MapRenderer : Renderer, Observer {
 		int x, y;
 		double distance, minDistance;
 		// check for distances to 4 surounding tiles
-		this.getTopLeftScreenCoordinate(
+		this.getTopLeftTileCoordinate(
 			cast(int)floor(nearestI), cast(int)floor(nearestJ), x, y);
 		x += 0.5 * tileWidth;
 		y += 0.5 * tileHeight;
@@ -240,7 +245,7 @@ class MapRenderer : Renderer, Observer {
 		i = cast(int)floor(nearestI);
 		j = cast(int)floor(nearestJ);
 
-		this.getTopLeftScreenCoordinate(
+		this.getTopLeftTileCoordinate(
 			cast(int)floor(nearestI), cast(int)ceil(nearestJ), x, y);
 		x += 0.5 * tileWidth;
 		y += 0.5 * tileHeight;
@@ -251,7 +256,7 @@ class MapRenderer : Renderer, Observer {
 			j = cast(int)ceil(nearestJ);
 		}
 
-		this.getTopLeftScreenCoordinate(
+		this.getTopLeftTileCoordinate(
 			cast(int)ceil(nearestI), cast(int)floor(nearestJ), x, y);
 		x += 0.5 * tileWidth;
 		y += 0.5 * tileHeight;
@@ -262,7 +267,7 @@ class MapRenderer : Renderer, Observer {
 			j = cast(int)floor(nearestJ);
 		}
 
-		this.getTopLeftScreenCoordinate(
+		this.getTopLeftTileCoordinate(
 			cast(int)ceil(nearestI), cast(int)ceil(nearestJ), x, y);
 		x += 0.5 * tileWidth;
 		y += 0.5 * tileHeight;
@@ -282,8 +287,8 @@ class MapRenderer : Renderer, Observer {
 	/**
 	 * get the top left coordinate of a tile drawn in column i, row j
 	 **/
-	private void getTopLeftScreenCoordinate(int i, int j,
-											out int x, out int y) {
+	private void getTopLeftTileCoordinate(int i, int j,
+										  out int x, out int y) {
 		double tileWidth =
 				cast(double)this.tileDimensions.w /
 				cast(double)this.zoom;
@@ -304,8 +309,39 @@ class MapRenderer : Renderer, Observer {
 				offsetY + j * 0.5 * tileHeight + i * 0.5 * tileHeight));
 
 		debug(3) {
-			writefln("MapRenderer::getTopLeftScreenCoordinate i: %d, j: %d --> x: %d, y:%d",
+			writefln("MapRenderer::getTopLeftTileCoordinate i: %d, j: %d --> x: %d, y:%d",
 					 i, j, x, y);
+		}
+	}
+
+
+	/**
+	 * get the coordinate of a tile drawn in column i, row j
+	 **/
+	public void getFractionalTileCoordinate(double i, double j,
+											 out int x, out int y) {
+		int xTopLeft, yTopLeft;
+		this.getTopLeftTileCoordinate(cast(int)(floor(i)), cast(int)(floor(j)),
+		                              xTopLeft, yTopLeft);
+		double iFraction = i - cast(int)(floor(i));
+		double jFraction = j - cast(int)(floor(j));
+
+		double tileWidth =
+			cast(double)this.tileDimensions.w /
+				cast(double)this.zoom;
+		double tileHeight =
+			cast(double)this.tileDimensions.h /
+				cast(double)this.zoom;
+		
+		x = cast(int)(round(
+			xTopLeft + iFraction * 0.5 * tileWidth - jFraction * 0.5 * tileWidth));
+		y = cast(int)(round(
+			yTopLeft + jFraction * 0.5 * tileHeight + iFraction * 0.5 * tileHeight));
+		
+		debug(3) {
+			writefln("MapRenderer::getFractionalTileCoordinate " ~
+			         "i: %f, j: %f --> x: %d, y:%d",
+			         i, j, x, y);
 		}
 	}
 
@@ -350,8 +386,19 @@ class MapRenderer : Renderer, Observer {
 	}
 
 
+	public const(int) getZoom() const {
+		return this.zoom;
+	}
+
+
 	public const(Position) getSelectedPosition() const {
 		return this.selectedPosition;
+	}
+
+
+	public override void setScreenRegion(int x, int y, int w, int h) {
+		super.setScreenRegion(x, y, w, h);
+		this.cloudRenderer.setScreenRegion(x, y, w, h);
 	}
 
 
@@ -486,7 +533,7 @@ class MapRenderer : Renderer, Observer {
 				const(Nation) nation = structure.getNation();
 				const(Color) color = nation.getColor();
 				int x, y;
-				this.getTopLeftScreenCoordinate(position.i, position.j, x, y);
+				this.getTopLeftTileCoordinate(position.i, position.j, x, y);
 
 				// top neighbor border
 				Rebindable!(const(Structure)) neighbor =
@@ -525,6 +572,9 @@ class MapRenderer : Renderer, Observer {
 									color);
 				}
 			}
+
+			//clouds
+			this.cloudRenderer.render();
 
 
 

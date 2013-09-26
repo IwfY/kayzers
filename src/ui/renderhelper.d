@@ -225,6 +225,15 @@ class RenderHelper {
 	}
 
 
+	public void drawRect(Rect rect, const(Color) color = null) {
+		if (color !is null) {
+			this.setDrawColor(color.r, color.g, color.b, color.a);
+		}
+		SDL_Rect *dest = new SDL_Rect(rect.x, rect.y, rect.w, rect.h);
+		SDL_RenderDrawRect(this.renderer, dest);
+	}
+
+
 	/**
 	 * get the rectangular region of the screen
 	 **/
