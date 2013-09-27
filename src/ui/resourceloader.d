@@ -24,6 +24,7 @@ class ResourceLoader {
 		renderer.registerTexture("tile_3_2", "resources/img/trees2.png");
 
 		renderer.registerTexture("cloud", "resources/img/cloud.png");
+		renderer.registerTexture("cloud2", "resources/img/cloud2.png");
 
 		renderer.registerTexture("mouseTile",
 								 "resources/img/grid_border.png");

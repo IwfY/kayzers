@@ -56,7 +56,7 @@ class CloudRenderer : Renderer {
 
 		// new clouds should be created at border
 		if (atBorder) {
-			if (dice(1, 1)) {	// 50% 
+			if (dice(1, 1)) {	// 50%
 				if (this.moveDirectionI >= 0) {
 					cloud.position.i = -10;
 				} else {
@@ -77,6 +77,12 @@ class CloudRenderer : Renderer {
 		}
 
 		cloud.speed = 0.7 + uniform(0.0, 0.6, random);
+
+		if (dice(0.25, 0.75)) {	// 75%
+			cloud.textureName = "cloud";
+		} else {
+			cloud.textureName = "cloud2";
+		}
 	}
 
 	public override void handleEvent(SDL_Event event) {
@@ -87,8 +93,6 @@ class CloudRenderer : Renderer {
 		if (dice(200, 1)) {	// 0.5%
 			this.moveDirectionI += uniform(0.0, 0.01) - 0.005;
 			this.moveDirectionJ += uniform(0.0, 0.01) - 0.005;
-				import std.stdio;
-				writeln("CloudRenderer::render moveDir changed");
 		}
 
 		double zoom = cast(double)(this.mapRenderer.getZoom());
