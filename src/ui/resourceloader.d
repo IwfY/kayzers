@@ -64,6 +64,11 @@ class ResourceLoader {
 								 "resources/img/ui/border_round_30.png");
 		renderer.registerTexture(NULL_TEXTURE,
 								 "resources/img/ui/null.png");
+		// icons
+		renderer.registerTexture("gold",
+								 "resources/img/ui/gold.png");
+		renderer.registerTexture("inhabitants",
+								 "resources/img/ui/inhabitants.png");
 
 		//TODO make portable
 		renderer.registerFont(STD_FONT, "/usr/share/fonts/TTF/DejaVuSans.ttf");

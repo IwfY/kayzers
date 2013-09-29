@@ -80,6 +80,20 @@ class Nation : ScriptContext {
 		return this.resources;
 	}
 
+	public const(double) getTotalResourceAmount(string resourceName) const {
+		double amount = 0.0;
+
+		// global amount
+		amount += this.resources.getResourceAmount(resourceName);
+
+		// amount per structure
+		foreach (const(Structure) structure; this.structures) {
+			amount += structure.getResources().getResourceAmount(resourceName);
+		}
+
+		return amount;
+	}
+
 	public const(NationPrototype) getPrototype() const {
 		return this.prototype;
 	}

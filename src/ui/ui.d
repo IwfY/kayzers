@@ -23,6 +23,7 @@ import world.structureprototype;
 import derelict.sdl2.sdl;
 
 import std.conv;
+import std.math;
 import std.stdio;
 import std.string;
 
@@ -223,13 +224,26 @@ class UI : Renderer {
 		// resource text
 		string resourceString;
 		const(ResourceManager) resources = nation.getResources();
-		foreach (string resourceName; resources.getResources().keys) {
-			resourceString ~= resourceName ~ ": " ~
-					text(resources.getResourceAmount(resourceName)) ~
-					"; ";
-		}
-		this.renderer.drawText(200, this.screenRegion.y + 160,
-								resourceString);
+
+		// gold
+		this.renderer.drawTexture(200, this.screenRegion.y + 160, "gold");
+		this.renderer.drawText(
+				220, this.screenRegion.y + 160,
+				text(floor(resources.getResourceAmount("gold"))));
+		// inhabitants
+		this.renderer.drawTexture(300, this.screenRegion.y + 160,
+								  "inhabitants");
+		this.renderer.drawText(
+				320, this.screenRegion.y + 160,
+				text(floor(nation.getTotalResourceAmount("inhabitants"))));
+		// build token
+		this.renderer.drawText(
+				300,
+				this.screenRegion.y + 12,
+				"Available build token: " ~
+				text(floor(nation.getTotalResourceAmount("structureToken"))));
+
+
 
 		// year
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
