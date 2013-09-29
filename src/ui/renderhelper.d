@@ -246,6 +246,13 @@ class RenderHelper {
 		SDL_RenderDrawRect(this.renderer, dest);
 	}
 
+	public void drawPoint(int x, int y, const(Color) color = null) {
+		if (color !is null) {
+			this.setDrawColor(color.r, color.g, color.b, color.a);
+		}
+		SDL_RenderDrawPoint(this.renderer, x, y);
+	}
+
 
 	/**
 	 * get the rectangular region of the screen
@@ -261,6 +268,31 @@ class RenderHelper {
 
 	public void setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a=255) {
 		SDL_SetRenderDrawColor(this.renderer, r, g, b, a);
+	}
+
+
+	/**
+	 * create a texture and set it as rendering target
+	 * texture is made accessable through given texture name
+	 **/
+	public void setRenderTargetTexture(string name, int width, int height) {
+		SDL_Texture* target = SDL_CreateTexture(
+				this.renderer,
+				SDL_PIXELFORMAT_RGBA8888,
+				SDL_TEXTUREACCESS_TARGET,
+				width, height);
+
+		this.textures.registerTexture(name, target);
+
+		SDL_SetRenderTarget(this.renderer, target);
+	}
+
+
+	/**
+	 * set render target to default
+	 **/
+	public void resetRenderTarget() {
+		SDL_SetRenderTarget(this.renderer, null);
 	}
 
 	/**

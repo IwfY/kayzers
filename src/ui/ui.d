@@ -9,6 +9,7 @@ import utils;
 import ui.button;
 import ui.image;
 import ui.maprenderer;
+import ui.minimap;
 import ui.popupbutton;
 import ui.renderer;
 import ui.renderhelper;
@@ -33,6 +34,7 @@ class UI : Renderer {
 	private Image tileImage;
 	private Image structureImage;
 	private const(MapRenderer) mapRenderer;
+	private MiniMap miniMap;
 
 
 
@@ -74,6 +76,12 @@ class UI : Renderer {
 									    NULL_TEXTURE,
 									    new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.structureImage;
+
+		// mini map
+		this.miniMap = new MiniMap(this.renderer, "minimap", "minimap_bg",
+								   new SDL_Rect(0, 0, 160, 160),
+								   this.map);
+		this.widgets ~= this.miniMap;
 	}
 
 
@@ -144,6 +152,10 @@ class UI : Renderer {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
+
+		// minimap
+		this.miniMap.setXY(this.screenRegion.x + this.screenRegion.w - 170,
+						   this.screenRegion.y + 10);
 	}
 
 
@@ -152,7 +164,6 @@ class UI : Renderer {
 							     this.client.getCurrentNation(),
 							     this.mapRenderer.getSelectedPosition());
 	}
-
 
 
 	public override void handleEvent(SDL_Event event) {

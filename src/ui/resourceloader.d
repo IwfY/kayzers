@@ -48,7 +48,8 @@ class ResourceLoader {
 
 		renderer.registerTexture("ui_popup_background",
 								 "resources/img/ui/mainmenu_button.png");
-
+		renderer.registerTexture("minimap_bg",
+								 "resources/img/ui/minimap_bg.png");
 		renderer.registerTexture("ui_background",
 								 "resources/img/ui/ui_background.png");
 		renderer.registerTexture("button_default",
