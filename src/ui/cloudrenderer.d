@@ -88,7 +88,7 @@ class CloudRenderer : Renderer {
 	public override void handleEvent(SDL_Event event) {
 	}
 
-	public override void render() {
+	public override void render(int tick=0) {
 		// change clouds move direction
 		if (dice(200, 1)) {	// 0.5%
 			this.moveDirectionI += uniform(0.0, 0.01) - 0.005;

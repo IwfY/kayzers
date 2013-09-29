@@ -81,7 +81,7 @@ class MainMenu : Renderer {
 		this.head.centerHorizontally();
 	}
 
-	public override void render() {
+	public override void render(int tick=0) {
 		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
 		foreach (Widget widget; this.allWidgets) {

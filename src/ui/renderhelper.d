@@ -88,6 +88,17 @@ class RenderHelper {
 	}
 
 
+	public bool registerTexture(const(string) textureName,
+								const(string[]) filenames,
+								const(uint[]) durations) {
+		debug(2) {
+			writefln("RenderHelper::registerTextures %s, ... as %s",
+					 filenames[0], textureName);
+		}
+		return this.textures.registerTexture(textureName, filenames, durations);
+	}
+
+
 	/**
 	 * load a font from a file and make it accessible through the font manager
 	 *
@@ -163,29 +174,31 @@ class RenderHelper {
 	 * draw a named texture to the renderer
 	 **/
 	public void drawTexture(const int x, const int y,
-						    const string textureName) {
-		SDL_Texture *texture = this.textures.getTexture(textureName);
+						    const string textureName, int tick=0) {
+		SDL_Texture *texture = this.textures.getTexture(textureName, tick);
 		this.drawTexture(x, y, texture);
 	}
 
-	public void drawTexture(const(Rect) dest, const string textureName) {
-		this.drawTexture(dest.x, dest.y, dest.w, dest.h, textureName);
+	public void drawTexture(const(Rect) dest,
+							const string textureName,
+							int tick=0) {
+		this.drawTexture(dest.x, dest.y, dest.w, dest.h, textureName, tick);
 	}
 
 	public void drawTexture(int x, int y, int w, int h,
-						    const string textureName) {
+						    const string textureName, int tick=0) {
 		SDL_Rect *position = new SDL_Rect();
 		position.x = x;
 		position.y = y;
 		position.w = w;
 		position.h = h;
-		SDL_Texture *texture = this.textures.getTexture(textureName);
+		SDL_Texture *texture = this.textures.getTexture(textureName, tick);
 		this.drawTexture(position, texture);
 	}
 
 
-	public void drawTexture(SDL_Rect *dest, string textureName) {
-		SDL_Texture *texture = this.textures.getTexture(textureName);
+	public void drawTexture(SDL_Rect *dest, string textureName, int tick=0) {
+		SDL_Texture *texture = this.textures.getTexture(textureName, tick);
 		this.drawTexture(dest, texture);
 	}
 

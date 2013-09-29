@@ -28,7 +28,7 @@ class Renderer {
 	/**
 	 * abstract methods
 	 **/
-	public abstract void render();
+	public abstract void render(int tick=0);
 	public abstract void handleEvent(SDL_Event event);
 
 }

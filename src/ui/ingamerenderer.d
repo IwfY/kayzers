@@ -72,15 +72,15 @@ class InGameRenderer : Renderer, Observer {
 	}
 
 
-	public override void render()
+	public override void render(int tick=0)
 		in {
 			assert(this.client.isGameActive(),
 				   "InGameRenderer::render no game active");
 		}
 		body {
 			this.updateRendererDrawRegions();
-			this.mapRenderer.render();
-			this.ui.render();
+			this.mapRenderer.render(tick);
+			this.ui.render(tick);
 		}
 
 

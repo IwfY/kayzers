@@ -51,15 +51,15 @@ class RenderDispatcher : Renderer {
 	}
 
 
-	public override void render() {
+	public override void render(int tick=0) {
 		this.updateRendererDrawRegions();
 		this.renderer.setDrawColor(0, 0, 0, 255);	// set black
 		this.renderer.clear();
 		
 		if (this.renderState.getState() == Modus.MAIN_MENU) {
-			this.mainMenu.render();
+			this.mainMenu.render(tick);
 		} else if (this.renderState.getState() == Modus.IN_GAME) {
-			this.inGameRenderer.render();
+			this.inGameRenderer.render(tick);
 		}
 		
 		this.renderer.renderPresent();

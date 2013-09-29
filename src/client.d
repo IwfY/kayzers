@@ -139,6 +139,7 @@ public class Client {
 		int frameStartTime;
 
 		this.running = true;
+		int tick = 0;
 		while (this.running) {
 			frameStartTime = SDL_GetTicks();
 			while (SDL_PollEvent(&event)) {
@@ -164,7 +165,8 @@ public class Client {
 				this.renderer.handleEvent(event);
 			}
 
-			this.renderer.render();
+			this.renderer.render(tick);
+			++tick;
 
 			int frameDuration = SDL_GetTicks() - frameStartTime;
 			if (frameDuration < (1000 / MAX_FRAMES_PER_SECOND)) {

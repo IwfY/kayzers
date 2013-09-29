@@ -12,12 +12,19 @@ import std.string;
 class ResourceLoader {
 	public static void loadTexturesAndFonts(RenderHelper renderer) {
 		//TODO declare general resources in a file
-		renderer.registerTexture("grass", "resources/img/grass.png");
-		renderer.registerTexture("water", "resources/img/water.png");
+
+		//renderer.registerTexture("tile_1_2", "resources/img/water.png");
+		renderer.registerTexture(
+				"tile_1",
+				["resources/img/water.png", "resources/img/water_2.png"],
+				[30, 30]);
+		renderer.registerTexture(
+				"tile_1_2",
+				["resources/img/water.png", "resources/img/water_2.png"],
+				[30, 30]);
+
 		renderer.registerTexture("tile_0", "resources/img/grass.png");
 		renderer.registerTexture("tile_0_2", "resources/img/grass_2.png");
-		renderer.registerTexture("tile_1", "resources/img/water.png");
-		renderer.registerTexture("tile_1_2", "resources/img/water.png");
 		renderer.registerTexture("tile_2", "resources/img/mountain.png");
 		renderer.registerTexture("tile_2_2", "resources/img/mountain.png");
 		renderer.registerTexture("tile_3", "resources/img/trees.png");

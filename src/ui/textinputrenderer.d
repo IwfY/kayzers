@@ -75,7 +75,7 @@ class TextInputRenderer : Renderer {
 	}
 
 
-	public override void render() {
+	public override void render(int tick=0) {
 		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
 

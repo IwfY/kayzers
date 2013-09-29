@@ -2,6 +2,7 @@ module ui.maprenderer;
 
 import client;
 import color;
+import constants;
 import map;
 import messagebroker;
 import observer;
@@ -118,7 +119,7 @@ class MapRenderer : Renderer, Observer {
 	 * draw tile at given screen coordinate
 	 * takes zoom level into account for tile dimension
 	 **/
-	private void drawTile(int x, int y, string textureName) {
+	private void drawTile(int x, int y, string textureName, int tick) {
 		SDL_Rect *position = new SDL_Rect();
 		position.x = x;
 		position.y = y;
@@ -128,13 +129,13 @@ class MapRenderer : Renderer, Observer {
 		position.h = cast(int)(
 			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom));
 
-		this.renderer.drawTexture(position, textureName);
+		this.renderer.drawTexture(position, textureName, tick);
 	}
 
 
 
 
-	private void drawTileIJ(int i, int j, string textureName) {
+	private void drawTileIJ(int i, int j, string textureName, int tick) {
 		SDL_Rect *position = new SDL_Rect();
 		this.getTopLeftTileCoordinate(i, j, position.x, position.y);
 
@@ -143,7 +144,7 @@ class MapRenderer : Renderer, Observer {
 		position.h = cast(int)(round(
 			ceil(cast(double)this.tileDimensions.h / cast(double)this.zoom)));
 
-		this.renderer.drawTexture(position, textureName);
+		this.renderer.drawTexture(position, textureName, tick);
 	}
 
 
@@ -484,7 +485,7 @@ class MapRenderer : Renderer, Observer {
 	}
 
 
-	public override void render() {
+	public override void render(int tick=0) {
 		if (this.renderer !is null && this.map !is null) {
 			// mouse marker
 			this.getTileAtPixel(this.mouseCoordinate,
@@ -521,7 +522,9 @@ class MapRenderer : Renderer, Observer {
 					for (uint j = jMin; j <= jMax; ++j) {
 						string textureName =
 								this.mapLayers[key].getTextureName(i, j);
-						this.drawTileIJ(i, j, textureName);
+						if (textureName != NULL_TEXTURE) {
+							this.drawTileIJ(i, j, textureName, tick);
+						}
 					}
 				}
 			}
@@ -574,7 +577,7 @@ class MapRenderer : Renderer, Observer {
 			}
 
 			//clouds
-			this.cloudRenderer.render();
+			this.cloudRenderer.render(tick);
 
 
 

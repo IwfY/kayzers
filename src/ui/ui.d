@@ -196,7 +196,7 @@ class UI : Renderer {
 	}
 
 
-	public override void render() {
+	public override void render(int tick=0) {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 
 		// nation flag and name
