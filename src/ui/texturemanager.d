@@ -51,7 +51,7 @@ class TextureManager {
 		}
 
 		Texture tex = new StaticTexture(surface, texture);
-		this.textures[textureName] = tex;
+		this.setTexture(textureName, tex);
 
 		debug(2) {
 			writefln("Renderer::registerTexture Load %s as %s",
@@ -90,10 +90,29 @@ class TextureManager {
 			}
 
 			Texture tex = new AnimatedTexture(textures, durations);
-			this.textures[textureName] = tex;
+			this.setTexture(textureName, tex);
 
 			return true;
 		}
+
+
+	public bool registerTexture(const(string) textureName,
+								SDL_Texture* texture) {
+		Texture tmp = new StaticTexture(null, texture);
+		this.setTexture(textureName, tmp);
+
+		return true;
+	}
+
+
+	private void setTexture(string textureName, Texture texture) {
+		// delete old texture if present
+		Texture oldTexture = this.textures.get(textureName, null);
+		if (oldTexture !is null) {
+			delete oldTexture;
+		}
+		this.textures[textureName] = texture;
+	}
 
 
 	public SDL_Texture *getTexture(const string textureName) {
