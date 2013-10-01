@@ -81,7 +81,7 @@ class UI : Renderer {
 		// mini map
 		this.miniMap = new MiniMap(this.renderer, "minimap", "minimap_bg",
 								   new SDL_Rect(0, 0, 160, 160),
-								   this.map);
+								   this.client);
 		this.widgets ~= this.miniMap;
 	}
 

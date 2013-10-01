@@ -1,10 +1,11 @@
 module ui.minimap;
 
-//import color;
+import client;
 import map;
 import rect;
 import ui.renderhelper;
 import ui.widget;
+import world.structure;
 
 import derelict.sdl2.sdl;
 
@@ -12,6 +13,7 @@ import std.conv;
 import std.math;
 
 class MiniMap : Widget {
+	private const(Client) client;
 	private const(Map) map;
 	private int tileWidth;
 	private int tileHeight;
@@ -23,10 +25,11 @@ class MiniMap : Widget {
 				string name,
 				string textureName,
 				const(SDL_Rect *)bounds,
-				const(Map) map) {
+				const(Client) client) {
 		super(renderer, name, textureName, bounds);
 
-		this.map = map;
+		this.client = client;
+		this.map = this.client.getMap();
 
 		this.tileWidth = 2;
 		this.tileHeight = 2;
@@ -35,6 +38,7 @@ class MiniMap : Widget {
 		this.textureWidth = this.tileWidth * this.map.getWidth() + 4;
 		this.textureHeight = this.tileHeight * this.map.getHeight() + 4;
 
+		this.generateTerrainMap();
 		this.updateMap();
 	}
 
@@ -57,13 +61,16 @@ class MiniMap : Widget {
 	}
 
 
-	private void updateMap() {
+	/**
+	 * generate a texture of the terrain
+	 **/
+	private void generateTerrainMap() {
 		// create a texture to render map to
 		this.renderer.setRenderTargetTexture(
-				"minimap", this.textureWidth, this.textureHeight);
+			"minimap_terrain", this.textureWidth, this.textureHeight);
 
 		this.renderer.drawTexture(0, 0, textureWidth, textureHeight,
-								  this.textureName);
+		                          this.textureName);
 
 		// render tiles
 		for (uint i = 0; i < this.map.getWidth(); ++i) {
@@ -78,7 +85,30 @@ class MiniMap : Widget {
 	}
 
 
+	/**
+	 * generate texture with structures
+	 **/
+	private void updateMap() {
+		// create a texture to render map to
+		this.renderer.setRenderTargetTexture(
+				"minimap", this.textureWidth, this.textureHeight);
+
+		// render terrain
+		this.renderer.drawTexture(0, 0, "minimap_terrain");
+
+		// render structures
+		foreach (const(Structure) structure; this.client.getStructures()) {
+			this.drawTileIJ(structure.getPosition().i,
+			                structure.getPosition().j,
+			                "tile_" ~ structure.getNation().getColor().getHex());
+		}
+
+		this.renderer.resetRenderTarget();
+	}
+
+
 	public override void draw() {
+		this.updateMap();
 		this.renderer.drawTexture(this.bounds, "minimap");
 	}
 }

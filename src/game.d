@@ -83,7 +83,7 @@ public class Game {
 		this.map.setTile(i, j, value);
 	}
 
-	public Nation[] getNations() {
+	public const(Nation[]) getNations() const {
 		return this.nations;
 	}
 	public void setNations(Nation[] nations) {

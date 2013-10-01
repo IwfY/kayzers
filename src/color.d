@@ -1,5 +1,7 @@
 module color;
 
+import std.string;
+
 class Color {
 	public ubyte r;
 	public ubyte g;
@@ -15,5 +17,15 @@ class Color {
 		this.g = g;
 		this.b = b;
 		this.a = a;
+	}
+
+
+	public const(string) getHex(bool sharp=false) const {
+		string hex = "%2x%2x%2x".format(this.r, this.g, this.b);
+		if (sharp) {
+			hex = "#" ~ hex;
+		}
+
+		return hex;
 	}
 }

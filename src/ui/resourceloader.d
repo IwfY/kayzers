@@ -3,6 +3,7 @@ module ui.resourceloader;
 import client;
 import constants;
 import ui.renderhelper;
+import world.nation;
 import world.nationprototype;
 import world.structureprototype;
 
@@ -122,6 +123,18 @@ class ResourceLoader {
 					format("ResourceLoader::loadGameTextures " ~
 						   "couldn't load texture %s.'",
 						   prototype.getFlagImage()));
+		}
+
+		// create nation colored tiles
+		foreach (const(Nation) nation;
+		         client.getNations()) {
+			bool success = renderer.registerColoredTexture(
+				"tile_template", "tile_" ~ nation.getColor().getHex(),
+				nation.getColor());
+			assert (success,
+			        format("ResourceLoader::loadGameTextures " ~
+					       "couldn't create texture %s.'",
+					       "tile_" ~ nation.getColor().getHex()));
 		}
 	}
 }

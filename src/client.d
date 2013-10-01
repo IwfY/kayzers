@@ -91,6 +91,12 @@ public class Client {
 		return this.game.getNationPrototypes();
 	}
 
+
+	public const(Nation[]) getNations() const {
+		return this.game.getNations();
+	}
+
+
 	public const(Nation) getCurrentNation() const {
 		return this.currentNation;
 	}
