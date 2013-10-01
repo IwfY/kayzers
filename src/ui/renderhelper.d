@@ -307,52 +307,15 @@ class RenderHelper {
 	}
 
 	/**
-	 * get the pixel color values from a SDL_Surface
+	 * create and register a texture from a template
+	 * grayscale of template indicates transparency of target (white means opaque)
+	 * color the texture with the given color
 	 **/
-	public static void getSurfacePixel(
-			SDL_Surface *surface, int x, int y,
-			out ubyte r, out ubyte g, out ubyte b, out ubyte a)
-		in {
-			assert(surface.format.BytesPerPixel == 4);
-			assert(x >= 0 && y >= 0);
-			assert(x < surface.w && y < surface.h);
-		}
-		body {
-			uint *pixels = cast(uint *)surface.pixels;
-			uint pixel = pixels[(y * surface.w) + x];
-
-			a = cast(ubyte)(pixel >> 24);
-			r = cast(ubyte)(pixel >> 16);
-			g = cast(ubyte)(pixel >> 8);
-			b = cast(ubyte)pixel;
-		}
-
-	/**
-	 * put given color to the surface at the given position
-	 **/
-	public static void putSurfacePixel(
-			SDL_Surface *surface, int x, int y,
-			ubyte r, ubyte g, ubyte b, ubyte a)
-		in {
-			assert(surface.format.BytesPerPixel == 4);
-			assert(x >= 0 && y >= 0);
-			assert(x < surface.w && y < surface.h);
-		}
-		body {
-			uint *pixels = cast(uint *)surface.pixels;
-			uint color = (a << 24) + (r << 16) + (g << 8) + b;
-
-			// lock surface
-			if(SDL_MUSTLOCK(surface)) {
-				SDL_LockSurface(surface);
-			}
-
-			// put pixel data
-			pixels[(y * surface.w) + x] = color;
-
-			// unlock surface
-			if(SDL_MUSTLOCK(surface)) {
-				SDL_UnlockSurface(surface);
-			}
-		}
+	public bool registerColoredTexture(const(string) templateTextureName,
+									   const(string) targetTextureName,
+									   const(Color) color) {
+		return this.textures.registerColoredTexture(templateTextureName,
+													targetTextureName,
+		                                            color);
+	}
 }

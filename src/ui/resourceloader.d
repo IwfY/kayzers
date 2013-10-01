@@ -23,6 +23,9 @@ class ResourceLoader {
 				["resources/img/water.png", "resources/img/water_2.png"],
 				[30, 30]);
 
+		renderer.registerTexture("tile_template",
+		                         "resources/img/tile_template.png");
+
 		renderer.registerTexture("tile_0", "resources/img/grass.png");
 		renderer.registerTexture("tile_0_2", "resources/img/grass_2.png");
 		renderer.registerTexture("tile_2", "resources/img/mountain.png");
