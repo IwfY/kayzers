@@ -3,6 +3,7 @@ module ui.minimap;
 import client;
 import map;
 import rect;
+import utils;
 import ui.renderhelper;
 import ui.widget;
 import world.structure;
@@ -35,8 +36,9 @@ class MiniMap : Widget {
 		this.tileHeight = 2;
 		this.offsetX = cast(int)(this.map.getWidth() * tileWidth * 0.5);
 
-		this.textureWidth = this.tileWidth * this.map.getWidth() + 4;
-		this.textureHeight = this.tileHeight * this.map.getHeight() + 4;
+		int maxEdgeLength = max(this.map.getWidth(), this.map.getHeight());
+		this.textureWidth = this.tileWidth * maxEdgeLength;
+		this.textureHeight = this.tileHeight * maxEdgeLength;
 
 		this.generateTerrainMap();
 		this.updateMap();
@@ -47,10 +49,10 @@ class MiniMap : Widget {
 		int offsetY = 0;
 		SDL_Rect *position = new SDL_Rect();
 
-		position.x = 2 + cast(int)(round(
+		position.x = cast(int)(round(
 				this.offsetX + i * 0.5 * this.tileWidth
 							 - j * 0.5 * this.tileWidth));
-		position.y = 2 + cast(int)(round(
+		position.y = cast(int)(round(
 				offsetY + j * 0.5 * this.tileHeight
 						+ i * 0.5 * this.tileHeight));
 
