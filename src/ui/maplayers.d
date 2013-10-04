@@ -29,7 +29,7 @@ class TileMapLayer : MapLayer {
 	private void buildTileAlterationMap() {
 		for (int i = 0; i < this.width; ++i) {
 			for (int j = 0; j < this.height; ++j) {
-				this.tileAlterationMap[i * this.width + j] =
+				this.tileAlterationMap[i * this.height + j] =
 						cast(byte)(hash(i, j, 0.8));
 			}
 		}
@@ -39,7 +39,7 @@ class TileMapLayer : MapLayer {
 		byte tile = this.map.getTile(i, j);
 		string textureName = "tile_" ~ text(tile);
 
-		if (this.tileAlterationMap[i * this.width + j] != 0) {
+		if (this.tileAlterationMap[i * this.height + j] != 0) {
 			textureName ~= "_2";
 		}
 
