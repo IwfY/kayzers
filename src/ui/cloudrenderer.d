@@ -42,7 +42,8 @@ class CloudRenderer : Renderer {
 		this.moveDirectionI = 0.01;
 		this.moveDirectionJ = 0.015;
 
-		for (int i = 0; i < 20; ++i) {
+		int cloudCount = cast(int)((this.map.getWidth() + this.map.getHeight()) / 10);
+		for (int i = 0; i < cloudCount; ++i) {
 			Cloud newCloud = new Cloud(new PositionDouble(0.0, 0.0));
 			this.initCloud(newCloud);
 			this.clouds ~= newCloud;
