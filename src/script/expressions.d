@@ -1,5 +1,6 @@
 module script.expressions;
 
+import utils;
 import script.script;
 import script.scriptcontext;
 import script.token;
@@ -213,5 +214,37 @@ class IfExpression : Expression {
 			this.action.execute();
 		}
 		return 0.0;
+	}
+}
+
+
+class MinExpression : Expression {
+	private Expression e1;
+	private Expression e2;
+
+	public this(Script script, Expression e1, Expression e2) {
+		super(script);
+		this.e1 = e1;
+		this.e2 = e2;
+	}
+
+	public override double execute() {
+		return min(e1.execute(), e2.execute());
+	}
+}
+
+
+class MaxExpression : Expression {
+	private Expression e1;
+	private Expression e2;
+
+	public this(Script script, Expression e1, Expression e2) {
+		super(script);
+		this.e1 = e1;
+		this.e2 = e2;
+	}
+
+	public override double execute() {
+		return max(e1.execute(), e2.execute());
 	}
 }

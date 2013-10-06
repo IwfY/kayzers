@@ -49,7 +49,11 @@ class Script {
 		Regex!(char) produceExpression =
 				regex(`^produce\(res\.(\w*?),(.+?)\)$`, "g");
 		Regex!(char) ifExpression =
-				regex(`^if\((.*?)\)(.+?)$`, "g");
+			regex(`^if\((.*?)\)(.+?)$`, "g");
+		Regex!(char) minExpression =
+			regex(`^min\((.*?),(.*?)\)$`, "g");
+		Regex!(char) maxExpression =
+			regex(`^max\((.*?),(.*?)\)$`, "g");
 
 		// if expression
 		auto m = match(text, ifExpression);
@@ -58,6 +62,25 @@ class Script {
 					this,
 					this.parseString(m.captures[1]),
 					this.parseString(m.captures[2]));
+			return tmp;
+		}
+
+		// min and max expression
+		m = match(text, minExpression);
+		if (m) {
+			Expression tmp = new MinExpression(
+				this,
+				this.parseString(m.captures[1]),
+				this.parseString(m.captures[2]));
+			return tmp;
+		}
+
+		m = match(text, maxExpression);
+		if (m) {
+			Expression tmp = new MaxExpression(
+				this,
+				this.parseString(m.captures[1]),
+				this.parseString(m.captures[2]));
 			return tmp;
 		}
 
@@ -97,7 +120,7 @@ class Script {
 			return tmp;
 		}
 
-		// add statement
+		// binary statement
 		m = match(text, binaryExpression);
 		if (m) {
 			Expression tmp = new BinaryExpression(
