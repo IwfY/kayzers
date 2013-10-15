@@ -7,14 +7,19 @@ import ui.renderer;
 import ui.renderhelper;
 import ui.maprenderer;
 import ui.resourceloader;
+import ui.structurenamerenderer;
 import ui.ui;
+import world.structure;
 
 import derelict.sdl2.sdl;
 
 class InGameRenderer : Renderer, Observer {
 	private UI ui;
 	private MapRenderer mapRenderer;
+	private StructureNameRenderer structureNameRenderer;
+
 	private MessageBroker messageBroker;
+
 
 	public this(Client client, RenderHelper renderer,
 				MessageBroker messageBroker) {
@@ -39,6 +44,12 @@ class InGameRenderer : Renderer, Observer {
 	}
 
 
+	public void startStructureNameRenderer(const(Structure) structure) {
+		this.structureNameRenderer = new StructureNameRenderer(
+			this.client, this.renderer, structure);
+	}
+
+
 	public override void notify(string message) {
 		// a game was started
 		if (message == "gameStarted") {
@@ -48,13 +59,18 @@ class InGameRenderer : Renderer, Observer {
 			// create renderer
 			this.mapRenderer = new MapRenderer(
 					this.client, this.renderer, this.messageBroker);
-			this.ui = new UI(this.client, this.renderer, this.mapRenderer);
+			this.ui = new UI(this.client, this.renderer, this, this.mapRenderer);
 		}
 
 		// the game was stopped
 		else if (message == "gameStopped") {
 			delete this.mapRenderer;
 			delete this.ui;
+
+			// structure naming
+			if (this.structureNameRenderer !is null) {
+				delete this.structureNameRenderer;
+			}
 		}
 	}
 
@@ -64,11 +80,17 @@ class InGameRenderer : Renderer, Observer {
 	 **/
 	private void updateRendererDrawRegions() {
 		this.mapRenderer.setScreenRegion(
-				this.screenRegion.x, this.screenRegion.y,
-				this.screenRegion.w, this.screenRegion.h - 180);
+			this.screenRegion.x, this.screenRegion.y,
+			this.screenRegion.w, this.screenRegion.h - 180);
 		this.ui.setScreenRegion(
-				this.screenRegion.x, this.screenRegion.h - 180,
-				this.screenRegion.w, 180);
+			this.screenRegion.x, this.screenRegion.h - 180,
+			this.screenRegion.w, 180);
+
+		if (this.structureNameRenderer !is null) {
+			this.structureNameRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
+		}
 	}
 
 
@@ -81,6 +103,11 @@ class InGameRenderer : Renderer, Observer {
 			this.updateRendererDrawRegions();
 			this.mapRenderer.render(tick);
 			this.ui.render(tick);
+
+			// structure naming
+			if (this.structureNameRenderer !is null) {
+				this.structureNameRenderer.render(tick);
+			}
 		}
 
 
@@ -90,6 +117,16 @@ class InGameRenderer : Renderer, Observer {
 				   "InGameRenderer::handleEvent no game active");
 		}
 		body {
+			// structure naming
+			if (this.structureNameRenderer !is null) {
+				this.structureNameRenderer.handleEvent(event);
+				// if event triggered deactivation of text input renderer - delete it
+				if (!this.structureNameRenderer.isActive()) {
+					delete this.structureNameRenderer;
+				}
+				return;
+			}
+
 			this.mapRenderer.handleEvent(event);
 			this.ui.handleEvent(event);
 		}

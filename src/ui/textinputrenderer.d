@@ -5,7 +5,6 @@ import constants;
 import textinput;
 import ui.renderer;
 import ui.renderhelper;
-import ui.renderstate;
 import ui.labelbutton;
 import ui.inputbox;
 import ui.widget;
@@ -19,16 +18,15 @@ class TextInputRenderer : Renderer {
 	private InputBox inputBox;
 	private LabelButton okButton;
 	private TextInput textInputServer;
-	private RenderState renderState;
+	private bool active;
 	
 	private string *textPointer;
 
 
-	public this(Client client, RenderHelper renderer, RenderState renderState) {
+	public this(Client client, RenderHelper renderer) {
 		super(client, renderer);
-		
-		this.renderState = renderState;
 		this.textInputServer = new TextInput();
+		this.active = false;
 
 		this.initWidgets();
 	}
@@ -60,8 +58,12 @@ class TextInputRenderer : Renderer {
 	}
 
 
+	public const(bool) isActive() const {
+		return this.active;
+	}
+
+
 	private void okButtonCallback(string message) {
-		this.renderState.restoreState();
 		// set pointers to zero
 		this.inputBox.setTextPointer(null);
 	}

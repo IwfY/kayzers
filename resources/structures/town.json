@@ -11,5 +11,5 @@
 	"produceScript" : "tax = res.inhabitants * 1; glob.gold = glob.gold  + tax; a = res.consumeSatisfaction - 0.3; a = a * 0.2; inhabitantsInc = res.inhabitants * a; produce(res.inhabitants, inhabitantsInc); produce(res.workToken, res.inhabitants);",
 	"constructableScript" : "",
 	"progressScript" : "",
-	"nameable" : false
+	"nameable" : true
 }

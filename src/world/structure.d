@@ -18,6 +18,7 @@ class Structure : ScriptContext {
 	private Nation nation;
 	private Rebindable!(const(Nation)) creatingNation;
 	private ResourceManager resources;
+	private string name;
 
 	private Script consumeScript;
 	private Script produceScript;
@@ -29,6 +30,12 @@ class Structure : ScriptContext {
 	/************************
 	 * Getters and Setters
 	 ************************/
+	public const(string) getName() const {
+		return this.name;
+	}
+	public void setName(string name) {
+		this.name = name;
+	}
 
 	public const(StructurePrototype) getPrototype() const {
 		return this.prototype;

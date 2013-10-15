@@ -8,11 +8,14 @@ import rect;
 import utils;
 import ui.button;
 import ui.image;
+import ui.ingamerenderer;
 import ui.maprenderer;
 import ui.minimap;
 import ui.popupbutton;
 import ui.renderer;
 import ui.renderhelper;
+import ui.structurenamerenderer;
+import ui.textinputrenderer;
 import ui.widget;
 import world.nation;
 import world.nationprototype;
@@ -36,12 +39,14 @@ class UI : Renderer {
 	private Image structureImage;
 	private const(MapRenderer) mapRenderer;
 	private MiniMap miniMap;
+	private InGameRenderer inGameRenderer;
 
 
 
-	public this(Client client, RenderHelper renderer,
+	public this(Client client, RenderHelper renderer, InGameRenderer inGameRenderer,
 				const(MapRenderer) mapRenderer) {
 		super(client, renderer);
+		this.inGameRenderer = inGameRenderer;
 		this.mapRenderer = mapRenderer;
 		this.map = this.client.getMap();
 
@@ -161,9 +166,22 @@ class UI : Renderer {
 
 
 	public void addStructureHandler(string structureName) {
-		this.client.addStructure(structureName,
-							     this.client.getCurrentNation(),
-							     this.mapRenderer.getSelectedPosition());
+		bool success = this.client.addStructure(
+			structureName,
+			this.client.getCurrentNation(),
+			this.mapRenderer.getSelectedPosition());
+
+		if (success) {
+			const(Structure) newStructure = this.client.getStructure(
+				this.mapRenderer.getSelectedPosition().i,
+				this.mapRenderer.getSelectedPosition().j);
+			// name new nameable structures
+			if (newStructure !is null) {
+				if (newStructure.getPrototype().isNameable()) {
+					this.inGameRenderer.startStructureNameRenderer(newStructure);
+				}
+			}
+		}
 	}
 
 
