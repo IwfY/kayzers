@@ -71,11 +71,22 @@ class StructureManager {
 	public const(Structure[]) getStructures() const {
 		return this.structures.values;
 	}
+	public Structure[] getStructures() {
+		return this.structures.values;
+	}
 
 	public void setStructures(Structure[int[2]] structures) {
 		this.structures = structures;
 	}
 
+	public Structure getStructure(const(Structure) structure) {
+		foreach (Structure structureCursor; this.getStructures()) {
+			if (structureCursor == structure) {
+				return structureCursor;
+			}
+		}
+		return null;
+	}
 	public Structure getStructure(int i, int j) {
 		Structure tmp = this.structures.get([i, j], null);
 		return tmp;

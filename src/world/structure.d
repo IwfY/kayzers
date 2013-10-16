@@ -37,6 +37,19 @@ class Structure : ScriptContext {
 		this.name = name;
 	}
 
+	/**
+	 * get the complete name of the structure
+	 **/
+	public const(string) getNameString() const {
+		string ret;
+		ret = this.prototype.getName();
+		if (this.prototype.isNameable()) {
+			ret ~= ": " ~ this.name;
+		}
+
+		return ret;
+	}
+
 	public const(StructurePrototype) getPrototype() const {
 		return this.prototype;
 	}

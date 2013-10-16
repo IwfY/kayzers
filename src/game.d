@@ -183,6 +183,12 @@ public class Game {
 	}
 
 
+	public void setStructureName(const(Structure) structure, string name) {
+		Structure structureUnConst = this.structureManager.getStructure(structure);
+		structureUnConst.setName(name);
+	}
+
+
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nation,
 							 const(Position) position) {

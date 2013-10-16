@@ -63,7 +63,7 @@ class StructureNameRenderer : Renderer {
 
 
 	private void okButtonCallback(string message) {
-		//this.client.setStructureName(this.inputString);
+		this.client.setStructureName(this.structure, this.inputString);
 		this.active = false;
 	}
 
@@ -77,11 +77,9 @@ class StructureNameRenderer : Renderer {
 
 
 	public override void render(int tick=0) {
-		import std.stdio;
-		writefln("StructureNameRenderer::render");
 		if (this.active) {
 			this.updateWidgets();
-			this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
+			this.renderer.drawTexture(this.screenRegion, "grey_a127");
 
 			foreach (Widget widget; this.allWidgets) {
 				widget.render();

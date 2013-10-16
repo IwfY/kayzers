@@ -141,7 +141,7 @@ class UI : Renderer {
 					// structure name
 					this.renderer.drawText(this.screenRegion.x + 20,
 											this.screenRegion.y + 25,
-											prototype.getName());
+											structure.getNameString());
 				} else {
 					this.structureImage.setTextureName(NULL_TEXTURE);
 				}

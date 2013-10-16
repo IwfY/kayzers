@@ -37,6 +37,7 @@ class ResourceLoader {
 		renderer.registerTexture("cloud", "resources/img/cloud.png");
 		renderer.registerTexture("cloud2", "resources/img/cloud2.png");
 
+		renderer.registerTexture("grey_a127", "resources/img/grey_a127.png");
 		renderer.registerTexture("mouseTile",
 								 "resources/img/grid_border.png");
 		renderer.registerTexture("selectedTile",

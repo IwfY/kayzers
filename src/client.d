@@ -106,6 +106,11 @@ public class Client {
 	}
 
 
+	public void setStructureName(const(Structure) structure, string name) {
+		this.game.setStructureName(structure, name);
+	}
+
+
 	public bool addStructure(string structurePrototypeName,
 							 const(Nation) nation,
 							 const(Position) position) {
