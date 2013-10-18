@@ -318,4 +318,17 @@ class RenderHelper {
 													targetTextureName,
 		                                            color);
 	}
+
+
+	/**
+	 * uses a given nine-patch image to generate a viriable sized image and
+	 * registers it with the given name
+	 **/
+	public void registerTextureFromNinePatch(const(string) ninePathTextureName,
+	                                         const(string) targetTextureName,
+	                                         const(int) width, const(int) height) {
+		this.textures.registerTextureFromNinePatch(ninePathTextureName,
+		                                           targetTextureName,
+		                                           width, height);
+	}
 }

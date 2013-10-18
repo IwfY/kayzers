@@ -24,6 +24,7 @@ class ResourceLoader {
 				["resources/img/water.png", "resources/img/water_2.png"],
 				[30, 30]);
 
+		// tile template used to generate colored tile textures
 		renderer.registerTexture("tile_template",
 		                         "resources/img/tile_template.png");
 
@@ -69,6 +70,11 @@ class ResourceLoader {
 								 "resources/img/ui/border_round_30.png");
 		renderer.registerTexture(NULL_TEXTURE,
 								 "resources/img/ui/null.png");
+		// nine patch textures
+		renderer.registerTexture("button_9patch",
+		                         "resources/img/ui/button_9patch.png");
+		//renderer.registerTextureFromNinePatch("button_9patch", "bg_300_200", 300, 200);
+
 		// icons
 		renderer.registerTexture("gold",
 								 "resources/img/ui/gold.png");

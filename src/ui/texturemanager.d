@@ -186,6 +186,129 @@ class TextureManager {
 	}
 
 
+
+	/**
+	 * uses a given nine-patch image to generate a viriable sized image and
+	 * registers it with the given name
+	 *
+	 * ninePatchTexture's width and height need to be a multiple of 3
+	 **/
+	public void registerTextureFromNinePatch(const(string) ninePathTextureName,
+	                                         const(string) targetTextureName,
+	                                         const(int) width, const(int) height) {
+		SDL_Surface* ninePatchSurface = this.getSurface(ninePathTextureName);
+		// lock surface
+		if(SDL_MUSTLOCK(ninePatchSurface)) {
+			SDL_LockSurface(ninePatchSurface);
+		}
+
+		int patchWidth = ninePatchSurface.w / 3;
+		int patchHeight = ninePatchSurface.h / 3;
+
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+		SDL_Rect* src = new SDL_Rect();
+		src.w = patchWidth;
+		src.h = patchHeight;
+
+		SDL_Rect* dest = new SDL_Rect();
+
+		// fill top, left and center
+		int i = 0;
+		int j = 0;
+		while (i * patchWidth < width) {
+			j = 0;
+			while (j * patchHeight < height) {
+				// set copy region
+				if (j == 0) {	// top row
+					src.x = patchWidth;
+					src.y = 0;
+				} else if (i == 0) {	// left column
+					src.x = 0;
+					src.y = patchHeight;
+				} else {
+					src.x = patchWidth;
+					src.y = patchHeight;
+				}
+				// set paste region
+				dest.x = i * patchWidth;
+				dest.y = j * patchHeight;
+
+				// blit
+				SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
+
+				++j;
+			}
+			++i;
+		}
+
+		// fill right
+		src.x = 2 * patchWidth;
+		src.y = patchHeight;
+		dest.x = width - patchWidth;
+		j = 0;
+		while (j * patchHeight < height) {
+			dest.y = j * patchHeight;
+
+			// blit
+			SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
+
+			++j;
+		}
+
+		// fill bottom
+		src.x = patchWidth;
+		src.y = 2 * patchHeight;
+		dest.y = height - patchHeight;
+		i = 0;
+		while (i * patchWidth < width) {
+			dest.x = i * patchWidth;
+
+			// blit
+			SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
+
+			++i;
+		}
+
+		// corners
+		src.x = 0;
+		src.y = 0;
+		dest.x = 0;
+		dest.y = 0;
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// top left
+
+		src.x = 2 * patchWidth;
+		src.y = 0;
+		dest.x = width - patchWidth;
+		dest.y = 0;
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// top right
+
+		src.x = 0;
+		src.y = 2 * patchHeight;
+		dest.x = 0;
+		dest.y = height - patchHeight;
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// bottom left
+
+		src.x = 2 * patchWidth;
+		src.y = 2 * patchHeight;
+		dest.x = width - patchWidth;
+		dest.y = height - patchHeight;
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// bottom right
+
+		// unlock surface
+		if(SDL_MUSTLOCK(ninePatchSurface)) {
+			SDL_UnlockSurface(ninePatchSurface);
+		}
+
+		// create sdl texture from new surface and register
+		SDL_Texture* newTexture = SDL_CreateTextureFromSurface(this.renderer,
+		                                                          newSurface);
+		assert(newTexture !is null,
+		       "TextureManager::registerTextureFromNinePatch error creating texture");
+
+		this.setTexture(targetTextureName, new StaticTexture(newSurface, newTexture));
+	}
+
+
 	/**
 	 * get the pixel color values from a SDL_Surface
 	 **/
