@@ -73,7 +73,8 @@ class ResourceLoader {
 		// nine patch textures
 		renderer.registerTexture("button_9patch",
 		                         "resources/img/ui/button_9patch.png");
-		//renderer.registerTextureFromNinePatch("button_9patch", "bg_300_200", 300, 200);
+		renderer.registerTextureFromNinePatch("button_9patch", "bg_300_140",
+											  300, 140);
 
 		// icons
 		renderer.registerTexture("gold",
