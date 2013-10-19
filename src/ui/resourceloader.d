@@ -108,6 +108,11 @@ class ResourceLoader {
 						   "couldn't load texture %s.'",
 						   structurePrototype.getIconImage()));
 
+			// make grey scale icon, prefixed with '_grey'
+			renderer.registerGreyScaledTexture(
+				structurePrototype.getIconImageName(),
+				structurePrototype.getIconImageName() ~ "_grey");
+
 			success = renderer.registerTexture(
 					structurePrototype.getTileImageName(),
 					structurePrototype.getTileImage());

@@ -9,7 +9,7 @@ import derelict.sdl2.sdl;
 abstract class HoverWidget : Widget {
 	protected string hoverTextureName;
 	bool mouseOver;
-	
+
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
@@ -28,6 +28,10 @@ abstract class HoverWidget : Widget {
 			}
 			this.draw();
 		}
+	}
+
+	public void setHoverTextureName(string hoverTextureName) {
+		this.hoverTextureName = hoverTextureName;
 	}
 
 	public override void mouseEnter() {

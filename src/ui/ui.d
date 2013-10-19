@@ -34,7 +34,7 @@ class UI : Renderer {
 	private const(Map) map;
 	private Widget[] widgets;
 	private Widget mouseOverWidget;	// reference to widget under mouse
-	private PopupButton[] structureButtons;
+	private PopupButton[string] structureButtons;
 	private Image tileImage;
 	private Image structureImage;
 	private const(MapRenderer) mapRenderer;
@@ -67,8 +67,9 @@ class UI : Renderer {
 					&this.addStructureHandler,
 					structurePrototype.getPopupText(),
 					STD_FONT);
-		   this.structureButtons ~= button;
-		   this.widgets ~= button;
+			this.structureButtons[structurePrototype.getIconImageName()] =
+				button;
+			this.widgets ~= button;
 		}
 
 		// selected structure and tile display
@@ -154,7 +155,7 @@ class UI : Renderer {
 		// structure buttons
 		int structureButtonX = 300;
 		int structureButtonY = this.screenRegion.y + 30;
-		foreach(PopupButton button; this.structureButtons) {
+		foreach(PopupButton button; this.structureButtons.values) {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
@@ -180,6 +181,27 @@ class UI : Renderer {
 				if (newStructure.getPrototype().isNameable()) {
 					this.inGameRenderer.startStructureNameRenderer(newStructure);
 				}
+			}
+		}
+	}
+
+	/**
+	 * grey out buttons for structures that can't be built
+	 **/
+	public void updateStructureButtonBuildable() {
+		const(Nation) currentNation = this.client.getCurrentNation();
+		const(Position) position = this.mapRenderer.getSelectedPosition();
+		foreach (string buttonImageName, PopupButton button;
+				 this.structureButtons) {
+			bool buildable = this.client.canBuildStructure(
+				button.getName(),
+				currentNation,
+				position);
+
+			if (buildable) {
+				button.setTextureName(buttonImageName);
+			} else {
+				button.setTextureName(buttonImageName ~ "_grey");
 			}
 		}
 	}
@@ -227,6 +249,8 @@ class UI : Renderer {
 
 
 	public override void render(int tick=0) {
+		this.updateStructureButtonBuildable();
+
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 
 		// nation flag and name

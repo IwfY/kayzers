@@ -308,8 +308,8 @@ class RenderHelper {
 
 	/**
 	 * create and register a texture from a template
-	 * grayscale of template indicates transparency of target (white means opaque)
-	 * color the texture with the given color
+	 * grayscale of template indicates transparency of target
+	 * (white means opaque) color the texture with the given color
 	 **/
 	public bool registerColoredTexture(const(string) templateTextureName,
 									   const(string) targetTextureName,
@@ -326,9 +326,16 @@ class RenderHelper {
 	 **/
 	public void registerTextureFromNinePatch(const(string) ninePathTextureName,
 	                                         const(string) targetTextureName,
-	                                         const(int) width, const(int) height) {
+	                                         const(int) width,
+	                                         const(int) height) {
 		this.textures.registerTextureFromNinePatch(ninePathTextureName,
 		                                           targetTextureName,
 		                                           width, height);
+	}
+
+	public void registerGreyScaledTexture(const(string) srcTextureName,
+										  const(string) targetTextureName) {
+		this.textures.registerGreyScaledTexture(
+			srcTextureName, targetTextureName);
 	}
 }

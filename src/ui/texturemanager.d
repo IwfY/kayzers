@@ -6,6 +6,7 @@ import ui.texture;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
 
+import std.math;
 import std.stdio;
 import std.string;
 
@@ -193,9 +194,10 @@ class TextureManager {
 	 *
 	 * ninePatchTexture's width and height need to be a multiple of 3
 	 **/
-	public void registerTextureFromNinePatch(const(string) ninePathTextureName,
-	                                         const(string) targetTextureName,
-	                                         const(int) width, const(int) height) {
+	public void registerTextureFromNinePatch(
+			const(string) ninePathTextureName,
+			const(string) targetTextureName,
+			const(int) width, const(int) height) {
 		SDL_Surface* ninePatchSurface = this.getSurface(ninePathTextureName);
 		// lock surface
 		if(SDL_MUSTLOCK(ninePatchSurface)) {
@@ -205,7 +207,8 @@ class TextureManager {
 		int patchWidth = ninePatchSurface.w / 3;
 		int patchHeight = ninePatchSurface.h / 3;
 
-		SDL_Surface* newSurface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(
+			0, width, height, 32, 0, 0, 0, 0);
 		SDL_Rect* src = new SDL_Rect();
 		src.w = patchWidth;
 		src.h = patchHeight;
@@ -270,29 +273,33 @@ class TextureManager {
 		}
 
 		// corners
+		// top left
 		src.x = 0;
 		src.y = 0;
 		dest.x = 0;
 		dest.y = 0;
-		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// top left
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
 
+		// top right
 		src.x = 2 * patchWidth;
 		src.y = 0;
 		dest.x = width - patchWidth;
 		dest.y = 0;
-		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// top right
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
 
+		// bottom left
 		src.x = 0;
 		src.y = 2 * patchHeight;
 		dest.x = 0;
 		dest.y = height - patchHeight;
-		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// bottom left
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
 
+		// bottom right
 		src.x = 2 * patchWidth;
 		src.y = 2 * patchHeight;
 		dest.x = width - patchWidth;
 		dest.y = height - patchHeight;
-		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);	// bottom right
+		SDL_BlitSurface(ninePatchSurface, src, newSurface, dest);
 
 		// unlock surface
 		if(SDL_MUSTLOCK(ninePatchSurface)) {
@@ -303,9 +310,54 @@ class TextureManager {
 		SDL_Texture* newTexture = SDL_CreateTextureFromSurface(this.renderer,
 		                                                          newSurface);
 		assert(newTexture !is null,
-		       "TextureManager::registerTextureFromNinePatch error creating texture");
+		       "TextureManager::registerTextureFromNinePatch " ~
+		       "error creating texture");
 
-		this.setTexture(targetTextureName, new StaticTexture(newSurface, newTexture));
+		this.setTexture(targetTextureName,
+						new StaticTexture(newSurface, newTexture));
+	}
+
+
+	/**
+	 * create a greyscale version of a texture and register it under a given
+	 * name
+	 **/
+	public void registerGreyScaledTexture(const(string) srcTextureName,
+										  const(string) targetTextureName) {
+		SDL_Surface* srcSurface = this.getSurface(srcTextureName);
+
+		SDL_Surface* newSurface = SDL_CreateRGBSurface(
+			srcSurface.flags,
+			srcSurface.w,
+			srcSurface.h,
+			32,
+			srcSurface.format.Rmask,
+			srcSurface.format.Gmask,
+			srcSurface.format.Bmask,
+			srcSurface.format.Amask);
+
+		ubyte r, g, b, a;
+		ubyte grey;
+		for (int i = 0; i < srcSurface.w; ++i) {
+			for (int j = 0; j < srcSurface.h; ++j) {
+				TextureManager.getSurfacePixel(srcSurface,
+											   i, j,
+				                               r, g, b, a);
+				// put grey, luma converted
+				grey = cast(ubyte)floor(
+					cast(double)r * 0.299 +
+					cast(double)g * 0.587 +
+					cast(double)b * 0.144);
+				TextureManager.putSurfacePixel(newSurface,
+				                               i, j,
+				                               grey, grey, grey, a);
+			}
+		}
+
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(this.renderer, newSurface);
+
+		Texture newTexture = new StaticTexture(newSurface, texture);
+		this.setTexture(targetTextureName, newTexture);
 	}
 
 
@@ -321,8 +373,17 @@ class TextureManager {
 		assert(x < surface.w && y < surface.h);
 	}
 	body {
+		// lock surface
+		if(SDL_MUSTLOCK(surface)) {
+			SDL_LockSurface(surface);
+		}
 		uint *pixels = cast(uint *)surface.pixels;
 		uint pixel = pixels[(y * surface.w) + x];
+
+		// unlock surface
+		if(SDL_MUSTLOCK(surface)) {
+			SDL_UnlockSurface(surface);
+		}
 
 		a = cast(ubyte)(pixel >> 24);
 		b = cast(ubyte)(pixel >> 16);

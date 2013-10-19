@@ -202,6 +202,14 @@ public class Game {
 	}
 
 
+	public bool canBuildStructure(string structurePrototypeName,
+								  const(Nation) nation,
+								  const(Position) position) const {
+		return this.structureManager.canBuildStructure(
+			structurePrototypeName, nation, position);
+	}
+
+
 	/**
 	 * get language by name
 	 **/

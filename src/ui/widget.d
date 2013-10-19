@@ -13,7 +13,7 @@ abstract class Widget {
 	protected string name;
 	protected string textureName;
 	private bool hidden;
-	
+
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
@@ -24,7 +24,7 @@ abstract class Widget {
 		this.hidden = false;
 		this.bounds = new SDL_Rect(bounds.x, bounds.y, bounds.w, bounds.h);
 	}
-	
+
 	public bool isPointInBounds(SDL_Point *point) {
 		return rectContainsPoint(this.bounds, point);
 	}
@@ -43,8 +43,8 @@ abstract class Widget {
 	}
 
 	public abstract void draw();
-	
-	
+
+
 	public void setXY(int x, int y) {
 		this.bounds.x = x;
 		this.bounds.y = y;
@@ -56,7 +56,7 @@ abstract class Widget {
 	public void unhide() {
 		this.hidden = false;
 	}
-	
+
 	public void centerHorizontally() {
 		Rect screenRegion = this.renderer.getScreenRegion();
 		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
@@ -72,11 +72,15 @@ abstract class Widget {
 	public void setTextureName(string textureName) {
 		this.textureName = textureName;
 	}
-	
+
 	public const(SDL_Rect *)getBounds() const {
 		return this.bounds;
 	}
-	
+
+	public const(string) getName() const {
+		return this.name;
+	}
+
 	public void click() {
 	}
 
