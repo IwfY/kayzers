@@ -48,7 +48,7 @@ public class Client {
 
 
 	public ~this() {
-		delete this.renderer;
+		destroy(this.renderer);
 
 		SDL_DestroyWindow(this.window);
 	}

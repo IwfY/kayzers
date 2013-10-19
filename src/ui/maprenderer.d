@@ -77,7 +77,7 @@ class MapRenderer : Renderer, Observer {
 
 	public ~this() {
 		this.messageBroker.unregister(this, "nationChanged");
-		delete this.cloudRenderer;
+		destroy(this.cloudRenderer);
 	}
 
 

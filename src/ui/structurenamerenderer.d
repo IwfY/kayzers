@@ -41,7 +41,7 @@ class StructureNameRenderer : Renderer {
 
 
 	public ~this() {
-		delete(this.textInputServer);
+		destroy(this.textInputServer);
 	}
 
 

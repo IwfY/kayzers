@@ -62,7 +62,7 @@ class AnimatedTexture : Texture {
 
 	public ~this() {
 		foreach (Texture texture; this.textures) {
-			delete texture;
+			destroy(texture);
 		}
 	}
 

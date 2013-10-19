@@ -45,8 +45,8 @@ class RenderHelper {
 
 
 	public ~this() {
-		delete this.textures;
-		delete this.fonts;
+		destroy(this.textures);
+		destroy(this.fonts);
 		SDL_DestroyRenderer(this.renderer);
 	}
 

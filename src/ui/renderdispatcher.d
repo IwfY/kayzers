@@ -33,10 +33,10 @@ class RenderDispatcher : Renderer {
 	
 	
 	public ~this() {
-		delete this.mainMenu;
-		delete this.inGameRenderer;
+		destroy(this.mainMenu);
+		destroy(this.inGameRenderer);
 		
-		delete this.renderer;
+		destroy(this.renderer);
 	}
 
 

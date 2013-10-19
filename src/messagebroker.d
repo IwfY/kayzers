@@ -92,7 +92,7 @@ unittest {
 	mb.notify("other_event");
 	assert(a.i == 2);
 
-	delete b;
+	b = null;
 	assert(b is null);
 	mb.notify("event");
 

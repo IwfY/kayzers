@@ -29,7 +29,7 @@ class FontManager {
 		for(int i = 0; i < keys.length; ++i) {
 			string key = keys[i];
 			Font font = this.fonts[key];
-			delete font;
+			destroy(font);
 			this.fonts.remove(key);
 		}
 	}

@@ -36,10 +36,10 @@ class InGameRenderer : Renderer, Observer {
 		this.messageBroker.unregister(this, "gameStopped");
 
 		if (this.mapRenderer !is null) {
-			delete this.mapRenderer;
+			destroy(this.mapRenderer);
 		}
 		if (this.ui !is null) {
-			delete this.ui;
+			destroy(this.ui);
 		}
 	}
 
@@ -66,12 +66,12 @@ class InGameRenderer : Renderer, Observer {
 
 		// the game was stopped
 		else if (message == "gameStopped") {
-			delete this.mapRenderer;
-			delete this.ui;
+			destroy(this.mapRenderer);
+			destroy(this.ui);
 
 			// structure naming
 			if (this.structureNameRenderer !is null) {
-				delete this.structureNameRenderer;
+				destroy(this.structureNameRenderer);
 			}
 		}
 	}
@@ -124,7 +124,7 @@ class InGameRenderer : Renderer, Observer {
 				this.structureNameRenderer.handleEvent(event);
 				// if event triggered deactivation of text input renderer - delete it
 				if (!this.structureNameRenderer.isActive()) {
-					delete this.structureNameRenderer;
+					this.structureNameRenderer = null;
 				}
 				return;
 			}

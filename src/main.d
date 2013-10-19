@@ -28,7 +28,7 @@ int main(string[] args) {
 	Client client;
 	client = new Client();
 	client.run();
-	delete client;
+	destroy(client);
 
 	TTF_Quit();
 	SDL_Quit();
