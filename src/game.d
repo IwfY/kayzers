@@ -26,6 +26,7 @@ public class Game {
 	private Client client;
 	private Player[] players;
 	private Nation[] nations;
+	private uint currentNationIndex;
 	private NationPrototype[] nationPrototypes;
 	private Language[] languages;
 	private StructureManager structureManager;
@@ -39,7 +40,9 @@ public class Game {
 		new Color(164, 57, 130)
 ];
 
-	public this(Scenario scenario) {
+	public this(Client client, Scenario scenario) {
+		this.client = client;
+
 		this.initLanguages();
 		this.initNations();
 		this.structureManager = new StructureManager(this);
@@ -61,6 +64,8 @@ public class Game {
 
 			++i;
 		}
+
+		this.currentNationIndex = 0;
 
 	}
 
@@ -91,6 +96,10 @@ public class Game {
 	}
 	public void addNation(Nation nation) {
 		this.nations ~= nation;
+	}
+
+	public const(Nation) getCurrentNation() const {
+		return this.nations[this.currentNationIndex];
 	}
 
 	public void addNation(string nationName) {
@@ -135,17 +144,6 @@ public class Game {
 	public void addPlayer(Player player) {
 		this.players ~= player;
 	}
-
-	public Client getClient() {
-		return this.client;
-	}
-	public void setClient(Client client) {
-		this.client = client;
-		if (this.nations.length > 0) {
-			this.client.setCurrentNation(this.nations[0]);
-		}
-	}
-
 
 	/**
 	 * method is called every time a new round is started and at the beginning
@@ -239,30 +237,17 @@ public class Game {
 
 
 	/**
-	 * called by client to signal end of turn; performes book keeping and
-	 * sends next Nation to the client
-	 *
-	 * @param nation nation that ends turn
+	 * called by client to signal end of turn; performes book keeping
 	 **/
-	public bool endTurn(const(Nation) nation) {
-		int i;
-
-		// get index of nation
-		for(i = 0; i < this.nations.length; ++i) {
-			if (this.nations[i] == nation) {
-				break;
-			}
-		}
+	public void endTurn() {
 		// check which nation turns next
-		++i;
-		if (i >= this.nations.length) {		// new year
-			i = 0;
+		++this.currentNationIndex;
+		if (this.currentNationIndex >= this.nations.length) {	// new year
+			this.currentNationIndex = 0;
 			this.startNewRound();
 
 		}
-		this.client.setCurrentNation(this.nations[i]);
-
-		return true;
+		this.client.serverNotify("nationChanged");
 	}
 
 

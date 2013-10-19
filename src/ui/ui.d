@@ -245,6 +245,13 @@ class UI : Renderer {
 				this.mouseOverWidget = null;
 			}
 		}
+		// key press
+		else if (event.type == SDL_KEYDOWN) {
+			// end turn
+			if (event.key.keysym.sym == SDLK_RETURN) {
+				this.client.endTurn();
+			}
+		}
 	}
 
 

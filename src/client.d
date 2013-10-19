@@ -20,7 +20,6 @@ import std.typecons;
 
 public class Client {
 	private Game game;
-	private Rebindable!(const(Nation)) currentNation;
 	private Renderer renderer;
 	private SDL_Window *window;
 	private bool gameActive;
@@ -59,8 +58,7 @@ public class Client {
 			return false;
 		}
 
-		this.game = new Game(this.scenarios[scenarioName]);
-		this.game.setClient(this);
+		this.game = new Game(this, this.scenarios[scenarioName]);
 		this.game.startNewRound();
 
 		this.gameActive = true;
@@ -73,6 +71,14 @@ public class Client {
 	public void stopGame() {
 		this.gameActive = false;
 		this.messageBroker.notify("gameStopped");
+	}
+
+
+	/**
+	 * publishes a notification from the server (Game) to the message broker
+	 **/
+	public void serverNotify(string message) {
+		this.messageBroker.notify(message);
 	}
 
 	/**
@@ -98,11 +104,7 @@ public class Client {
 
 
 	public const(Nation) getCurrentNation() const {
-		return this.currentNation;
-	}
-	public void setCurrentNation(const(Nation) currentNation) {
-		this.currentNation = currentNation;
-		this.messageBroker.notify("nationChanged");
+		return this.game.getCurrentNation();
 	}
 
 
@@ -145,6 +147,10 @@ public class Client {
 		this.running = false;
 	}
 
+	public void endTurn() {
+		this.game.endTurn();
+	}
+
 
 	/**
 	 * client main loop
@@ -170,10 +176,6 @@ public class Client {
 					// quit
 					if (event.key.keysym.sym == SDLK_q) {
 						this.running = false;
-					}
-					// end turn
-					if (event.key.keysym.sym == SDLK_RETURN) {
-						this.game.endTurn(this.currentNation);
 					}
 					debug(2) {
 						writefln("The %s key was pressed!\n",

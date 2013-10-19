@@ -152,6 +152,13 @@ class StructureNameRenderer : Renderer {
 					this.mouseOverWidget = null;
 				}
 			}
+			// key press
+			else if (event.type == SDL_KEYDOWN) {
+				// enter input
+				if (event.key.keysym.sym == SDLK_RETURN) {
+					this.okButtonCallback("");
+				}
+			}
 		}
 	}
 }

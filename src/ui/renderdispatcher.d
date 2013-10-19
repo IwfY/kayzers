@@ -21,7 +21,7 @@ class RenderDispatcher : Renderer {
 	public this(Client client, RenderHelper renderer,
 				MessageBroker messageBroker) {
 		super(client, renderer);
-		
+
 		this.renderState = new RenderState();
 
 		this.mainMenu = new MainMenu(
@@ -30,12 +30,12 @@ class RenderDispatcher : Renderer {
 		this.inGameRenderer = new InGameRenderer(
 				this.client, this.renderer, messageBroker);
 	}
-	
-	
+
+
 	public ~this() {
 		destroy(this.mainMenu);
 		destroy(this.inGameRenderer);
-		
+
 		destroy(this.renderer);
 	}
 
@@ -45,7 +45,7 @@ class RenderDispatcher : Renderer {
 	 **/
 	private void updateRendererDrawRegions() {
 		Rect screen = this.renderer.getScreenRegion();
-		
+
 		this.mainMenu.setScreenRegion(0, 0, screen.w, screen.h);
 		this.inGameRenderer.setScreenRegion(0, 0, screen.w, screen.h);
 	}
@@ -55,13 +55,13 @@ class RenderDispatcher : Renderer {
 		this.updateRendererDrawRegions();
 		this.renderer.setDrawColor(0, 0, 0, 255);	// set black
 		this.renderer.clear();
-		
+
 		if (this.renderState.getState() == Modus.MAIN_MENU) {
 			this.mainMenu.render(tick);
 		} else if (this.renderState.getState() == Modus.IN_GAME) {
 			this.inGameRenderer.render(tick);
 		}
-		
+
 		this.renderer.renderPresent();
 	}
 
