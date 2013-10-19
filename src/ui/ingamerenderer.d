@@ -58,8 +58,10 @@ class InGameRenderer : Renderer, Observer {
 
 			// create renderer
 			this.mapRenderer = new MapRenderer(
-					this.client, this.renderer, this.messageBroker);
-			this.ui = new UI(this.client, this.renderer, this, this.mapRenderer);
+				this.client, this.renderer, this.messageBroker);
+			this.ui = new UI(
+				this.client, this.renderer, this, this.mapRenderer);
+			this.updateRendererDrawRegions();
 		}
 
 		// the game was stopped
