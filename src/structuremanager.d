@@ -115,13 +115,17 @@ class StructureManager {
 	public bool canBuildStructure(string structurePrototypeName,
 								  const(Nation) nation,
 								  const(Position) position) const {
+		const(Map) map = this.game.getMap();
+		// is tile on map?
+		if (!map.isPositionInMap(position.i, position.j)) {
+			return false;
+		}
 		// is there a structure already?
 		if (!this.isTileEmpty(position)) {
 			return false;
 		}
 
 		// is it a land tile?
-		const(Map) map = this.game.getMap();
 		if (!map.isBuildable(position.i, position.j)) {
 			return false;
 		}
