@@ -33,6 +33,7 @@ srcFiles = Split("""
     src/ui/maplayers.d
     src/ui/maprenderer.d
     src/ui/minimap.d
+    src/ui/notificationrenderer.d
     src/ui/popupbutton.d
     src/ui/renderer.d
     src/ui/renderdispatcher.d
