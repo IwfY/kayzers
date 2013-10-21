@@ -32,6 +32,9 @@ class MapRenderer : Renderer, Observer {
 	private MapLayer[int] mapLayers;
 	private CloudRenderer cloudRenderer;
 
+	// store selected positions by nation
+	private Position[const(Nation)] nationSelectedPositions;
+
 	// offset is added to the tile position when drawing
 	private SDL_Point *offset;
 	private int zoom;
@@ -86,7 +89,14 @@ class MapRenderer : Renderer, Observer {
 		if (message == "nationChanged") {
 			// pan to new nation's seat
 			const(Nation) currentNation = this.client.getCurrentNation();
-			this.panToTile(currentNation.getSeat().getPosition());
+			if (this.nationSelectedPositions.get(currentNation, null) is null) {
+				this.nationSelectedPositions[currentNation] = new Position();
+				this.nationSelectedPositions[currentNation] <<
+					currentNation.getSeat().getPosition();
+			}
+			this.selectedPosition <<
+				this.nationSelectedPositions[currentNation];
+			this.panToTile(this.selectedPosition);
 		}
 	}
 
@@ -333,12 +343,12 @@ class MapRenderer : Renderer, Observer {
 		double tileHeight =
 			cast(double)this.tileDimensions.h /
 				cast(double)this.zoom;
-		
+
 		x = cast(int)(round(
 			xTopLeft + iFraction * 0.5 * tileWidth - jFraction * 0.5 * tileWidth));
 		y = cast(int)(round(
 			yTopLeft + jFraction * 0.5 * tileHeight + iFraction * 0.5 * tileHeight));
-		
+
 		debug(3) {
 			writefln("MapRenderer::getFractionalTileCoordinate " ~
 			         "i: %f, j: %f --> x: %d, y:%d",
@@ -482,6 +492,10 @@ class MapRenderer : Renderer, Observer {
 				this.mousePressedCoordinate.y = event.motion.y;
 			}
 		}
+
+		// update selected positions
+		this.nationSelectedPositions[this.client.getCurrentNation()] <<
+			this.selectedPosition;
 	}
 
 

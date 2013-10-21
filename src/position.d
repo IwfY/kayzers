@@ -16,4 +16,25 @@ class PositionTemplate(T) {
 		this.i = i;
 		this.j = j;
 	}
+
+
+	/**
+	 * overload the '<<' operator to assign values
+	 **/
+	public void opBinary(string op)
+						(const(PositionTemplate!(T)) pos) {
+		if (op == "<<") {
+			this.i = pos.i;
+			this.j = pos.j;
+		}
+	}
+
+	///
+	unittest {
+		PositionTemplate!(int) pos1 = new PositionTemplate!(int)(1, 8);
+		PositionTemplate!(int) pos2 = new PositionTemplate!(int)();
+		assert(pos2.i == 0);
+		pos2 << pos1;
+		assert(pos2.i == 1);
+	}
 }
