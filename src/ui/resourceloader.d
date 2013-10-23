@@ -70,6 +70,8 @@ class ResourceLoader {
 								 "resources/img/ui/border_round_30.png");
 		renderer.registerTexture("black",
 								 "resources/img/black.png");
+		renderer.registerTexture("white",
+								 "resources/img/white.png");
 		renderer.registerTexture(NULL_TEXTURE,
 								 "resources/img/ui/null.png");
 		// nine patch textures
@@ -92,6 +94,9 @@ class ResourceLoader {
 		renderer.registerFont("notificationLarge",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  30);
+		renderer.registerFont("maprenderer_structure_name",
+							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
+							  9);
 	}
 
 	/**
@@ -143,9 +148,8 @@ class ResourceLoader {
 						   prototype.getFlagImage()));
 		}
 
-		// create nation colored tiles
-		foreach (const(Nation) nation;
-		         client.getNations()) {
+		foreach (const(Nation) nation; client.getNations()) {
+			// create nation colored tiles
 			bool success = renderer.registerColoredTexture(
 				"tile_template", "tile_" ~ nation.getColor().getHex(),
 				nation.getColor());
@@ -153,6 +157,14 @@ class ResourceLoader {
 			        format("ResourceLoader::loadGameTextures " ~
 					       "couldn't create texture %s.'",
 					       "tile_" ~ nation.getColor().getHex()));
+			// create nation colores rectangle texture
+			success = renderer.registerColoredTexture(
+				"white", nation.getColor().getHex(),
+				nation.getColor());
+			assert (success,
+			        format("ResourceLoader::loadGameTextures " ~
+					       "couldn't create texture %s.'",
+					       nation.getColor().getHex()));
 		}
 	}
 }

@@ -590,6 +590,92 @@ class MapRenderer : Renderer, Observer {
 				}
 			}
 
+			// draw structure names
+			if (this.zoom <= 2) {	// if small zoom draw every town name
+				foreach (const(Structure) structure;
+							this.client.getStructures()) {
+					const(StructurePrototype) prototype =
+						structure.getPrototype();
+					if (prototype.isNameable()) {
+						const(Position) position = structure.getPosition();
+						if (position.i >= iMin && position.i <= iMax &&
+								position.j >= jMin && position.j <= jMax) {
+							const(Nation) nation = structure.getNation();
+
+							// calculate text position
+							int x, y;
+							this.getTopLeftTileCoordinate(
+								position.i, position.j, x, y);
+							x += (this.tileDimensions.w / this.zoom) / 2;
+							y += cast(int)(
+								(this.tileDimensions.h / this.zoom) * 0.8);
+							Rect textSize = this.renderer.getTextSize(
+								structure.getName(),
+								"maprenderer_structure_name");
+							x -= textSize.w / 2;
+							y -= textSize.h / 2;
+
+							if (structure == nation.getSeat()) { // capital bg
+								this.renderer.drawTextureAlpha(
+									x - 2, y - 2,
+									textSize.w + 4, textSize.h + 4,
+									"black",
+									200);
+							}
+
+							this.renderer.drawTextureAlpha(	// background
+								x - 1, y - 1,
+								textSize.w + 2, textSize.h + 2,
+								nation.getColor().getHex(),
+								200);
+							this.renderer.drawText(	// structure name
+								x, y,
+								structure.getName(),
+								"maprenderer_structure_name");
+						}
+					}
+				}
+			} else {	// zoom > 2 --> draw capital names
+				foreach(const(Nation) nation; this.client.getNations()) {
+					const(Structure) structure = nation.getSeat();
+					const(StructurePrototype) prototype =
+						structure.getPrototype();
+					if (prototype.isNameable()) {
+						const(Position) position = structure.getPosition();
+						if (position.i >= iMin && position.i <= iMax &&
+								position.j >= jMin && position.j <= jMax) {
+							// calculate text position
+							int x, y;
+							this.getTopLeftTileCoordinate(
+								position.i, position.j, x, y);
+							x += (this.tileDimensions.w / this.zoom) / 2;
+							y += cast(int)(
+								(this.tileDimensions.h / this.zoom) * 0.8);
+							Rect textSize = this.renderer.getTextSize(
+								structure.getName(),
+								"maprenderer_structure_name");
+							x -= textSize.w / 2;
+							y -= textSize.h / 2;
+
+							this.renderer.drawTextureAlpha(	// capital bg
+								x - 2, y - 2,
+								textSize.w + 4, textSize.h + 4,
+								"black",
+								200);
+							this.renderer.drawTextureAlpha(	// background
+								x - 1, y - 1,
+								textSize.w + 2, textSize.h + 2,
+								nation.getColor().getHex(),
+								200);
+							this.renderer.drawText(	// structure name
+								x, y,
+								structure.getName(),
+								"maprenderer_structure_name");
+						}
+					}
+				}
+			}
+
 			//clouds
 			this.cloudRenderer.render(tick);
 
