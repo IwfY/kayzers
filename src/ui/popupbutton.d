@@ -44,10 +44,12 @@ class PopupButton : LabelButton {
 	}
 
 	public override void mouseEnter() {
+		super.mouseEnter();
 		this.label.unhide();
 	}
 
 	public override void mouseLeave() {
+		super.mouseLeave();
 		this.label.hide();
 	}
 }

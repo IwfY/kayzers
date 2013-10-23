@@ -38,7 +38,6 @@ class ResourceLoader {
 		renderer.registerTexture("cloud", "resources/img/cloud.png");
 		renderer.registerTexture("cloud2", "resources/img/cloud2.png");
 
-		renderer.registerTexture("grey_a127", "resources/img/grey_a127.png");
 		renderer.registerTexture("mouseTile",
 								 "resources/img/grid_border.png");
 		renderer.registerTexture("selectedTile",
@@ -60,6 +59,8 @@ class ResourceLoader {
 								 "resources/img/ui/ui_background.png");
 		renderer.registerTexture("button_default",
 								 "resources/img/ui/button_default.png");
+		renderer.registerTexture("button_rename",
+		                         "resources/img/ui/button_rename.png");
 		renderer.registerTexture("mainmenu_bg",
 								 "resources/img/ui/mainmenu_bg.png");
 		renderer.registerTexture("mainmenu_button",
@@ -68,10 +69,14 @@ class ResourceLoader {
 				"resources/img/ui/mainmenu_button_hover.png");
 		renderer.registerTexture("border_round_30",
 								 "resources/img/ui/border_round_30.png");
+
 		renderer.registerTexture("black",
 								 "resources/img/black.png");
 		renderer.registerTexture("white",
 								 "resources/img/white.png");
+		renderer.registerTexture("grey_a127", "resources/img/grey_a127.png");
+		renderer.registerTexture("white_a10pc", "resources/img/white_a10pc.png");
+
 		renderer.registerTexture(NULL_TEXTURE,
 								 "resources/img/ui/null.png");
 		// nine patch textures

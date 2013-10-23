@@ -35,6 +35,7 @@ class UI : Renderer {
 	private Widget[] widgets;
 	private Widget mouseOverWidget;	// reference to widget under mouse
 	private PopupButton[string] structureButtons;
+	private PopupButton renameButton;
 	private Image tileImage;
 	private Image structureImage;
 	private const(MapRenderer) mapRenderer;
@@ -83,6 +84,18 @@ class UI : Renderer {
 									    NULL_TEXTURE,
 									    new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.structureImage;
+
+		// rename button
+		renameButton = new PopupButton(
+			this.renderer,
+			"",
+			"button_rename",
+			"white_a10pc",
+			new SDL_Rect(0, 0, 11, 11),
+			&this.renameStructureHandler,
+			"Rename",
+			STD_FONT);
+		this.widgets ~= this.renameButton;
 
 		// mini map
 		this.miniMap = new MiniMap(this.renderer, "minimap", "minimap_bg",
@@ -139,14 +152,26 @@ class UI : Renderer {
 							this.screenRegion.x + 20,
 							this.screenRegion.y + 40 + tileDimensions.h + 5,
 							resourceString);
+					// rename button
+					if (structure.getNation() == this.client.getCurrentNation() &&
+							prototype.isNameable()) {
+						this.renameButton.unhide();
+						this.renameButton.setXY(this.screenRegion.x + 20,
+						                        this.screenRegion.y + 24);
+
+					} else {
+						this.renameButton.hide();
+					}
 					// structure name
-					this.renderer.drawText(this.screenRegion.x + 20,
-											this.screenRegion.y + 25,
-											structure.getNameString());
+					this.renderer.drawText(this.screenRegion.x + 35,
+					                       this.screenRegion.y + 22,
+					                       structure.getNameString());
 				} else {
+					this.renameButton.hide();
 					this.structureImage.setTextureName(NULL_TEXTURE);
 				}
 			} else {
+				this.renameButton.hide();
 				this.tileImage.setTextureName(NULL_TEXTURE);
 				this.structureImage.setTextureName(NULL_TEXTURE);
 			}
@@ -181,6 +206,20 @@ class UI : Renderer {
 				if (newStructure.getPrototype().isNameable()) {
 					this.inGameRenderer.startStructureNameRenderer(newStructure);
 				}
+			}
+		}
+	}
+
+
+	public void renameStructureHandler(string message) {
+		const(Structure) structure = this.client.getStructure(
+			this.mapRenderer.getSelectedPosition().i,
+			this.mapRenderer.getSelectedPosition().j);
+		// name nameable structures
+		if (structure !is null) {
+			if (structure.getPrototype().isNameable() &&
+					structure.getNation() == this.client.getCurrentNation()) {
+				this.inGameRenderer.startStructureNameRenderer(structure);
 			}
 		}
 	}
