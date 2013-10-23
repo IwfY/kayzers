@@ -6,6 +6,7 @@ import observer;
 import ui.renderer;
 import ui.renderhelper;
 import ui.maprenderer;
+import ui.notificationrenderer;
 import ui.resourceloader;
 import ui.structurenamerenderer;
 import ui.ui;
@@ -17,6 +18,7 @@ class InGameRenderer : Renderer, Observer {
 	private UI ui;
 	private MapRenderer mapRenderer;
 	private StructureNameRenderer structureNameRenderer;
+	private NotificationRenderer notificationRenderer;
 
 	private MessageBroker messageBroker;
 
@@ -35,11 +37,24 @@ class InGameRenderer : Renderer, Observer {
 		this.messageBroker.unregister(this, "gameStarted");
 		this.messageBroker.unregister(this, "gameStopped");
 
+		this.destroyChildRenderer();
+	}
+
+
+	private void destroyChildRenderer() {
 		if (this.mapRenderer !is null) {
 			destroy(this.mapRenderer);
 		}
 		if (this.ui !is null) {
 			destroy(this.ui);
+		}
+		if (this.notificationRenderer !is null) {
+			destroy(this.notificationRenderer);
+		}
+
+		// structure naming
+		if (this.structureNameRenderer !is null) {
+			destroy(this.structureNameRenderer);
 		}
 	}
 
@@ -61,18 +76,14 @@ class InGameRenderer : Renderer, Observer {
 				this.client, this.renderer, this.messageBroker);
 			this.ui = new UI(
 				this.client, this.renderer, this, this.mapRenderer);
+			this.notificationRenderer = new NotificationRenderer(
+				this.client, this.renderer, this.messageBroker);
 			this.updateRendererDrawRegions();
 		}
 
 		// the game was stopped
 		else if (message == "gameStopped") {
-			destroy(this.mapRenderer);
-			destroy(this.ui);
-
-			// structure naming
-			if (this.structureNameRenderer !is null) {
-				destroy(this.structureNameRenderer);
-			}
+			this.destroyChildRenderer();
 		}
 	}
 
@@ -87,6 +98,9 @@ class InGameRenderer : Renderer, Observer {
 		this.ui.setScreenRegion(
 			this.screenRegion.x, this.screenRegion.h - 180,
 			this.screenRegion.w, 180);
+		this.notificationRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
 
 		if (this.structureNameRenderer !is null) {
 			this.structureNameRenderer.setScreenRegion(
@@ -105,6 +119,7 @@ class InGameRenderer : Renderer, Observer {
 			this.updateRendererDrawRegions();
 			this.mapRenderer.render(tick);
 			this.ui.render(tick);
+			this.notificationRenderer.render(tick);
 
 			// structure naming
 			if (this.structureNameRenderer !is null) {

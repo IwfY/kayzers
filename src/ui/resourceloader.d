@@ -68,6 +68,8 @@ class ResourceLoader {
 				"resources/img/ui/mainmenu_button_hover.png");
 		renderer.registerTexture("border_round_30",
 								 "resources/img/ui/border_round_30.png");
+		renderer.registerTexture("black",
+								 "resources/img/black.png");
 		renderer.registerTexture(NULL_TEXTURE,
 								 "resources/img/ui/null.png");
 		// nine patch textures
@@ -87,6 +89,9 @@ class ResourceLoader {
 		renderer.registerFont("mainMenuHead",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  80);
+		renderer.registerFont("notificationLarge",
+							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
+							  30);
 	}
 
 	/**

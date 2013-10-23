@@ -38,6 +38,10 @@ class RenderHelper {
 			writeln(SDL_GetError());
 		}
 
+		// set alpha blend mode
+		SDL_SetRenderDrawBlendMode(this.renderer, SDL_BLENDMODE_BLEND);
+
+
 
 		this.textures = new TextureManager(this.renderer);
 		this.fonts = new FontManager();
@@ -203,16 +207,6 @@ class RenderHelper {
 	}
 
 
-	public void drawTexture(SDL_Rect *dest, SDL_Texture *texture) {
-		debug(2) {
-			writefln("Renderer::drawTexture %d, %d, %d, %d",
-					 dest.x, dest.y, dest.w, dest.h);
-		}
-
-		SDL_RenderCopy(this.renderer, texture, null, dest);
-	}
-
-
 	/**
 	 * draw a texture to the renderer
 	 **/
@@ -225,6 +219,58 @@ class RenderHelper {
 		SDL_QueryTexture(texture, null, null, &position.w, &position.h);
 
 		this.drawTexture(position, texture);
+	}
+
+
+	public void drawTexture(SDL_Rect *dest, SDL_Texture *texture) {
+		debug(2) {
+			writefln("Renderer::drawTexture %d, %d, %d, %d",
+					 dest.x, dest.y, dest.w, dest.h);
+		}
+
+		SDL_RenderCopy(this.renderer, texture, null, dest);
+	}
+
+
+	public void drawTextureAlpha(int x, int y, int w, int h,
+									const(string) textureName,
+									ubyte alpha=255u,
+									int tick=0) {
+		SDL_Rect *position = new SDL_Rect();
+		position.x = x;
+		position.y = y;
+		position.w = w;
+		position.h = h;
+		SDL_Texture *texture = this.textures.getTexture(textureName, tick);
+		this.drawTextureAlpha(position, texture, alpha);
+	}
+
+
+	/**
+	 * draw a texture with the given alpha value
+	 *
+	 * @param alpha ... alpha value [0 .. 255]
+	 **/
+	public void drawTextureAlpha(SDL_Rect* dest, SDL_Texture* texture,
+									ubyte alpha) {
+		// set texture alpha blend mode
+		SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
+		// get old alpha value
+		ubyte oldAlpha;
+		SDL_GetTextureAlphaMod(texture, &oldAlpha);
+
+		// set new alpha value
+		if (oldAlpha != alpha) {
+			SDL_SetTextureAlphaMod(texture, alpha);
+		}
+
+		SDL_RenderCopy(this.renderer, texture, null, dest);
+
+		// reset old alpha value of texture
+		if (oldAlpha != alpha) {
+			SDL_SetTextureAlphaMod(texture, oldAlpha);
+		}
 	}
 
 
