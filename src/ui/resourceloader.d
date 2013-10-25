@@ -94,6 +94,11 @@ class ResourceLoader {
 		renderer.registerTexture("border_round_30",
 								 "resources/img/ui/border_round_30.png");
 
+		renderer.registerTexture("portrait_male",
+								 "resources/img/portraits/male.png");
+		renderer.registerTexture("portrait_female",
+								 "resources/img/portraits/female.png");
+
 		renderer.registerTexture("black",
 								 "resources/img/black.png");
 		renderer.registerTexture("white",

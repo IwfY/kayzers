@@ -6,6 +6,7 @@ import map;
 import player;
 import position;
 import structuremanager;
+import world.character;
 import world.dynasty;
 import world.language;
 import world.nation;
@@ -107,7 +108,22 @@ public class Game {
 		if (prototype is null) {
 			return;
 		}
+		const(Language) language = prototype.getLanguage();
 		Nation newNation = new Nation(prototype);
+
+		// create ruler
+		Character ruler = new Character();
+		Random gen = Random(unpredictableSeed);
+		if (uniform(0, 2, gen) == 0) {
+			// male
+			ruler.setSex(Sex.MALE);
+			ruler.setName(language.getRandomMaleName());
+		} else {
+			// female
+			ruler.setSex(Sex.FEMALE);
+			ruler.setName(language.getRandomFemaleName());
+		}
+		newNation.setRuler(ruler);
 
 		this.nations ~= newNation;
 	}

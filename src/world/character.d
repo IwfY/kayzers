@@ -21,7 +21,7 @@ class Character {
 	this() {
 	}
 
-	public string getName() {
+	public const(string) getName() const {
 		return this.name;
 	}
 	public void setName(string name) {
@@ -49,7 +49,7 @@ class Character {
 		this.death = death;
 	}
 
-	public Sex getSex() {
+	public const(Sex) getSex() const {
 		return this.sex;
 	}
 	public void setSex(Sex sex) {

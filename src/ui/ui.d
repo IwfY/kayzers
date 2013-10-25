@@ -17,6 +17,7 @@ import ui.renderhelper;
 import ui.structurenamerenderer;
 import ui.textinputrenderer;
 import ui.widget;
+import world.character;
 import world.nation;
 import world.nationprototype;
 import world.resourcemanager;
@@ -312,6 +313,25 @@ class UI : Renderer {
 								   "border_round_30");
 		this.renderer.drawText(44, this.screenRegion.y + 160,
 							    nation.getName());
+
+		// ruler portrait and name
+		const(Character) ruler = nation.getRuler();
+		if (ruler.getSex() == Sex.MALE) {
+			this.renderer.drawTexture(
+				this.screenRegion.x + 471, this.screenRegion.y + 144,
+				"portrait_male");
+
+		} else {
+			this.renderer.drawTexture(
+				this.screenRegion.x + 471, this.screenRegion.y + 144,
+				"portrait_female");
+		}
+		this.renderer.drawTexture(this.screenRegion.x + 470,
+								  this.screenRegion.y + 143,
+								  "border_round_30");
+		this.renderer.drawText(this.screenRegion.x + 504,
+							   this.screenRegion.y + 160,
+							   ruler.getName());
 
 		// resource text
 		string resourceString;
