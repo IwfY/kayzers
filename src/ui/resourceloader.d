@@ -17,12 +17,36 @@ class ResourceLoader {
 		//renderer.registerTexture("tile_1_2", "resources/img/water.png");
 		renderer.registerTexture(
 				"tile_1",
-				["resources/img/water.png", "resources/img/water_2.png"],
-				[30, 30]);
+				[
+					"resources/img/water_n01.png",
+					"resources/img/water_n02.png",
+					"resources/img/water_n03.png",
+					"resources/img/water_n04.png",
+					"resources/img/water_n05.png",
+					"resources/img/water_n06.png",
+					"resources/img/water_n07.png",
+					"resources/img/water_n08.png",
+					"resources/img/water_n09.png",
+					"resources/img/water_n10.png",
+					"resources/img/water_n11.png"
+				],
+				[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]);
 		renderer.registerTexture(
 				"tile_1_2",
-				["resources/img/water.png", "resources/img/water_2.png"],
-				[30, 30]);
+				[
+					"resources/img/water_n01.png",
+					"resources/img/water_n02.png",
+					"resources/img/water_n03.png",
+					"resources/img/water_n04.png",
+					"resources/img/water_n05.png",
+					"resources/img/water_n06.png",
+					"resources/img/water_n07.png",
+					"resources/img/water_n08.png",
+					"resources/img/water_n09.png",
+					"resources/img/water_n10.png",
+					"resources/img/water_n11.png"
+				],
+				[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]);
 
 		// tile template used to generate colored tile textures
 		renderer.registerTexture("tile_template",
