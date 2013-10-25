@@ -13,6 +13,8 @@ import world.structure;
 
 import derelict.sdl2.sdl;
 
+import std.string;
+
 class StructureNameRenderer : Renderer {
 	private const(Structure) structure;
 
@@ -30,13 +32,15 @@ class StructureNameRenderer : Renderer {
 	private TextInput textInputServer;
 	private string inputString;
 
-	public this(Client client, RenderHelper renderer, const(Structure) structure) {
+	public this(Client client, RenderHelper renderer,
+				const(Structure) structure) {
 		super(client, renderer);
 		this.textInputServer = new TextInput();
 		this.structure = structure;
 
 		this.initWidgets();
 		this.active = true;
+		this.inputBox.click();	// activate text input
 	}
 
 
@@ -48,7 +52,8 @@ class StructureNameRenderer : Renderer {
 	private void initWidgets() {
 		this.inputBox = new InputBox(
 			this.renderer, this.textInputServer,
-			"inputBox", "mainmenu_button",
+			"inputBox",
+			"inputbox_260_30",
 			new SDL_Rect(0, 0, 260, 30),
 			STD_FONT);
 		this.allWidgets ~= this.inputBox;
@@ -58,9 +63,9 @@ class StructureNameRenderer : Renderer {
 		this.okButton = new LabelButton(
 			this.renderer,
 			"okButton",
-			"mainmenu_button",
-			"mainmenu_button_hover",
-			new SDL_Rect(0, 0, 100, 30),
+			"button_100_28",
+			"white_a10pc",
+			new SDL_Rect(0, 0, 100, 28),
 			&(this.okButtonCallback),
 			"OK",
 			STD_FONT);
@@ -69,7 +74,7 @@ class StructureNameRenderer : Renderer {
 		this.label = new Label(
 			this.renderer, "", NULL_TEXTURE,
 			new SDL_Rect(0, 0, 280, 25),
-			"Name your new town:",
+			format("Name your %s:", this.structure.getPrototype().getName()),
 			STD_FONT);
 		this.allWidgets ~= this.label;
 	}
