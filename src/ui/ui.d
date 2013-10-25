@@ -292,6 +292,9 @@ class UI : Renderer {
 				this.client.endTurn();
 			}
 		}
+
+		// mini map
+		this.miniMap.handleEvent(event);
 	}
 
 
