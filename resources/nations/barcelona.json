@@ -4,6 +4,10 @@
 	"language" : "Spanish",
 	"flagImage" : "resources/img/flags/barcelona.png",
 	"flagImageName" : "flag_barcelona",
+	"defaultCityNames" : [
+		"Barcelona", "L’Hospitalet de Llobregat", "Badalona", "Terrassa",
+		"Sabadell", "Mataró", "Santa Coloma de Gramenet",
+		"Cornellà de Llobregat", "Sant Cugat del Vallès", "Rubí"],
 	"canBuild" : [],
 	"canNotBuild" :  []
 }

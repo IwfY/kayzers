@@ -2,6 +2,7 @@ module world.nationprototype;
 
 import world.language;
 
+import std.random;
 import std.typecons;
 
 class NationPrototype {
@@ -9,6 +10,7 @@ class NationPrototype {
 	private Rebindable!(const(Language)) language;
 	private string flagImage;	// file path to image
 	private string flagImageName;
+	private string[] defaultCityNames;
 
 
 	public const(string) getName() const {
@@ -30,6 +32,20 @@ class NationPrototype {
 	}
 	public void setFlagImageName(string flagImageName) {
 		this.flagImageName = flagImageName;
+	}
+
+	public const(string[]) getDefaultCityNames() const {
+		return this.defaultCityNames;
+	}
+	public void setDefaultCityNames(string[] defaultCityNames) {
+		this.defaultCityNames = defaultCityNames;
+	}
+	public string getRandomCityName() const {
+		if (this.defaultCityNames.length > 0) {
+			return this.defaultCityNames[
+				uniform(0, this.defaultCityNames.length)];
+		}
+		return "";
 	}
 
 	public const(string) getFlagImage() const {

@@ -214,6 +214,12 @@ class StructureManager {
 	}
 
 
+	public void setStructureName(const(Structure) structure, string name) {
+		Structure structureUnConst = this.getStructure(structure);
+		structureUnConst.setName(name);
+	}
+
+
 	/**
 	 * check if a structure can be removed from the map
 	 **/

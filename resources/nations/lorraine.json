@@ -4,6 +4,9 @@
 	"language" : "French",
 	"flagImage" : "resources/img/flags/lorraine.png",
 	"flagImageName" : "flag_lorraine",
+	"defaultCityNames" : [
+		"Nancy", "Metz", "Épinal", "Verdun", "Bar-le-Duc", "Thionville",
+		"Vandœuvre-lès-Nancy", "Sarreguemines"],
 	"canBuild" : [],
 	"canNotBuild" : []
 }

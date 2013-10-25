@@ -182,8 +182,7 @@ public class Game {
 
 
 	public void setStructureName(const(Structure) structure, string name) {
-		Structure structureUnConst = this.structureManager.getStructure(structure);
-		structureUnConst.setName(name);
+		this.structureManager.setStructureName(structure, name);
 	}
 
 
@@ -306,6 +305,11 @@ public class Game {
 			string flagImage = json["flagImage"].str;
 			string flagImageName = json["flagImageName"].str;
 
+			string[] defaultCityNames;
+			foreach(JSONValue cityName; json["defaultCityNames"].array) {
+				defaultCityNames ~= cityName.str;
+			}
+
 			const(Language) language = this.getLanguage(languageName);
 			if (language is null) {
 				debug (1) {
@@ -320,6 +324,7 @@ public class Game {
 			nation.setLanguage(language);
 			nation.setFlagImage(flagImage);
 			nation.setFlagImageName(flagImageName);
+			nation.setDefaultCityNames(defaultCityNames);
 
 			this.nationPrototypes ~= nation;
 

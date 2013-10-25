@@ -5,6 +5,7 @@ import map;
 import position;
 import structuremanager;
 import world.nation;
+import world.nationprototype;
 import world.structure;
 
 import std.random;
@@ -45,6 +46,7 @@ class SettlementCreator {
 							   Nation nation,
 							   Position position) {
 		const(Map) map = game.getMap();
+		const(NationPrototype) nationPrototype = nation.getPrototype();
 		StructureManager structureManager = game.getStructureManager();
 		nation.getResources().setResource("structureToken", 2);
 		Position farmPosition = new Position(position.i + 1, position.j);
@@ -55,8 +57,11 @@ class SettlementCreator {
 				map.isBuildable(position.i + 1, position.j)) {
 			structureManager.addStructure("Town", nation, position, true);
 			structureManager.addStructure("Farm", nation, farmPosition);
-			const(Structure) house = structureManager.getStructure(position);
-			nation.setSeat(house);
+
+			const(Structure) town = structureManager.getStructure(position);
+			structureManager.setStructureName(
+				town, nationPrototype.getRandomCityName());
+			nation.setSeat(town);
 
 			debug(1) {
 				import std.stdio;
