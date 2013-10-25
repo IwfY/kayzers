@@ -38,14 +38,15 @@ class UI : Renderer {
 	private PopupButton renameButton;
 	private Image tileImage;
 	private Image structureImage;
-	private const(MapRenderer) mapRenderer;
+	private MapRenderer mapRenderer;
 	private MiniMap miniMap;
 	private InGameRenderer inGameRenderer;
 
 
 
-	public this(Client client, RenderHelper renderer, InGameRenderer inGameRenderer,
-				const(MapRenderer) mapRenderer) {
+	public this(Client client, RenderHelper renderer,
+				InGameRenderer inGameRenderer,
+				MapRenderer mapRenderer) {
 		super(client, renderer);
 		this.inGameRenderer = inGameRenderer;
 		this.mapRenderer = mapRenderer;
@@ -98,10 +99,8 @@ class UI : Renderer {
 		this.widgets ~= this.renameButton;
 
 		// mini map
-		this.miniMap = new MiniMap(this.renderer, "minimap", "minimap_bg",
-								   new SDL_Rect(0, 0, 160, 160),
-								   this.client);
-		this.widgets ~= this.miniMap;
+		this.miniMap = new MiniMap(this.client, this.renderer,
+								   this.mapRenderer);
 	}
 
 
@@ -186,8 +185,10 @@ class UI : Renderer {
 		}
 
 		// minimap
-		this.miniMap.setXY(this.screenRegion.x + this.screenRegion.w - 170,
-						   this.screenRegion.y + 10);
+		this.miniMap.setScreenRegion(
+			this.screenRegion.x + this.screenRegion.w - 170,
+			this.screenRegion.y + 10,
+			160, 160);
 	}
 
 
@@ -343,5 +344,7 @@ class UI : Renderer {
 		foreach (Widget widget; this.widgets) {
 			widget.render();
 		}
+
+		this.miniMap.render();
 	}
 }

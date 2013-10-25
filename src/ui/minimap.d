@@ -4,8 +4,9 @@ import client;
 import map;
 import rect;
 import utils;
+import ui.maprenderer;
+import ui.renderer;
 import ui.renderhelper;
-import ui.widget;
 import world.structure;
 
 import derelict.sdl2.sdl;
@@ -13,8 +14,8 @@ import derelict.sdl2.sdl;
 import std.conv;
 import std.math;
 
-class MiniMap : Widget {
-	private const(Client) client;
+class MiniMap : Renderer {
+	private const(MapRenderer) mapRenderer;
 	private const(Map) map;
 	private int tileWidth;
 	private int tileHeight;
@@ -22,15 +23,11 @@ class MiniMap : Widget {
 	private int textureWidth;
 	private int textureHeight;
 
-	public this(RenderHelper renderer,
-				string name,
-				string textureName,
-				const(SDL_Rect *)bounds,
-				const(Client) client) {
-		super(renderer, name, textureName, bounds);
-
-		this.client = client;
+	public this(Client client, RenderHelper renderer,
+				MapRenderer mapRenderer) {
+		super(client, renderer);
 		this.map = this.client.getMap();
+		this.mapRenderer = mapRenderer;
 
 		this.tileWidth = 2;
 		this.tileHeight = 2;
@@ -72,7 +69,7 @@ class MiniMap : Widget {
 			"minimap_terrain", this.textureWidth, this.textureHeight);
 
 		this.renderer.drawTexture(0, 0, textureWidth, textureHeight,
-		                          this.textureName);
+		                          "minimap_bg");
 
 		// render tiles
 		for (uint i = 0; i < this.map.getWidth(); ++i) {
@@ -109,8 +106,12 @@ class MiniMap : Widget {
 	}
 
 
-	public override void draw() {
+	public override void render(int tick=0) {
 		this.updateMap();
-		this.renderer.drawTexture(this.bounds, "minimap");
+		this.renderer.drawTexture(this.screenRegion, "minimap");
+	}
+
+	public override void handleEvent(SDL_Event event) {
+
 	}
 }

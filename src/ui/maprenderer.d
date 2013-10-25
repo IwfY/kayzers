@@ -224,7 +224,8 @@ class MapRenderer : Renderer, Observer {
 	 * TODO: distance function could be weighted depending on tile
 	 * 		 dimension
 	 **/
-	public void getTileAtPixel(SDL_Point *position, out int i, out int j) {
+	public void getTileAtPixel(
+			SDL_Point *position, out int i, out int j) const {
 		double tileWidth =
 				cast(double)this.tileDimensions.w /
 				cast(double)this.zoom;
@@ -296,10 +297,25 @@ class MapRenderer : Renderer, Observer {
 
 
 	/**
-	 * get the top left coordinate of a tile drawn in column i, row j
+	 * return the tile coordinate of the viewport center
+	 **/
+	public Position getTileAtCenter() const {
+		// calculate viewport center
+		SDL_Point* center = new SDL_Point(
+			this.screenRegion.x + this.screenRegion.w / 2,
+			this.screenRegion.y + this.screenRegion.h / 2);
+		Position result = new Position();
+		this.getTileAtPixel(center, result.i, result.j);
+
+		return result;
+	}
+
+
+	/**
+	 * get the top left screen coordinate of a tile drawn in column i, row j
 	 **/
 	private void getTopLeftTileCoordinate(int i, int j,
-										  out int x, out int y) {
+										  out int x, out int y) const {
 		double tileWidth =
 				cast(double)this.tileDimensions.w /
 				cast(double)this.zoom;
