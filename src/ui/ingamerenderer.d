@@ -4,6 +4,7 @@ import client;
 import message;
 import messagebroker;
 import observer;
+import ui.characternamerenderer;
 import ui.renderer;
 import ui.renderhelper;
 import ui.maprenderer;
@@ -11,6 +12,7 @@ import ui.notificationrenderer;
 import ui.resourceloader;
 import ui.structurenamerenderer;
 import ui.ui;
+import world.character;
 import world.structure;
 
 import derelict.sdl2.sdl;
@@ -19,6 +21,7 @@ class InGameRenderer : Renderer, Observer {
 	private UI ui;
 	private MapRenderer mapRenderer;
 	private StructureNameRenderer structureNameRenderer;
+	private CharacterNameRenderer characterNameRenderer;
 	private NotificationRenderer notificationRenderer;
 
 	private MessageBroker messageBroker;
@@ -59,12 +62,21 @@ class InGameRenderer : Renderer, Observer {
 		if (this.structureNameRenderer !is null) {
 			destroy(this.structureNameRenderer);
 		}
+
+		if (this.characterNameRenderer !is null) {
+			destroy(this.characterNameRenderer);
+		}
 	}
 
 
 	public void startStructureNameRenderer(const(Structure) structure) {
 		this.structureNameRenderer = new StructureNameRenderer(
 			this.client, this.renderer, structure);
+	}
+
+	public void startCharacterNameRenderer(const(Character) character) {
+		this.characterNameRenderer = new CharacterNameRenderer(
+			this.client, this.renderer, character);
 	}
 
 
@@ -91,8 +103,11 @@ class InGameRenderer : Renderer, Observer {
 
 		// new character to be named
 		else if (message.text == "nameCharacter") {
-			import world.character;
-			//Character character = cast(Character)object;
+			assert(typeid(message) == typeid(ObjectMessage!(const(Character))));
+			ObjectMessage!(const(Character)) objectMessage =
+				cast(ObjectMessage!(const(Character)))message;
+			const(Character) character = objectMessage.object;
+			this.startCharacterNameRenderer(character);
 		}
 	}
 
@@ -116,6 +131,12 @@ class InGameRenderer : Renderer, Observer {
 				this.screenRegion.x, this.screenRegion.y,
 				this.screenRegion.w, this.screenRegion.h);
 		}
+
+		if (this.characterNameRenderer !is null) {
+			this.characterNameRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
+		}
 	}
 
 
@@ -134,6 +155,10 @@ class InGameRenderer : Renderer, Observer {
 			if (this.structureNameRenderer !is null) {
 				this.structureNameRenderer.render(tick);
 			}
+
+			if (this.characterNameRenderer !is null) {
+				this.characterNameRenderer.render(tick);
+			}
 		}
 
 
@@ -149,6 +174,15 @@ class InGameRenderer : Renderer, Observer {
 				// if event triggered deactivation of text input renderer - delete it
 				if (!this.structureNameRenderer.isActive()) {
 					this.structureNameRenderer = null;
+				}
+				return;
+			}
+			// character naming
+			else if (this.characterNameRenderer !is null) {
+				this.characterNameRenderer.handleEvent(event);
+				// if event triggered deactivation of text input renderer - delete it
+				if (!this.characterNameRenderer.isActive()) {
+					this.characterNameRenderer = null;
 				}
 				return;
 			}
