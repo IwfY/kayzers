@@ -1,5 +1,6 @@
 module observable;
 
+import message;
 import observer;
 
 class Observable {
@@ -32,7 +33,7 @@ class Observable {
 
 	protected void notifyObservers() {
 		foreach (Observer observer; this.observers) {
-			observer.notify("");
+			observer.notify(new Message(""));
 		}
 	}
 }

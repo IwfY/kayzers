@@ -3,6 +3,7 @@ module game;
 import client;
 import color;
 import map;
+import message;
 import player;
 import position;
 import structuremanager;
@@ -262,7 +263,7 @@ public class Game {
 			this.startNewRound();
 
 		}
-		this.client.serverNotify("nationChanged");
+		this.client.serverNotify(new Message("nationChanged"));
 	}
 
 

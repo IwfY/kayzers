@@ -1,5 +1,6 @@
 module ui.inputbox;
 
+import message;
 import observer;
 import rect;
 import textinput;
@@ -61,7 +62,7 @@ class InputBox : Widget, Observer {
 		}
 	}
 
-	public override void notify(string message) {
+	public override void notify(const(Message) message) {
 		if (this.text is null) {
 			return;
 		}

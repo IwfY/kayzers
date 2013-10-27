@@ -1,6 +1,7 @@
 module messagebroker;
 
 import list;
+import message;
 import observer;
 
 class MessageBroker {
@@ -44,8 +45,8 @@ class MessageBroker {
 	/**
 	 * send a notification to every registered observer
 	 **/
-	public void notify(string message) {
-		List!(Observer) list = this.observers.get(message, null);
+	public void notify(const(Message) message) {
+		List!(Observer) list = this.observers.get(message.text, null);
 
 		// check if list exists
 		if (list is null) {
@@ -72,8 +73,8 @@ unittest {
 		public this () {
 			this.i = 1;
 		}
-		public void notify(string message) {
-			if (message == "event") {
+		public void notify(const(Message) message) {
+			if (message.text == "event") {
 				this.i++;
 			} else {
 				this.i = -1;
@@ -87,16 +88,16 @@ unittest {
 	mb.register(a, "event");
 	mb.register(b, "event");
 	assert(a.i == 1);
-	mb.notify("event");
+	mb.notify(new Message("event"));
 	assert(a.i == 2);
-	mb.notify("other_event");
+	mb.notify(new Message("other_event"));
 	assert(a.i == 2);
 
 	b = null;
 	assert(b is null);
-	mb.notify("event");
+	mb.notify(new Message("event"));
 
 	mb.unregister(a, "event");
-	mb.notify("event");
+	mb.notify(new Message("event"));
 	assert(a.i == 3);
 }

@@ -1,6 +1,7 @@
 module ui.ingamerenderer;
 
 import client;
+import message;
 import messagebroker;
 import observer;
 import ui.renderer;
@@ -30,12 +31,14 @@ class InGameRenderer : Renderer, Observer {
 		this.messageBroker = messageBroker;
 		this.messageBroker.register(this, "gameStarted");
 		this.messageBroker.register(this, "gameStopped");
+		this.messageBroker.register(this, "nameCharacter");
 	}
 
 
 	public ~this() {
 		this.messageBroker.unregister(this, "gameStarted");
 		this.messageBroker.unregister(this, "gameStopped");
+		this.messageBroker.unregister(this, "nameCharacter");
 
 		this.destroyChildRenderer();
 	}
@@ -65,9 +68,9 @@ class InGameRenderer : Renderer, Observer {
 	}
 
 
-	public override void notify(string message) {
+	public override void notify(const(Message) message) {
 		// a game was started
-		if (message == "gameStarted") {
+		if (message.text == "gameStarted") {
 			// load game specific assets
 			ResourceLoader.loadGameTextures(this.client, this.renderer);
 
@@ -82,8 +85,14 @@ class InGameRenderer : Renderer, Observer {
 		}
 
 		// the game was stopped
-		else if (message == "gameStopped") {
+		else if (message.text == "gameStopped") {
 			this.destroyChildRenderer();
+		}
+
+		// new character to be named
+		else if (message.text == "nameCharacter") {
+			import world.character;
+			//Character character = cast(Character)object;
 		}
 	}
 

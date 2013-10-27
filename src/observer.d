@@ -1,5 +1,7 @@
 module observer;
 
+import message;
+
 interface Observer {
-	public void notify(string message);
+	public void notify(const(Message) message);
 }

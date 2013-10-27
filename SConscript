@@ -6,6 +6,7 @@ srcFiles = Split("""
     src/list.d
     src/main.d
     src/map.d
+    src/message.d
     src/messagebroker.d
     src/observable.d
     src/observer.d

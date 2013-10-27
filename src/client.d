@@ -2,6 +2,7 @@ module client;
 
 import game;
 import map;
+import message;
 import messagebroker;
 import position;
 import ui.renderer;
@@ -62,22 +63,22 @@ public class Client {
 		this.game.startNewRound();
 
 		this.gameActive = true;
-		this.messageBroker.notify("gameStarted");
-		this.messageBroker.notify("nationChanged");
+		this.messageBroker.notify(new Message("gameStarted"));
+		this.messageBroker.notify(new Message("nationChanged"));
 
 		return true;
 	}
 
 	public void stopGame() {
 		this.gameActive = false;
-		this.messageBroker.notify("gameStopped");
+		this.messageBroker.notify(new Message("gameStopped"));
 	}
 
 
 	/**
 	 * publishes a notification from the server (Game) to the message broker
 	 **/
-	public void serverNotify(string message) {
+	public void serverNotify(const(Message) message) {
 		this.messageBroker.notify(message);
 	}
 

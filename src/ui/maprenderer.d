@@ -4,6 +4,7 @@ import client;
 import color;
 import constants;
 import map;
+import message;
 import messagebroker;
 import observer;
 import position;
@@ -84,9 +85,9 @@ class MapRenderer : Renderer, Observer {
 	}
 
 
-	public override void notify(string message) {
+	public override void notify(const(Message) message) {
 		// active nation changed
-		if (message == "nationChanged") {
+		if (message.text == "nationChanged") {
 			// pan to new nation's seat
 			const(Nation) currentNation = this.client.getCurrentNation();
 			if (this.nationSelectedPositions.get(currentNation, null) is null) {

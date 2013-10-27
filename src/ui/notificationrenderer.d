@@ -1,6 +1,7 @@
 module ui.notificationrenderer;
 
 import client;
+import message;
 import messagebroker;
 import observer;
 import utils;
@@ -37,9 +38,9 @@ class NotificationRenderer : Renderer, Observer {
 		this.messageBroker.unregister(this, "nationChanged");
 	}
 
-	public override void notify(string message) {
+	public override void notify(const(Message) message) {
 		// active nation changed
-		if (message == "nationChanged") {
+		if (message.text == "nationChanged") {
 			this.startNotifyNation = SDL_GetTicks();
 		}
 	}
