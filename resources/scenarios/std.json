@@ -1,7 +1,9 @@
 {
 	"_fileType" : "scenario",
 	"name" : "Endless Game",
+	"description" : "Do whatever you want.",
 	"map" : "resources/img/map.png",
 	"nations" : ["Barcelona", "Lorraine"],
-	"startYear" : 1
+	"startYear" : 1,
+	"nationStartScript" : ""
 }

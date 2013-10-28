@@ -2,7 +2,8 @@ module ui.renderstate;
 
 enum Modus {
 	MAIN_MENU,
-	IN_GAME
+	IN_GAME,
+	SCENARIO_LIST
 }
 
 class RenderState {

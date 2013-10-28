@@ -40,11 +40,11 @@ public class Client {
 		this.messageBroker = new MessageBroker();
 		this.gameActive = false;
 
+		this.scenarios = ScenarioLoader.loadScenarios("resources/scenarios");
+
 		this.renderer = RendererFactory.makeRenderInfrastructure(
 				this, this.window, this.messageBroker);
-
-		this.scenarios = ScenarioLoader.loadScenarios("resources/scenarios");
-	}
+}
 
 
 	public ~this() {
@@ -141,6 +141,11 @@ public class Client {
 
 	public const(int) getCurrentYear() const {
 		return this.game.getCurrentYear();
+	}
+
+
+	public const(Scenario[]) getScenarios() const {
+		return this.scenarios.values;
 	}
 
 

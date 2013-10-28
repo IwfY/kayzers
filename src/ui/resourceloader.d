@@ -133,9 +133,12 @@ class ResourceLoader {
 
 		//TODO make portable
 		renderer.registerFont(STD_FONT, "/usr/share/fonts/TTF/DejaVuSans.ttf");
-		renderer.registerFont("mainMenuHead",
+		renderer.registerFont("menuHead",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  80);
+		renderer.registerFont("menuHead2",
+							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
+							  50);
 		renderer.registerFont("notificationLarge",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  30);

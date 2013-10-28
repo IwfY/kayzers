@@ -49,25 +49,7 @@ public class Game {
 		this.initNations();
 		this.structureManager = new StructureManager(this);
 
-		this.name = scenario.getName();
-		this.currentYear = scenario.getStartYear();
-		this.map = new Map(scenario.getMapName);
-		foreach (string nationName; scenario.getNationNames()) {
-			this.addNation(nationName);
-		}
-
-		int i = 0;
-		randomShuffle(this.nationColors);
-		foreach (Nation nation; this.nations) {
-			// create settlement
-			SettlementCreator.create(this, nation);
-			// set nation color
-			nation.setColor(this.nationColors[i % nationColors.length]);
-
-			++i;
-		}
-
-		this.currentNationIndex = 0;
+		this.initGame(scenario);
 
 	}
 
@@ -264,6 +246,32 @@ public class Game {
 
 		}
 		this.client.serverNotify(new Message("nationChanged"));
+	}
+
+
+	/**
+	 * load scenario data and initialize game accordingly
+	 **/
+	public void initGame(Scenario scenario) {
+		this.name = scenario.getName();
+		this.currentYear = scenario.getStartYear();
+		this.map = new Map(scenario.getMapName);
+		foreach (string nationName; scenario.getNationNames()) {
+			this.addNation(nationName);
+		}
+
+		int i = 0;
+		randomShuffle(this.nationColors);
+		foreach (Nation nation; this.nations) {
+			// create settlement
+			SettlementCreator.create(this, nation);
+			// set nation color
+			nation.setColor(this.nationColors[i % nationColors.length]);
+
+			++i;
+		}
+
+		this.currentNationIndex = 0;
 	}
 
 

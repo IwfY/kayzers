@@ -8,6 +8,7 @@ import ui.mainmenu;
 import ui.renderer;
 import ui.renderhelper;
 import ui.renderstate;
+import ui.scenariolistrenderer;
 
 import derelict.sdl2.sdl;
 
@@ -16,6 +17,7 @@ class RenderDispatcher : Renderer {
 	private MainMenu mainMenu;
 	private InGameRenderer inGameRenderer;
 	private RenderState renderState;
+	private ScenarioListRenderer scenarioListRenderer;
 
 
 	public this(Client client, RenderHelper renderer,
@@ -27,6 +29,9 @@ class RenderDispatcher : Renderer {
 		this.mainMenu = new MainMenu(
 				this.client, this.renderer, this.renderState);
 
+		this.scenarioListRenderer = new ScenarioListRenderer(
+			this.client, this.renderer, this.renderState);
+
 		this.inGameRenderer = new InGameRenderer(
 				this.client, this.renderer, messageBroker);
 	}
@@ -35,6 +40,7 @@ class RenderDispatcher : Renderer {
 	public ~this() {
 		destroy(this.mainMenu);
 		destroy(this.inGameRenderer);
+		destroy(this.scenarioListRenderer);
 
 		destroy(this.renderer);
 	}
@@ -47,6 +53,7 @@ class RenderDispatcher : Renderer {
 		Rect screen = this.renderer.getScreenRegion();
 
 		this.mainMenu.setScreenRegion(0, 0, screen.w, screen.h);
+		this.scenarioListRenderer.setScreenRegion(0, 0, screen.w, screen.h);
 		this.inGameRenderer.setScreenRegion(0, 0, screen.w, screen.h);
 	}
 
@@ -60,6 +67,8 @@ class RenderDispatcher : Renderer {
 			this.mainMenu.render(tick);
 		} else if (this.renderState.getState() == Modus.IN_GAME) {
 			this.inGameRenderer.render(tick);
+		} else if (this.renderState.getState() == Modus.SCENARIO_LIST) {
+			this.scenarioListRenderer.render(tick);
 		}
 
 		this.renderer.renderPresent();
@@ -71,6 +80,8 @@ class RenderDispatcher : Renderer {
 			this.mainMenu.handleEvent(event);
 		} else if (this.renderState.getState() == Modus.IN_GAME) {
 			this.inGameRenderer.handleEvent(event);
+		} else if (this.renderState.getState() == Modus.SCENARIO_LIST) {
+			this.scenarioListRenderer.handleEvent(event);
 		}
 	}
 }

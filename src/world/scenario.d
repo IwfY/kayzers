@@ -1,6 +1,8 @@
 module world.scenario;
 
 import map;
+import script.script;
+import script.scriptcontext;
 import world.nationprototype;
 
 import std.conv;
@@ -24,7 +26,9 @@ class ScenarioLoader {
 		}
 
 		string name = json["name"].str;
+		string description = json["description"].str;
 		string mapName = json["map"].str;
+		string nationStartScriptString = json["nationStartScript"].str;
 		int startYear = to!int(json["startYear"].integer);
 
 		Scenario scenario = new Scenario();
@@ -32,6 +36,8 @@ class ScenarioLoader {
 		scenario.setStartYear(startYear);
 		scenario.setNationNames(nationNames);
 		scenario.setMapName(mapName);
+		scenario.setDescription(description);
+		scenario.setNationStartScript(nationStartScriptString);
 
 		return scenario;
 	}
@@ -54,20 +60,28 @@ class ScenarioLoader {
 
 class Scenario {
 	private string name;
+	private string description;
 	private string mapName;
 	private int startYear;
 	private string[] nationNames;
+	private Script nationStartScript;
 
 
 	public this() {
 
 	}
 
-	public string getName() {
+	public const(string) getName() const {
         return this.name;
 	}
 	public void setName(string name) {
 			this.name = name;
+	}
+	public const(string) getDescription() const {
+        return this.description;
+	}
+	public void setDescription(string description) {
+			this.description = description;
 	}
 
 	public const(int) getStartYear() const {
@@ -89,5 +103,16 @@ class Scenario {
 	}
 	public void setNationNames(string[] nationNames) {
 		this.nationNames = nationNames;
+	}
+
+	public void setNationStartScript(Script script) {
+		this.nationStartScript = script;
+	}
+	public void setNationStartScript(string scriptString) {
+		this.nationStartScript = new Script(scriptString);
+	}
+
+	public void runNationStartScript(ScriptContext context) {
+		this.nationStartScript.execute(context);
 	}
 }
