@@ -9,6 +9,8 @@ import ui.widgets.widgetinterface;
 
 import derelict.sdl2.sdl;
 
+import std.string;
+
 /**
  * decorator that adds a popup to a widget
  **/
@@ -30,6 +32,8 @@ class PopupWidgetDecorator : WidgetDecorator {
 
 		if (offset !is null) {
 			this.offset = offset;
+		} else {
+			this.offset = new Position(5, -5);
 		}
 
 		const(SDL_Rect*) widgetBounds = this.decoratedWidget.getBounds();
@@ -37,8 +41,13 @@ class PopupWidgetDecorator : WidgetDecorator {
 			0, 0,
 			0, 0);	// zeroes as Label ignores width and height settings
 
-		this.label = new Label(renderer, "", labelBackground,
-							   bounds, labelText, fontName, color);
+		this.label = new Label(
+			renderer,
+			format("%s popup", this.decoratedWidget.getName()),
+			labelBackground, bounds, labelText, fontName, color);
+		this.label.setPadding(5, 3);
+		this.label.hide();
+
 		this.repositionPopup();
 	}
 
@@ -47,7 +56,7 @@ class PopupWidgetDecorator : WidgetDecorator {
 		const(SDL_Rect*) widgetBounds = this.decoratedWidget.getBounds();
 		const(SDL_Rect*) popupBounds = this.label.getBounds();
 
-		int x = widgetBounds.x + this.offset.j;
+		int x = widgetBounds.x + this.offset.i;
 		int y = widgetBounds.y - popupBounds.h + this.offset.j;
 
 		this.label.setXY(x, y);
@@ -70,7 +79,24 @@ class PopupWidgetDecorator : WidgetDecorator {
 	}
 
 	protected override void draw() {
-		super.render();
+		super.draw();
 		this.label.render();
+	}
+
+	public override void mouseEnter() {
+		super.mouseEnter();
+		if (!this.decoratedWidget.isHidden()) {
+			this.label.unhide();
+		}
+	}
+
+	public override void mouseLeave() {
+		super.mouseLeave();
+		this.label.hide();
+	}
+
+	public override void hide() {
+		super.hide();
+		this.label.hide();
 	}
 }

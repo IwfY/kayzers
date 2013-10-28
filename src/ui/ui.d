@@ -11,12 +11,10 @@ import ui.image;
 import ui.ingamerenderer;
 import ui.maprenderer;
 import ui.minimap;
-import ui.popupbutton;
 import ui.renderer;
 import ui.renderhelper;
-import ui.structurenamerenderer;
-import ui.textinputrenderer;
-import ui.widget;
+import ui.widgets.popupwidgetdecorator;
+import ui.widgets.widgetinterface;
 import world.character;
 import world.nation;
 import world.nationprototype;
@@ -33,10 +31,10 @@ import std.string;
 
 class UI : Renderer {
 	private const(Map) map;
-	private Widget[] widgets;
-	private Widget mouseOverWidget;	// reference to widget under mouse
-	private PopupButton[string] structureButtons;
-	private PopupButton renameButton;
+	private WidgetInterface[] widgets;
+	private WidgetInterface mouseOverWidget; // reference to widget under mouse
+	private WidgetInterface[string] structureButtons;
+	private WidgetInterface renameButton;
 	private Image tileImage;
 	private Image structureImage;
 	private MapRenderer mapRenderer;
@@ -61,18 +59,23 @@ class UI : Renderer {
 		// structure buttons
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
-			PopupButton button = new PopupButton(
+			Button button = new Button(
 					this.renderer,
 					structurePrototype.getName(),
 					structurePrototype.getIconImageName(),
 					NULL_TEXTURE,
 					new SDL_Rect(0, 0, 35, 35),
-					&this.addStructureHandler,
-					structurePrototype.getPopupText(),
-					STD_FONT);
+					&this.addStructureHandler);
+
+			WidgetInterface decoratedButton = new PopupWidgetDecorator(
+				button,
+				this.renderer,
+				structurePrototype.getPopupText(),
+				"ui_popup_background");
+
 			this.structureButtons[structurePrototype.getIconImageName()] =
-				button;
-			this.widgets ~= button;
+				decoratedButton;
+			this.widgets ~= decoratedButton;
 		}
 
 		// selected structure and tile display
@@ -88,15 +91,19 @@ class UI : Renderer {
 		this.widgets ~= this.structureImage;
 
 		// rename button
-		renameButton = new PopupButton(
+		Button tmpButton = new Button(
 			this.renderer,
-			"",
+			"rename",
 			"button_rename",
 			"white_a10pc",
 			new SDL_Rect(0, 0, 11, 11),
-			&this.renameStructureHandler,
-			"Rename",
-			STD_FONT);
+			&this.renameStructureHandler);
+
+		this.renameButton = new PopupWidgetDecorator(
+				tmpButton,
+				this.renderer,
+				"Rename",
+				"ui_popup_background");
 		this.widgets ~= this.renameButton;
 
 		// mini map
@@ -180,7 +187,7 @@ class UI : Renderer {
 		// structure buttons
 		int structureButtonX = 300;
 		int structureButtonY = this.screenRegion.y + 30;
-		foreach(PopupButton button; this.structureButtons.values) {
+		foreach(WidgetInterface button; this.structureButtons.values) {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
@@ -232,7 +239,7 @@ class UI : Renderer {
 	public void updateStructureButtonBuildable() {
 		const(Nation) currentNation = this.client.getCurrentNation();
 		const(Position) position = this.mapRenderer.getSelectedPosition();
-		foreach (string buttonImageName, PopupButton button;
+		foreach (string buttonImageName, WidgetInterface button;
 				 this.structureButtons) {
 			bool buildable = this.client.canBuildStructure(
 				button.getName(),
@@ -254,7 +261,7 @@ class UI : Renderer {
 				event.button.button == SDL_BUTTON_LEFT) {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
-			foreach (Widget widget; this.widgets) {
+			foreach (WidgetInterface widget; this.widgets) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
 				}
@@ -265,7 +272,7 @@ class UI : Renderer {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
 			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (Widget widget; this.widgets) {
+			foreach (WidgetInterface widget; this.widgets) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widgetMouseOver = true;
 					if (this.mouseOverWidget is null) {
@@ -364,7 +371,7 @@ class UI : Renderer {
 
 		this.updateWidgets();
 
-		foreach (Widget widget; this.widgets) {
+		foreach (WidgetInterface widget; this.widgets) {
 			widget.render();
 		}
 
