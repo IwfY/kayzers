@@ -12,6 +12,10 @@ abstract class Widget {
 	protected RenderHelper renderer;
 	protected string name;
 	protected string textureName;
+
+	// z-index specifies drawing order of overlapping widgets
+	// 		higher index widgets are drawn above lower index ones
+	protected int zIndex;
 	private bool hidden;
 
 	public this(RenderHelper renderer,
@@ -23,6 +27,16 @@ abstract class Widget {
 		this.textureName = textureName;
 		this.hidden = false;
 		this.bounds = new SDL_Rect(bounds.x, bounds.y, bounds.w, bounds.h);
+		this.zIndex = 0;
+	}
+
+
+	public const(int) getZIndex() const {
+		return this.zIndex;
+	}
+
+	public void setZIndex(int zIndex) {
+		this.zIndex = zIndex;
 	}
 
 	public bool isPointInBounds(SDL_Point *point) {
@@ -88,5 +102,9 @@ abstract class Widget {
 	}
 
 	public void mouseLeave() {
+	}
+
+	static bool zIndexSort(Widget a, Widget b) {
+		return (a.getZIndex() < b.getZIndex());
 	}
 }

@@ -8,6 +8,8 @@ import world.scenario;
 
 import derelict.sdl2.sdl;
 
+import std.algorithm;
+
 abstract class WidgetRenderer : Renderer {
 	protected string backgroundImage;
 	protected Widget[] allWidgets;
@@ -29,7 +31,7 @@ abstract class WidgetRenderer : Renderer {
 	public override void render(int tick=0) {
 		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, this.backgroundImage);
-		foreach (Widget widget; this.allWidgets) {
+		foreach (Widget widget; sort!(Widget.zIndexSort)(this.allWidgets)) {
 			widget.render();
 		}
 	}
