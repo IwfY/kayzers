@@ -1,5 +1,6 @@
 module ui.label;
 
+import constants;
 import rect;
 import utils;
 import ui.widget;
@@ -22,8 +23,8 @@ class Label : Widget {
 				string textureName,
 				SDL_Rect *bounds,
 				string textIn,
-				string fontName,
-				SDL_Color *color = null) {
+				string fontName=STD_FONT,
+				SDL_Color *color=null) {
 		super(renderer, name, textureName, bounds);
 		this.text = textIn.split("\n");
 		this.fontName = fontName;

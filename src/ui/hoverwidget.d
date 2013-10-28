@@ -23,7 +23,7 @@ abstract class HoverWidget : Widget {
 	public override final void render() {
 		if (!this.isHidden()) {
 			this.renderer.drawTexture(this.bounds, this.textureName);
-			if (mouseOver) {
+			if (this.mouseOver) {
 				this.renderer.drawTexture(this.bounds, this.hoverTextureName);
 			}
 			this.draw();

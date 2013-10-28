@@ -5,7 +5,7 @@ import ui.widgets.widgetinterface;
 import derelict.sdl2.sdl;
 
 abstract class WidgetDecorator : WidgetInterface {
-	private WidgetInterface decoratedWidget;
+	protected WidgetInterface decoratedWidget;
 
 	public this(WidgetInterface decoratedWidget) {
 		this.decoratedWidget = decoratedWidget;
@@ -26,7 +26,7 @@ abstract class WidgetDecorator : WidgetInterface {
 		this.draw();
 	}
 
-	protected void draw() {
+	protected override void draw() {
 		this.decoratedWidget.render();
 	}
 
