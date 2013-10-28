@@ -3,19 +3,20 @@ module ui.characternamerenderer;
 import client;
 import constants;
 import textinput;
+import ui.image;
 import ui.inputbox;
 import ui.label;
 import ui.labelbutton;
-import ui.renderer;
 import ui.renderhelper;
 import ui.widget;
+import ui.widgetrenderer;
 import world.character;
 
 import derelict.sdl2.sdl;
 
 import std.string;
 
-class CharacterNameRenderer : Renderer {
+class CharacterNameRenderer : WidgetRenderer {
 	private const(Character) character;
 
 	private bool active;
@@ -24,21 +25,20 @@ class CharacterNameRenderer : Renderer {
 	private int boxX;
 	private int boxY;
 
-	private Widget[] allWidgets;
-	private Widget mouseOverWidget;	// reference to widget under mouse
 	private Label label;
 	private InputBox inputBox;
 	private LabelButton okButton;
 	private TextInput textInputServer;
+	private Image boxBackground;
 	private string inputString;
 
 	public this(Client client, RenderHelper renderer,
 	            const(Character) character) {
-		super(client, renderer);
 		this.textInputServer = new TextInput();
 		this.character = character;
 
-		this.initWidgets();
+		super(client, renderer, "grey_a127");	// calls initWidgets
+
 		this.active = true;
 		this.inputBox.click();	// activate text input
 	}
@@ -49,7 +49,13 @@ class CharacterNameRenderer : Renderer {
 	}
 
 
-	private void initWidgets() {
+	protected override void initWidgets() {
+		this.boxBackground = new Image(
+			this.renderer, "", "bg_300_140",
+			new SDL_Rect(0, 0, 300, 140));
+		this.boxBackground.setZIndex(-1);
+		this.allWidgets ~= this.boxBackground;
+
 		this.inputBox = new InputBox(
 			this.renderer, this.textInputServer,
 			"inputBox",
@@ -86,7 +92,12 @@ class CharacterNameRenderer : Renderer {
 	}
 
 
-	private void updateWidgets() {
+	protected override void updateWidgets() {
+		this.boxX = this.screenRegion.x + (this.screenRegion.w - 300) / 2;
+		this.boxY = this.screenRegion.y + (this.screenRegion.h - 140) / 2;
+
+		this.boxBackground.setXY(this.boxX,
+		                         this.boxY);
 		this.label.setXY(this.boxX + 20,
 		                 this.boxY + 20);
 		this.inputBox.setXY(this.boxX + 20,
@@ -98,16 +109,7 @@ class CharacterNameRenderer : Renderer {
 
 	public override void render(int tick=0) {
 		if (this.active) {
-			this.boxX = this.screenRegion.x + (this.screenRegion.w - 300) / 2;
-			this.boxY = this.screenRegion.y + (this.screenRegion.h - 140) / 2;
-
-			this.renderer.drawTexture(this.screenRegion, "grey_a127");
-			this.renderer.drawTexture(this.boxX, this.boxY, "bg_300_140");
-
-			this.updateWidgets();
-			foreach (Widget widget; this.allWidgets) {
-				widget.render();
-			}
+			super.render(tick);
 		}
 	}
 
@@ -118,47 +120,14 @@ class CharacterNameRenderer : Renderer {
 
 	public override void handleEvent(SDL_Event event) {
 		if (this.active) {
+			// text input
 			this.textInputServer.handleEvent(event);
 
-			// left mouse down
-			if (event.type == SDL_MOUSEBUTTONDOWN &&
-			    event.button.button == SDL_BUTTON_LEFT) {
-				SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-				foreach (Widget widget; this.allWidgets) {
-					if (widget.isPointInBounds(mousePosition)) {
-						widget.click();
-					}
-				}
-			}
-			// mouse motion --> hover effects
-			else if (event.type == SDL_MOUSEMOTION) {
-				SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-				bool widgetMouseOver = false; // is there a widget under the mouse?
-				foreach (Widget widget; this.allWidgets) {
-					if (widget.isPointInBounds(mousePosition)) {
-						widgetMouseOver = true;
-						if (this.mouseOverWidget is null) {
-							this.mouseOverWidget = widget;
-							this.mouseOverWidget.mouseEnter();
-							break;
-						} else if (this.mouseOverWidget != widget) {
-							this.mouseOverWidget.mouseLeave();
-							this.mouseOverWidget = widget;
-							this.mouseOverWidget.mouseEnter();
-							break;
-						}
-					}
-				}
-				// no widget under mouse but there was one before
-				if (!widgetMouseOver && this.mouseOverWidget !is null) {
-					this.mouseOverWidget.mouseLeave();
-					this.mouseOverWidget = null;
-				}
-			}
+			// widgets
+			super.handleEvent(event);
+
 			// key press
-			else if (event.type == SDL_KEYDOWN) {
+			if (event.type == SDL_KEYDOWN) {
 				// enter input
 				if (event.key.keysym.sym == SDLK_RETURN) {
 					this.okButtonCallback("");
