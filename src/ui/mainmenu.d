@@ -4,31 +4,26 @@ import client;
 import ui.button;
 import ui.label;
 import ui.labelbutton;
-import ui.renderer;
 import ui.renderhelper;
 import ui.renderstate;
 import ui.widget;
+import ui.widgetrenderer;
 
 import derelict.sdl2.sdl;
 
-class MainMenu : Renderer {
+class MainMenu : WidgetRenderer {
 	private Label head;
 	private LabelButton exitButton;
 	private LabelButton newGameButton;
 	private LabelButton settingsButton;
-	private Widget[] allWidgets;
-	private Widget mouseOverWidget;	// reference to widget under mouse
 	private RenderState renderState;
 
 	public this(Client client, RenderHelper renderer, RenderState renderState) {
-		super(client, renderer);
-		this.mouseOverWidget = null;
+		super(client, renderer, "mainmenu_bg");
 		this.renderState = renderState;
-
-		this.initWidgets();
 	}
 
-	private void initWidgets() {
+	protected override void initWidgets() {
 		this.newGameButton =
 				new LabelButton(this.renderer,
 								"newGame",
@@ -70,7 +65,7 @@ class MainMenu : Renderer {
 		this.allWidgets ~= this.head;
 	}
 
-	private void updateWidgets() {
+	protected override void updateWidgets() {
 		this.newGameButton.setXY(0, 200);
 		this.newGameButton.centerHorizontally();
 		this.settingsButton.setXY(0, 400);
@@ -81,14 +76,6 @@ class MainMenu : Renderer {
 		this.head.centerHorizontally();
 	}
 
-	public override void render(int tick=0) {
-		this.updateWidgets();
-		this.renderer.drawTexture(this.screenRegion, "mainmenu_bg");
-		foreach (Widget widget; this.allWidgets) {
-			widget.render();
-		}
-	}
-
 	public void mainMenuCallbackHandler(string message) {
 		if (message == "exit") {
 			this.client.stop();
@@ -96,46 +83,6 @@ class MainMenu : Renderer {
 			this.renderState.setState(Modus.SCENARIO_LIST);
 		} else if (message == "settings") {
 			//this.renderer.setState(RendererState.INPUT_POPUP);
-		}
-	}
-
-	public override void handleEvent(SDL_Event event) {
-		// left mouse down
-		if (event.type == SDL_MOUSEBUTTONDOWN &&
-				event.button.button == SDL_BUTTON_LEFT) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			foreach (Widget widget; this.allWidgets) {
-				if (widget.isPointInBounds(mousePosition)) {
-					widget.click();
-				}
-			}
-		}
-		// mouse motion --> hover effects
-		else if (event.type == SDL_MOUSEMOTION) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (Widget widget; this.allWidgets) {
-				if (widget.isPointInBounds(mousePosition)) {
-					widgetMouseOver = true;
-					if (this.mouseOverWidget is null) {
-						this.mouseOverWidget = widget;
-						this.mouseOverWidget.mouseEnter();
-						break;
-					} else if (this.mouseOverWidget != widget) {
-						this.mouseOverWidget.mouseLeave();
-						this.mouseOverWidget = widget;
-						this.mouseOverWidget.mouseEnter();
-						break;
-					}
-				}
-			}
-			// no widget under mouse but there was one before
-			if (!widgetMouseOver && this.mouseOverWidget !is null) {
-				this.mouseOverWidget.mouseLeave();
-				this.mouseOverWidget = null;
-			}
 		}
 	}
 }

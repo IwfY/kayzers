@@ -50,6 +50,7 @@ srcFiles = Split("""
     src/ui/texturemanager.d
     src/ui/ui.d
     src/ui/widget.d
+    src/ui/widgetrenderer.d
     src/world/character.d
     src/world/dynasty.d
     src/world/language.d
