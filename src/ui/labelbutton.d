@@ -28,7 +28,7 @@ class LabelButton : HoverWidget {
 							   this.bounds, text, fontName, color);
 	}
 
-	public override void draw() {
+	protected override void draw() {
 		this.button.render();
 		this.label.render();
 	}

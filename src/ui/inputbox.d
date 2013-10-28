@@ -75,7 +75,7 @@ class InputBox : Widget, Observer {
 		}
 	}
 
-	public override void draw() {
+	protected override void draw() {
 		if (this.text is null) {
 			return;
 		}

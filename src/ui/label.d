@@ -80,7 +80,7 @@ class Label : Widget {
 	public override void click() {
 	}
 
-	public override void draw() {
+	protected override void draw() {
 		this.renderer.drawTextMultiline(
 				this.bounds.x + this.padding.x,
 				this.bounds.y + this.padding.y,

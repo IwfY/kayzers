@@ -17,6 +17,6 @@ class Image : Widget {
 	override public void click() {
 	}
 
-	public override void draw() {
+	protected override void draw() {
 	}
 }

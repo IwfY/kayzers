@@ -3,10 +3,11 @@ module ui.widget;
 import rect;
 import utils;
 import ui.renderhelper;
+import ui.widgets.widgetinterface;
 
 import derelict.sdl2.sdl;
 
-abstract class Widget {
+abstract class Widget : WidgetInterface {
 	// bounds sets scale for drawing and serves as hit box for interaction
 	protected SDL_Rect *bounds;
 	protected RenderHelper renderer;
@@ -31,7 +32,7 @@ abstract class Widget {
 	}
 
 
-	public const(int) getZIndex() const {
+	public final const(int) getZIndex() const {
 		return this.zIndex;
 	}
 
@@ -39,13 +40,8 @@ abstract class Widget {
 		this.zIndex = zIndex;
 	}
 
-	public bool isPointInBounds(SDL_Point *point) {
+	public final bool isPointInBounds(SDL_Point *point) {
 		return rectContainsPoint(this.bounds, point);
-	}
-
-
-	public const(bool) isHidden() const {
-		return this.hidden;
 	}
 
 
@@ -56,7 +52,7 @@ abstract class Widget {
 		}
 	}
 
-	public abstract void draw();
+	protected abstract void draw();
 
 
 	public void setXY(int x, int y) {
@@ -64,10 +60,13 @@ abstract class Widget {
 		this.bounds.y = y;
 	}
 
-	public void hide() {
+	public final const(bool) isHidden() const {
+		return this.hidden;
+	}
+	public final void hide() {
 		this.hidden = true;
 	}
-	public void unhide() {
+	public final void unhide() {
 		this.hidden = false;
 	}
 
@@ -83,15 +82,15 @@ abstract class Widget {
 		this.bounds.h = h;
 	}
 
-	public void setTextureName(string textureName) {
+	public final void setTextureName(string textureName) {
 		this.textureName = textureName;
 	}
 
-	public const(SDL_Rect *)getBounds() const {
+	public final const(SDL_Rect *) getBounds() const {
 		return this.bounds;
 	}
 
-	public const(string) getName() const {
+	public final const(string) getName() const {
 		return this.name;
 	}
 
