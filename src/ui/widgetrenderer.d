@@ -3,7 +3,7 @@ module ui.widgetrenderer;
 import client;
 import ui.renderer;
 import ui.renderhelper;
-import ui.widget;
+import ui.widgets.widget;
 import world.scenario;
 
 import derelict.sdl2.sdl;

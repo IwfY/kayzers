@@ -3,12 +3,12 @@ module ui.structurenamerenderer;
 import client;
 import constants;
 import textinput;
-import ui.image;
-import ui.inputbox;
-import ui.label;
-import ui.labelbutton;
+import ui.widgets.image;
+import ui.widgets.inputbox;
+import ui.widgets.label;
+import ui.widgets.labelbutton;
 import ui.renderhelper;
-import ui.widget;
+import ui.widgets.widget;
 import ui.widgetrenderer;
 import world.structure;
 

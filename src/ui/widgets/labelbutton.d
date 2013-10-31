@@ -1,9 +1,9 @@
 module ui.labelbutton;
 
 import rect;
-import ui.button;
-import ui.label;
-import ui.hoverwidget;
+import ui.widgets.button;
+import ui.widgets.label;
+import ui.widgets.hoverwidget;
 import ui.renderhelper;
 
 import derelict.sdl2.sdl;

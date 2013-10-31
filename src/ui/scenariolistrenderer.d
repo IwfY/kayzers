@@ -1,11 +1,11 @@
 module ui.scenariolistrenderer;
 
 import client;
-import ui.label;
-import ui.labelbutton;
+import ui.widgets.label;
+import ui.widgets.labelbutton;
 import ui.renderhelper;
 import ui.renderstate;
-import ui.widget;
+import ui.widgets.widget;
 import ui.widgetrenderer;
 import world.scenario;
 

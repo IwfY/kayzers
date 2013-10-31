@@ -5,9 +5,9 @@ import constants;
 import textinput;
 import ui.renderer;
 import ui.renderhelper;
-import ui.labelbutton;
-import ui.inputbox;
-import ui.widget;
+import ui.widgets.labelbutton;
+import ui.widgets.inputbox;
+import ui.widgets.widget;
 
 import derelict.sdl2.sdl;
 

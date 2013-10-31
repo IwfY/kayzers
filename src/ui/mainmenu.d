@@ -1,12 +1,12 @@
 module ui.mainmenu;
 
 import client;
-import ui.button;
-import ui.label;
-import ui.labelbutton;
+import ui.widgets.button;
+import ui.widgets.label;
+import ui.widgets.labelbutton;
 import ui.renderhelper;
 import ui.renderstate;
-import ui.widget;
+import ui.widgets.widget;
 import ui.widgetrenderer;
 
 import derelict.sdl2.sdl;

@@ -20,16 +20,10 @@ srcFiles = Split("""
     src/script/script.d
     src/script/scriptcontext.d
     src/script/token.d
-    src/ui/button.d
     src/ui/characternamerenderer.d
     src/ui/cloudrenderer.d
     src/ui/fontmanager.d
-    src/ui/hoverwidget.d
-    src/ui/image.d
     src/ui/ingamerenderer.d
-    src/ui/inputbox.d
-    src/ui/label.d
-    src/ui/labelbutton.d
     src/ui/mainmenu.d
     src/ui/maplayer.d
     src/ui/maplayers.d
@@ -48,9 +42,15 @@ srcFiles = Split("""
     src/ui/texture.d
     src/ui/texturemanager.d
     src/ui/ui.d
-    src/ui/widget.d
     src/ui/widgetrenderer.d
+    src/ui/widgets/button.d
+    src/ui/widgets/hoverwidget.d
+    src/ui/widgets/image.d
+    src/ui/widgets/inputbox.d
+    src/ui/widgets/label.d
+    src/ui/widgets/labelbutton.d
     src/ui/widgets/popupwidgetdecorator.d
+    src/ui/widgets/widget.d
     src/ui/widgets/widgetdecorator.d
     src/ui/widgets/widgetinterface.d
     src/world/character.d

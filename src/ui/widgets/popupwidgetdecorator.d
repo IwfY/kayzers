@@ -2,7 +2,7 @@ module ui.widgets.popupwidgetdecorator;
 
 import constants;
 import position;
-import ui.label;
+import ui.widgets.label;
 import ui.renderhelper;
 import ui.widgets.widgetdecorator;
 import ui.widgets.widgetinterface;

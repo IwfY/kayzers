@@ -3,7 +3,7 @@ module ui.label;
 import constants;
 import rect;
 import utils;
-import ui.widget;
+import ui.widgets.widget;
 import ui.renderhelper;
 
 import derelict.sdl2.sdl;
