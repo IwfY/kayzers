@@ -3,16 +3,20 @@ module ui.ui;
 import client;
 import constants;
 import map;
+import message;
+import messagebroker;
+import observer;
 import position;
 import rect;
 import utils;
-import ui.widgets.button;
-import ui.widgets.image;
 import ui.ingamerenderer;
 import ui.maprenderer;
 import ui.minimap;
 import ui.renderer;
 import ui.renderhelper;
+import ui.widgets.button;
+import ui.widgets.image;
+import ui.widgets.label;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.widgetinterface;
 import world.character;
@@ -29,29 +33,62 @@ import std.math;
 import std.stdio;
 import std.string;
 
-class UI : Renderer {
+class UI : Renderer, Observer {
 	private const(Map) map;
+
 	private WidgetInterface[] widgets;
 	private WidgetInterface mouseOverWidget; // reference to widget under mouse
 	private WidgetInterface[string] structureButtons;
 	private WidgetInterface renameButton;
 	private Image tileImage;
 	private Image structureImage;
+	private Label yearLabel;
+	private Label nationName;
+	private Image nationFlag;
+	private Image nationFlagBorder;
+	private Image goldIcon;
+	private Image inhabitantsIcon;
+
 	private MapRenderer mapRenderer;
 	private MiniMap miniMap;
 	private InGameRenderer inGameRenderer;
 
+	private MessageBroker messageBroker;
+
 
 	public this(Client client, RenderHelper renderer,
 				InGameRenderer inGameRenderer,
-				MapRenderer mapRenderer) {
+	            MapRenderer mapRenderer,
+	            MessageBroker messageBroker) {
 		super(client, renderer);
+		this.messageBroker = messageBroker;
 		this.inGameRenderer = inGameRenderer;
 		this.mapRenderer = mapRenderer;
 		this.map = this.client.getMap();
 
 		this.initWidgets();
+
+		this.messageBroker.register(this, "nationChanged");
 	}
+
+
+	public ~this() {
+		this.messageBroker.unregister(this, "nationChanged");
+	}
+
+
+	public override void notify(const(Message) message) {
+		// active nation changed
+		if (message.text == "nationChanged") {
+			// nation flag and name
+			const(Nation) nation = this.client.getCurrentNation();
+			this.nationName.setText(nation.getName());
+			this.nationFlag.setTextureName(nation.getPrototype().getFlagImageName());
+
+			this.yearLabel.setText(_("Year ") ~ text(this.client.getCurrentYear()));
+		}
+	}
+
 
 	private const(string) _(string text) const {
 		return this.client.getI18nString(text);
@@ -108,6 +145,35 @@ class UI : Renderer {
 				_("Rename"),
 				"ui_popup_background");
 		this.widgets ~= this.renameButton;
+
+
+		// nation flag and label
+		this.nationName = new Label(this.renderer, "", NULL_TEXTURE, new SDL_Rect(),
+		                            "", STD_FONT);
+		this.widgets ~= this.nationName;
+
+		this.nationFlag = new Image(
+			this.renderer, "", NULL_TEXTURE, new SDL_Rect(0, 0, 28, 28));
+		this.widgets ~= this.nationFlag;
+
+		this.nationFlagBorder = new Image(
+			this.renderer, "", "border_round_30", new SDL_Rect(0, 0, 30, 30));
+		this.nationFlagBorder.setZIndex(1);
+		this.widgets ~= this.nationFlagBorder;
+
+		this.yearLabel = new Label(this.renderer, "", NULL_TEXTURE, new SDL_Rect(),
+		                            "", STD_FONT);
+		this.widgets ~= this.yearLabel;
+
+		// resources
+		this.goldIcon = new Image(
+			this.renderer, "", "gold", new SDL_Rect(0, 0, 18, 18));
+		this.widgets ~= this.goldIcon;
+
+		this.inhabitantsIcon = new Image(
+			this.renderer, "", "inhabitants", new SDL_Rect(0, 0, 18, 18));
+		this.widgets ~= this.inhabitantsIcon;
+
 
 		// mini map
 		this.miniMap = new MiniMap(this.client, this.renderer,
@@ -194,6 +260,19 @@ class UI : Renderer {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
+
+		// nation flag and label
+		this.nationName.setXY(this.screenRegion.x + 44, this.screenRegion.y + 160);
+		this.nationFlag.setXY(this.screenRegion.x + 11, this.screenRegion.y + 144);
+		this.nationFlagBorder.setXY(
+			this.screenRegion.x + 10, this.screenRegion.y + 143);
+
+		this.yearLabel.setXY(this.screenRegion.x + this.screenRegion.w - 240,
+		                     this.screenRegion.y + 160);
+
+		// resource icons
+		this.goldIcon.setXY(this.screenRegion.x + 200, this.screenRegion.y + 160);
+		this.inhabitantsIcon.setXY(this.screenRegion.x + 300, this.screenRegion.y + 160);
 
 		// minimap
 		this.miniMap.setScreenRegion(
@@ -314,17 +393,8 @@ class UI : Renderer {
 
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 
-		// nation flag and name
-		const(Nation) nation = this.client.getCurrentNation();
-		this.renderer.drawTexture(
-				11, this.screenRegion.y + 144,
-				nation.getPrototype().getFlagImageName());
-		this.renderer.drawTexture(10, this.screenRegion.y + 143,
-								   "border_round_30");
-		this.renderer.drawText(44, this.screenRegion.y + 160,
-							    nation.getName());
-
 		// ruler portrait and name
+		const(Nation) nation = this.client.getCurrentNation();
 		const(Character) ruler = nation.getRuler();
 		if (ruler.getSex() == Sex.MALE) {
 			this.renderer.drawTexture(
@@ -348,13 +418,10 @@ class UI : Renderer {
 		const(ResourceManager) resources = nation.getResources();
 
 		// gold
-		this.renderer.drawTexture(200, this.screenRegion.y + 160, "gold");
 		this.renderer.drawText(
 				220, this.screenRegion.y + 160,
 				text(floor(resources.getResourceAmount("gold"))));
 		// inhabitants
-		this.renderer.drawTexture(300, this.screenRegion.y + 160,
-								  "inhabitants");
 		this.renderer.drawText(
 				320, this.screenRegion.y + 160,
 				text(floor(nation.getTotalResourceAmount("inhabitants"))));
@@ -364,13 +431,6 @@ class UI : Renderer {
 				this.screenRegion.y + 12,
 				_("Available build token: ") ~
 				text(floor(nation.getTotalResourceAmount("structureToken"))));
-
-
-
-		// year
-		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
-							    this.screenRegion.y + 160,
-							    _("Year ") ~ text(this.client.getCurrentYear()));
 
 
 		this.updateWidgets();

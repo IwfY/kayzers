@@ -26,7 +26,7 @@ class Label : Widget {
 				string fontName=STD_FONT,
 				SDL_Color *color=null) {
 		super(renderer, name, textureName, bounds);
-		this.text = textIn.split("\n");
+		this.setText(textIn);
 		this.fontName = fontName;
 		if (color is null) {
 			this.color = new SDL_Color(255, 255, 255);
@@ -65,6 +65,11 @@ class Label : Widget {
 		// don't set new width and height as these are specified by renderer
 		this.bounds.x = x;
 		this.bounds.y = y;
+	}
+
+
+	public void setText(string textIn) {
+		this.text = textIn.split("\n");
 	}
 
 

@@ -90,7 +90,7 @@ class InGameRenderer : Renderer, Observer {
 			this.mapRenderer = new MapRenderer(
 				this.client, this.renderer, this.messageBroker);
 			this.ui = new UI(
-				this.client, this.renderer, this, this.mapRenderer);
+				this.client, this.renderer, this, this.mapRenderer, this.messageBroker);
 			this.notificationRenderer = new NotificationRenderer(
 				this.client, this.renderer, this.messageBroker);
 			this.updateRendererDrawRegions();
