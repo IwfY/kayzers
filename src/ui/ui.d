@@ -42,7 +42,6 @@ class UI : Renderer {
 	private InGameRenderer inGameRenderer;
 
 
-
 	public this(Client client, RenderHelper renderer,
 				InGameRenderer inGameRenderer,
 				MapRenderer mapRenderer) {
@@ -52,6 +51,10 @@ class UI : Renderer {
 		this.map = this.client.getMap();
 
 		this.initWidgets();
+	}
+
+	private const(string) _(string text) const {
+		return this.client.getI18nString(text);
 	}
 
 
@@ -102,7 +105,7 @@ class UI : Renderer {
 		this.renameButton = new PopupWidgetDecorator(
 				tmpButton,
 				this.renderer,
-				"Rename",
+				_("Rename"),
 				"ui_popup_background");
 		this.widgets ~= this.renameButton;
 
@@ -359,7 +362,7 @@ class UI : Renderer {
 		this.renderer.drawText(
 				300,
 				this.screenRegion.y + 12,
-				"Available build token: " ~
+				_("Available build token: ") ~
 				text(floor(nation.getTotalResourceAmount("structureToken"))));
 
 
@@ -367,7 +370,8 @@ class UI : Renderer {
 		// year
 		this.renderer.drawText(this.screenRegion.x + this.screenRegion.w - 240,
 							    this.screenRegion.y + 160,
-							    "Year " ~ text(this.client.getCurrentYear()));
+							    _("Year ") ~ text(this.client.getCurrentYear()));
+
 
 		this.updateWidgets();
 

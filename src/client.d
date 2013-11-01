@@ -28,7 +28,6 @@ public class Client {
 	private Scenario[string] scenarios;
 	private MessageBroker messageBroker;
 
-
 	public this() {
 		this.window = SDL_CreateWindow("Kayzers",
 									   0, 0, 1024, 740,
@@ -87,6 +86,14 @@ public class Client {
 	 **/
 	public bool isGameActive() {
 		return this.gameActive;
+	}
+
+
+	/**
+	 * get the internationalized string for a given one
+	 **/
+	public const(string) getI18nString(string text) const {
+		return text;	// dummy just echo
 	}
 
 
