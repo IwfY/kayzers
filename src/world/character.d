@@ -3,6 +3,8 @@ module world.character;
 import world.dynasty;
 import world.nation;
 
+import std.typecons;
+
 static enum Sex {MALE, FEMALE};
 
 class Character {
@@ -10,9 +12,9 @@ class Character {
 	private string dna;
 	private Dynasty dynasty;
 	private int birth;
+	private Rebindable!(const(Nation)) birthNation;
 	private int death;
 	private Sex sex;
-	private Nation birthNation;
 	private Character father;
 	private Character mother;
 	private Character partner;
@@ -27,22 +29,40 @@ class Character {
 	public void setName(string name) {
 			this.name = name;
 	}
+	public const(string) getFullName() const {
+		string ret = this.name ~ " ";
+		if (this.sex == Sex.MALE) {
+			ret ~= this.dynasty.getLanguage().getNobiliaryParticleMale();
+		} else {
+			ret ~= this.dynasty.getLanguage().getNobiliaryParticleFemale();
+		}
+		ret ~= " " ~ this.dynasty.getName();
 
-	public string getDna() {
+		return ret;
+	}
+
+	public const(string) getDna() const {
 		return this.dna;
 	}
 	public void setDna(string dna) {
 		this.dna = dna;
 	}
 
-	public int getBirth() {
+	public const(Nation) getBirthNation() const {
+		return this.birthNation;
+	}
+	public void setBirthNation(const(Nation) nation) {
+		this.birthNation = nation;
+	}
+
+	public const(int) getBirth() const {
 		return this.birth;
 	}
 	public void setBirth(int birth) {
 		this.birth = birth;
 	}
 
-	public int getDeath() {
+	public const(int) getDeath() const {
 		return this.death;
 	}
 	public void setDeath(int death) {
@@ -56,39 +76,39 @@ class Character {
 		this.sex = sex;
 	}
 
-	public Character getFather() {
+	public const(Character) getFather() const {
 		return this.father;
 	}
 	public void setFather(Character father) {
 		this.father = father;
 	}
 
-	public Character getMother() {
+	public const(Character) getMother() const {
 		return this.mother;
 	}
 	public void setMother(Character mother) {
 		this.mother = mother;
 	}
 
-	public Character getPartner() {
+	public const(Character) getPartner() const {
 		return this.partner;
 	}
 	public void setPartner(Character partner) {
 		this.partner = partner;
 	}
 
-	public Character[] getChildren() {
+	public const(Character[]) getChildren() const {
 		return this.children;
 	}
 	public void setChildren(Character[] children) {
 		this.children = children;
 	}
 
-	public Dynasty getDynasty() {
+	public const(Dynasty) getDynasty() const {
 		return this.dynasty;
 	}
 	public void setDynasty(Dynasty dynasty) {
 		this.dynasty = dynasty;
 	}
-	
+
 }

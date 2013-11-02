@@ -31,6 +31,7 @@ public class Game {
 	private uint currentNationIndex;
 	private NationPrototype[] nationPrototypes;
 	private Language[] languages;
+	private Dynasty[] dynasties;
 	private StructureManager structureManager;
 	private int currentYear;
 
@@ -94,19 +95,31 @@ public class Game {
 		const(Language) language = prototype.getLanguage();
 		Nation newNation = new Nation(prototype);
 
+		// create dynasty
+		Dynasty dynasty = new Dynasty();
+		dynasty.setName(newNation.getName());
+		dynasty.setLanguage(language);
+		this.dynasties ~= dynasty;
+
 		// create ruler
-		Character ruler = new Character();
+		Character male = new Character();
+		male.setSex(Sex.MALE);
+		male.setName(language.getRandomMaleName());
+		male.setDynasty(dynasty);
+		dynasty.addMember(male);
+
+		Character female = new Character();
+		female.setSex(Sex.FEMALE);
+		female.setName(language.getRandomFemaleName());
+		female.setDynasty(dynasty);
+		dynasty.addMember(female);
+
 		Random gen = Random(unpredictableSeed);
 		if (uniform(0, 2, gen) == 0) {
-			// male
-			ruler.setSex(Sex.MALE);
-			ruler.setName(language.getRandomMaleName());
+			newNation.setRuler(male);
 		} else {
-			// female
-			ruler.setSex(Sex.FEMALE);
-			ruler.setName(language.getRandomFemaleName());
+			newNation.setRuler(female);
 		}
-		newNation.setRuler(ruler);
 
 		this.nations ~= newNation;
 	}

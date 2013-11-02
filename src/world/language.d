@@ -54,7 +54,7 @@ class Language {
 		return this.nobiliaryParticleMale;
 	}
 
-	public const(string) getNobiliaryParticleFemal() const {
+	public const(string) getNobiliaryParticleFemale() const {
 		return this.nobiliaryParticleFemale;
 	}
 }
