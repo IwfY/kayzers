@@ -15,6 +15,7 @@ import ui.minimap;
 import ui.renderer;
 import ui.renderhelper;
 import ui.widgets.button;
+import ui.widgets.clickwidgetdecorator;
 import ui.widgets.image;
 import ui.widgets.label;
 import ui.widgets.popupwidgetdecorator;
@@ -28,6 +29,7 @@ import world.structureprototype;
 
 import derelict.sdl2.sdl;
 
+import std.algorithm;
 import std.conv;
 import std.math;
 import std.stdio;
@@ -44,6 +46,9 @@ class UI : Renderer, Observer {
 	private Image structureImage;
 	private Label yearLabel;
 	private Label nationName;
+	private WidgetInterface rulerLabel;
+	private WidgetInterface rulerImage;
+	private WidgetInterface rulerImageBorder;
 	private Image nationFlag;
 	private Image nationFlagBorder;
 	private Image goldIcon;
@@ -83,9 +88,21 @@ class UI : Renderer, Observer {
 			// nation flag and name
 			const(Nation) nation = this.client.getCurrentNation();
 			this.nationName.setText(nation.getName());
-			this.nationFlag.setTextureName(nation.getPrototype().getFlagImageName());
+			this.nationFlag.setTextureName(
+				nation.getPrototype().getFlagImageName());
 
-			this.yearLabel.setText(_("Year ") ~ text(this.client.getCurrentYear()));
+			// ruler
+			const(Character) ruler = nation.getRuler();
+			this.rulerLabel.setText(ruler.getFullName());
+			if (ruler.getSex() == Sex.MALE) {
+				this.rulerImage.setTextureName("portrait_male");
+			} else {
+				this.rulerImage.setTextureName("portrait_female");
+			}
+
+			// year
+			this.yearLabel.setText(
+				_("Year ") ~ text(this.client.getCurrentYear()));
 		}
 	}
 
@@ -148,8 +165,8 @@ class UI : Renderer, Observer {
 
 
 		// nation flag and label
-		this.nationName = new Label(this.renderer, "", NULL_TEXTURE, new SDL_Rect(),
-		                            "", STD_FONT);
+		this.nationName = new Label(
+			this.renderer, "", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
 		this.widgets ~= this.nationName;
 
 		this.nationFlag = new Image(
@@ -161,9 +178,31 @@ class UI : Renderer, Observer {
 		this.nationFlagBorder.setZIndex(1);
 		this.widgets ~= this.nationFlagBorder;
 
-		this.yearLabel = new Label(this.renderer, "", NULL_TEXTURE, new SDL_Rect(),
-		                            "", STD_FONT);
+		// year
+		this.yearLabel = new Label(
+			this.renderer, "", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
 		this.widgets ~= this.yearLabel;
+
+		// ruler
+		WidgetInterface tmpWidget = new Label(
+			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
+		this.rulerLabel = new ClickWidgetDecorator(
+			tmpWidget, &this.buttonHandler);
+		this.widgets ~= this.rulerLabel;
+
+		tmpWidget = new Image(
+			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(0, 0, 28, 28));
+		this.rulerImage = new ClickWidgetDecorator(
+			tmpWidget, &this.buttonHandler);
+		this.widgets ~= this.rulerImage;
+
+		tmpWidget = new Image(
+			this.renderer, "ruler", "border_round_30",
+			new SDL_Rect(0, 0, 30, 30));
+		this.rulerImageBorder = new ClickWidgetDecorator(
+			tmpWidget, &this.buttonHandler);
+		this.rulerImageBorder.setZIndex(1);
+		this.widgets ~= this.rulerImageBorder;
 
 		// resources
 		this.goldIcon = new Image(
@@ -270,6 +309,14 @@ class UI : Renderer, Observer {
 		this.yearLabel.setXY(this.screenRegion.x + this.screenRegion.w - 240,
 		                     this.screenRegion.y + 160);
 
+		// ruler
+		this.rulerImage.setXY(this.screenRegion.x + 471,
+							  this.screenRegion.y + 144);
+		this.rulerImageBorder.setXY(this.screenRegion.x + 470,
+									this.screenRegion.y + 143);
+		this.rulerLabel.setXY(this.screenRegion.x + 504,
+							  this.screenRegion.y + 160);
+
 		// resource icons
 		this.goldIcon.setXY(this.screenRegion.x + 200, this.screenRegion.y + 160);
 		this.inhabitantsIcon.setXY(this.screenRegion.x + 300, this.screenRegion.y + 160);
@@ -279,6 +326,10 @@ class UI : Renderer, Observer {
 			this.screenRegion.x + this.screenRegion.w - 170,
 			this.screenRegion.y + 10,
 			160, 160);
+	}
+
+
+	private void buttonHandler(string message) {
 	}
 
 
@@ -343,9 +394,11 @@ class UI : Renderer, Observer {
 				event.button.button == SDL_BUTTON_LEFT) {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
-			foreach (WidgetInterface widget; this.widgets) {
+			foreach (WidgetInterface widget;
+					 sort!(WidgetInterface.zIndexSortDesc)(this.widgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
+					break;
 				}
 			}
 		}
@@ -354,19 +407,19 @@ class UI : Renderer, Observer {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
 			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (WidgetInterface widget; this.widgets) {
+			foreach (WidgetInterface widget;
+					 sort!(WidgetInterface.zIndexSortDesc)(this.widgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widgetMouseOver = true;
 					if (this.mouseOverWidget is null) {
 						this.mouseOverWidget = widget;
 						this.mouseOverWidget.mouseEnter();
-						break;
 					} else if (this.mouseOverWidget != widget) {
 						this.mouseOverWidget.mouseLeave();
 						this.mouseOverWidget = widget;
 						this.mouseOverWidget.mouseEnter();
-						break;
 					}
+					break;
 				}
 			}
 			// no widget under mouse but there was one before
@@ -395,23 +448,6 @@ class UI : Renderer, Observer {
 
 		// ruler portrait and name
 		const(Nation) nation = this.client.getCurrentNation();
-		const(Character) ruler = nation.getRuler();
-		if (ruler.getSex() == Sex.MALE) {
-			this.renderer.drawTexture(
-				this.screenRegion.x + 471, this.screenRegion.y + 144,
-				"portrait_male");
-
-		} else {
-			this.renderer.drawTexture(
-				this.screenRegion.x + 471, this.screenRegion.y + 144,
-				"portrait_female");
-		}
-		this.renderer.drawTexture(this.screenRegion.x + 470,
-								  this.screenRegion.y + 143,
-								  "border_round_30");
-		this.renderer.drawText(this.screenRegion.x + 504,
-							   this.screenRegion.y + 160,
-							   ruler.getName());
 
 		// resource text
 		string resourceString;
@@ -435,7 +471,8 @@ class UI : Renderer, Observer {
 
 		this.updateWidgets();
 
-		foreach (WidgetInterface widget; this.widgets) {
+		foreach (WidgetInterface widget;
+				 sort!(WidgetInterface.zIndexSort)(this.widgets)) {
 			widget.render();
 		}
 

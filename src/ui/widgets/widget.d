@@ -94,6 +94,8 @@ abstract class Widget : WidgetInterface {
 		return this.name;
 	}
 
+	public void setText(string text) {}
+
 	public void click() {
 	}
 

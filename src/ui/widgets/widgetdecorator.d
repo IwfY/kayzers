@@ -73,4 +73,8 @@ abstract class WidgetDecorator : WidgetInterface {
 	public const(string) getName() const {
 		return this.decoratedWidget.getName();
 	}
+
+	public void setText(string text) {
+		this.decoratedWidget.setText(text);
+	}
 }

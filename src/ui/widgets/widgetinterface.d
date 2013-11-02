@@ -21,11 +21,17 @@ interface WidgetInterface {
 	public void setTextureName(string textureName);
 	public const(string) getName() const;
 
+	public void setText(string text);
+
 	public void click();
 	public void mouseEnter();
 	public void mouseLeave();
 
 	static bool zIndexSort(WidgetInterface a, WidgetInterface b) {
 		return (a.getZIndex() < b.getZIndex());
+	}
+
+	static bool zIndexSortDesc(WidgetInterface a, WidgetInterface b) {
+		return (a.getZIndex() > b.getZIndex());
 	}
 }

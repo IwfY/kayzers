@@ -26,7 +26,6 @@ class Label : Widget {
 				string fontName=STD_FONT,
 				SDL_Color *color=null) {
 		super(renderer, name, textureName, bounds);
-		this.setText(textIn);
 		this.fontName = fontName;
 		if (color is null) {
 			this.color = new SDL_Color(255, 255, 255);
@@ -35,10 +34,7 @@ class Label : Widget {
 		}
 		this.padding = new Rect();
 
-		// set width and height to actual bounds of rendered text
-		Rect boundsRect = this.getTextSize();
-		this.bounds.w = boundsRect.w + 2 * this.padding.x;
-		this.bounds.h = boundsRect.h + 2 * this.padding.y;
+		this.setText(textIn);
 	}
 
 
@@ -68,8 +64,13 @@ class Label : Widget {
 	}
 
 
-	public void setText(string textIn) {
+	public override void setText(string textIn) {
 		this.text = textIn.split("\n");
+
+		// set width and height to actual bounds of rendered text
+		Rect boundsRect = this.getTextSize();
+		this.bounds.w = boundsRect.w + 2 * this.padding.x;
+		this.bounds.h = boundsRect.h + 2 * this.padding.y;
 	}
 
 

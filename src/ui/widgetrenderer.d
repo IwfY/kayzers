@@ -4,6 +4,7 @@ import client;
 import ui.renderer;
 import ui.renderhelper;
 import ui.widgets.widget;
+import ui.widgets.widgetinterface;
 import world.scenario;
 
 import derelict.sdl2.sdl;
@@ -42,9 +43,11 @@ abstract class WidgetRenderer : Renderer {
 				event.button.button == SDL_BUTTON_LEFT) {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
-			foreach (Widget widget; this.allWidgets) {
+			foreach (Widget widget;
+					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
+					break;
 				}
 			}
 		}
@@ -53,19 +56,19 @@ abstract class WidgetRenderer : Renderer {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
 			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (Widget widget; this.allWidgets) {
+			foreach (Widget widget;
+					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widgetMouseOver = true;
 					if (this.mouseOverWidget is null) {
 						this.mouseOverWidget = widget;
 						this.mouseOverWidget.mouseEnter();
-						break;
 					} else if (this.mouseOverWidget != widget) {
 						this.mouseOverWidget.mouseLeave();
 						this.mouseOverWidget = widget;
 						this.mouseOverWidget.mouseEnter();
-						break;
 					}
+					break;
 				}
 			}
 			// no widget under mouse but there was one before
