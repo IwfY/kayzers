@@ -4,6 +4,7 @@ import client;
 import message;
 import messagebroker;
 import observer;
+import ui.characterinforenderer;
 import ui.characternamerenderer;
 import ui.renderer;
 import ui.renderhelper;
@@ -23,6 +24,7 @@ class InGameRenderer : Renderer, Observer {
 	private StructureNameRenderer structureNameRenderer;
 	private CharacterNameRenderer characterNameRenderer;
 	private NotificationRenderer notificationRenderer;
+	private CharacterInfoRenderer characterInfoRenderer;
 
 	private MessageBroker messageBroker;
 
@@ -66,6 +68,10 @@ class InGameRenderer : Renderer, Observer {
 		if (this.characterNameRenderer !is null) {
 			destroy(this.characterNameRenderer);
 		}
+
+		if (this.characterInfoRenderer !is null) {
+			destroy(this.characterInfoRenderer);
+		}
 	}
 
 
@@ -76,6 +82,11 @@ class InGameRenderer : Renderer, Observer {
 
 	public void startCharacterNameRenderer(const(Character) character) {
 		this.characterNameRenderer = new CharacterNameRenderer(
+			this.client, this.renderer, character);
+	}
+
+	public void startCharacterInfoRenderer(const(Character) character) {
+		this.characterInfoRenderer = new CharacterInfoRenderer(
 			this.client, this.renderer, character);
 	}
 
@@ -137,6 +148,12 @@ class InGameRenderer : Renderer, Observer {
 				this.screenRegion.x, this.screenRegion.y,
 				this.screenRegion.w, this.screenRegion.h);
 		}
+
+		if (this.characterInfoRenderer !is null) {
+			this.characterInfoRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
+		}
 	}
 
 
@@ -155,9 +172,13 @@ class InGameRenderer : Renderer, Observer {
 			if (this.structureNameRenderer !is null) {
 				this.structureNameRenderer.render(tick);
 			}
-
-			if (this.characterNameRenderer !is null) {
+			// character naming
+			else if (this.characterNameRenderer !is null) {
 				this.characterNameRenderer.render(tick);
+			}
+			// character info
+			else if (this.characterInfoRenderer !is null) {
+				this.characterInfoRenderer.render(tick);
 			}
 		}
 
@@ -171,7 +192,7 @@ class InGameRenderer : Renderer, Observer {
 			// structure naming
 			if (this.structureNameRenderer !is null) {
 				this.structureNameRenderer.handleEvent(event);
-				// if event triggered deactivation of text input renderer - delete it
+				// if event triggered deactivation of renderer - delete it
 				if (!this.structureNameRenderer.isActive()) {
 					this.structureNameRenderer = null;
 				}
@@ -180,9 +201,18 @@ class InGameRenderer : Renderer, Observer {
 			// character naming
 			else if (this.characterNameRenderer !is null) {
 				this.characterNameRenderer.handleEvent(event);
-				// if event triggered deactivation of text input renderer - delete it
+				// if event triggered deactivation of renderer - delete it
 				if (!this.characterNameRenderer.isActive()) {
 					this.characterNameRenderer = null;
+				}
+				return;
+			}
+			// character info
+			else if (this.characterInfoRenderer !is null) {
+				this.characterInfoRenderer.handleEvent(event);
+				// if event triggered deactivation of renderer - delete it
+				if (!this.characterInfoRenderer.isActive()) {
+					this.characterInfoRenderer = null;
 				}
 				return;
 			}

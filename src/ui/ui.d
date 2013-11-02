@@ -316,6 +316,11 @@ class UI : Renderer, Observer {
 
 
 	private void buttonHandler(string message) {
+		if (message == "ruler") {
+			const(Nation) nation = this.client.getCurrentNation();
+			const(Character) ruler = nation.getRuler();
+			this.inGameRenderer.startCharacterInfoRenderer(ruler);
+		}
 	}
 
 
