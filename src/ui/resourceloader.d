@@ -118,6 +118,8 @@ class ResourceLoader {
 
 		renderer.registerTextureFromNinePatch("button_9patch", "bg_300_140",
 											  300, 140);
+		renderer.registerTextureFromNinePatch("button_9patch", "bg_550_400",
+											  550, 400);
 		renderer.registerTextureFromNinePatch("button_thin_9patch",
 											  "button_100_28",
 											  100, 28);
@@ -142,6 +144,9 @@ class ResourceLoader {
 		renderer.registerFont("notificationLarge",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  30);
+		renderer.registerFont("std_20",
+							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
+							  20);
 		renderer.registerFont("maprenderer_structure_name",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  9);

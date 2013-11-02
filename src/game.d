@@ -34,6 +34,7 @@ public class Game {
 	private Dynasty[] dynasties;
 	private StructureManager structureManager;
 	private int currentYear;
+	private Random gen;
 
 	private static Color[] nationColors = [
 		new Color(63, 56, 190),
@@ -44,6 +45,8 @@ public class Game {
 ];
 
 	public this(Client client, Scenario scenario) {
+		this.gen = Random(unpredictableSeed);
+
 		this.client = client;
 
 		this.initLanguages();
@@ -105,18 +108,19 @@ public class Game {
 		// create ruler
 		Character male = new Character();
 		male.setSex(Sex.MALE);
+		male.setBirth(this.currentYear - 18 - uniform(0, 18, this.gen));
 		male.setName(language.getRandomMaleName());
 		male.setDynasty(dynasty);
 		dynasty.addMember(male);
 
 		Character female = new Character();
 		female.setSex(Sex.FEMALE);
+		female.setBirth(this.currentYear - 18 - uniform(0, 18, this.gen));
 		female.setName(language.getRandomFemaleName());
 		female.setDynasty(dynasty);
 		dynasty.addMember(female);
 
-		Random gen = Random(unpredictableSeed);
-		if (uniform(0, 2, gen) == 0) {
+		if (uniform(0, 2, this.gen) == 0) {
 			newNation.setRuler(male);
 		} else {
 			newNation.setRuler(female);

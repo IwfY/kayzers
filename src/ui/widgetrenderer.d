@@ -3,7 +3,6 @@ module ui.widgetrenderer;
 import client;
 import ui.renderer;
 import ui.renderhelper;
-import ui.widgets.widget;
 import ui.widgets.widgetinterface;
 import world.scenario;
 
@@ -13,8 +12,9 @@ import std.algorithm;
 
 abstract class WidgetRenderer : Renderer {
 	protected string backgroundImage;
-	protected Widget[] allWidgets;
-	protected Widget mouseOverWidget;	// reference to widget under mouse
+	protected WidgetInterface[] allWidgets;
+	// reference to widget under mouse
+	protected WidgetInterface mouseOverWidget;
 
 	public this(Client client, RenderHelper renderer, string backgroundImage) {
 		super(client, renderer);
@@ -32,7 +32,8 @@ abstract class WidgetRenderer : Renderer {
 	public override void render(int tick=0) {
 		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, this.backgroundImage);
-		foreach (Widget widget; sort!(Widget.zIndexSort)(this.allWidgets)) {
+		foreach (WidgetInterface widget;
+				 sort!(WidgetInterface.zIndexSort)(this.allWidgets)) {
 			widget.render();
 		}
 	}
@@ -43,7 +44,7 @@ abstract class WidgetRenderer : Renderer {
 				event.button.button == SDL_BUTTON_LEFT) {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
-			foreach (Widget widget;
+			foreach (WidgetInterface widget;
 					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widget.click();
@@ -56,7 +57,7 @@ abstract class WidgetRenderer : Renderer {
 			SDL_Point *mousePosition =
 					new SDL_Point(event.button.x, event.button.y);
 			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (Widget widget;
+			foreach (WidgetInterface widget;
 					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
 				if (widget.isPointInBounds(mousePosition)) {
 					widgetMouseOver = true;

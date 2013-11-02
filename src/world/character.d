@@ -8,6 +8,8 @@ import std.typecons;
 static enum Sex {MALE, FEMALE};
 
 class Character {
+	private static int lastId = 0;
+	private int id;
 	private string name;
 	private string dna;
 	private Dynasty dynasty;
@@ -21,7 +23,28 @@ class Character {
 	private Character[] children;
 
 	this() {
+		Character.lastId++;
+		this.id = Character.lastId;
 	}
+
+	this(int id) {
+		this.id = id;
+		if (id > Character.lastId) {
+			Character.lastId = id;
+		}
+	}
+
+	public const(bool) opEquals(const(Character) character) const {
+		if (character.getId() == this.getId()) {
+			return true;
+		}
+		return false;
+	}
+
+	public const(int) getId() const {
+		return this.id;
+	}
+
 
 	public const(string) getName() const {
 		return this.name;
@@ -60,8 +83,19 @@ class Character {
 	}
 	public void setBirth(int birth) {
 		this.birth = birth;
+		this.death = birth - 1;
 	}
 
+	public const(int) getAge(int currentYear) const {
+		if (this.isDead()) {
+			return this.death - this.birth;
+		} else {
+			return currentYear - this.birth;
+		}
+	}
+	public const(bool) isDead() const {
+		return (this.death >= this.birth);
+	}
 	public const(int) getDeath() const {
 		return this.death;
 	}
