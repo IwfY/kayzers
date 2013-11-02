@@ -99,6 +99,7 @@ public class Game {
 		Dynasty dynasty = new Dynasty();
 		dynasty.setName(newNation.getName());
 		dynasty.setLanguage(language);
+		dynasty.setFlagImageName(prototype.getFlagImageName());
 		this.dynasties ~= dynasty;
 
 		// create ruler

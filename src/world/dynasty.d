@@ -9,6 +9,7 @@ class Dynasty {
 	private string name;
 	private Character[] members;
 	private Rebindable!(const(Language)) language;
+	private string flagImageName;
 
 	public const(string) getName() const {
 		return this.name;
@@ -32,5 +33,12 @@ class Dynasty {
 	}
 	public void addMember(Character character) {
 		this.members ~= character;
+	}
+
+	public const(string) getFlagImageName() const {
+		return this.flagImageName;
+	}
+	public void setFlagImageName(string flagImageName) {
+		this.flagImageName = flagImageName;
 	}
 }
