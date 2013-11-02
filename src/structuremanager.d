@@ -195,7 +195,6 @@ class StructureManager {
 		newStructure.setPrototype(prototype);
 		newStructure.setPosition(new Position(position.i, position.j));
 		newStructure.setNation(nation);
-		newStructure.setCreatingNation(nation);
 
 		newStructure.runInitScript();
 

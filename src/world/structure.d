@@ -16,7 +16,6 @@ class Structure : ScriptContext {
 	private StructurePrototype prototype;
 	private Position position;
 	private Nation nation;
-	private Rebindable!(const(Nation)) creatingNation;
 	private ResourceManager resources;
 	private string name;
 
@@ -72,13 +71,6 @@ class Structure : ScriptContext {
 	}
 	public void setNation(Nation nation) {
 		this.nation = nation;
-	}
-
-	public const(Nation) getCreatingNation() const {
-		return this.creatingNation;
-	}
-	public void setCreatingNation(const(Nation) creatingNation) {
-		this.creatingNation = creatingNation;
 	}
 
 	public ResourceManager getResources() {
