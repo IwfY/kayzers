@@ -19,6 +19,7 @@ import ui.widgets.clickwidgetdecorator;
 import ui.widgets.image;
 import ui.widgets.label;
 import ui.widgets.popupwidgetdecorator;
+import ui.widgets.roundborderimage;
 import ui.widgets.widgetinterface;
 import world.character;
 import world.nation;
@@ -46,11 +47,9 @@ class UI : Renderer, Observer {
 	private Image structureImage;
 	private Label yearLabel;
 	private Label nationName;
+	private RoundBorderImage nationFlag;
 	private WidgetInterface rulerLabel;
 	private WidgetInterface rulerImage;
-	private WidgetInterface rulerImageBorder;
-	private Image nationFlag;
-	private Image nationFlagBorder;
 	private Image goldIcon;
 	private Image inhabitantsIcon;
 
@@ -169,14 +168,9 @@ class UI : Renderer, Observer {
 			this.renderer, "", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
 		this.widgets ~= this.nationName;
 
-		this.nationFlag = new Image(
-			this.renderer, "", NULL_TEXTURE, new SDL_Rect(0, 0, 28, 28));
+		this.nationFlag = new RoundBorderImage(
+			this.renderer, "", NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
 		this.widgets ~= this.nationFlag;
-
-		this.nationFlagBorder = new Image(
-			this.renderer, "", "border_round_30", new SDL_Rect(0, 0, 30, 30));
-		this.nationFlagBorder.setZIndex(1);
-		this.widgets ~= this.nationFlagBorder;
 
 		// year
 		this.yearLabel = new Label(
@@ -190,19 +184,11 @@ class UI : Renderer, Observer {
 			tmpWidget, &this.buttonHandler);
 		this.widgets ~= this.rulerLabel;
 
-		tmpWidget = new Image(
-			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(0, 0, 28, 28));
+		tmpWidget = new RoundBorderImage(
+			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
 		this.rulerImage = new ClickWidgetDecorator(
 			tmpWidget, &this.buttonHandler);
 		this.widgets ~= this.rulerImage;
-
-		tmpWidget = new Image(
-			this.renderer, "ruler", "border_round_30",
-			new SDL_Rect(0, 0, 30, 30));
-		this.rulerImageBorder = new ClickWidgetDecorator(
-			tmpWidget, &this.buttonHandler);
-		this.rulerImageBorder.setZIndex(1);
-		this.widgets ~= this.rulerImageBorder;
 
 		// resources
 		this.goldIcon = new Image(
@@ -301,25 +287,25 @@ class UI : Renderer, Observer {
 		}
 
 		// nation flag and label
-		this.nationName.setXY(this.screenRegion.x + 44, this.screenRegion.y + 160);
-		this.nationFlag.setXY(this.screenRegion.x + 11, this.screenRegion.y + 144);
-		this.nationFlagBorder.setXY(
-			this.screenRegion.x + 10, this.screenRegion.y + 143);
+		this.nationName.setXY(
+			this.screenRegion.x + 44, this.screenRegion.y + 160);
+		this.nationFlag.setXY(
+			this.screenRegion.x + 10, this.screenRegion.y + 145);
 
 		this.yearLabel.setXY(this.screenRegion.x + this.screenRegion.w - 240,
 		                     this.screenRegion.y + 160);
 
 		// ruler
-		this.rulerImage.setXY(this.screenRegion.x + 471,
-							  this.screenRegion.y + 144);
-		this.rulerImageBorder.setXY(this.screenRegion.x + 470,
-									this.screenRegion.y + 143);
+		this.rulerImage.setXY(this.screenRegion.x + 470,
+							  this.screenRegion.y + 145);
 		this.rulerLabel.setXY(this.screenRegion.x + 504,
 							  this.screenRegion.y + 160);
 
 		// resource icons
-		this.goldIcon.setXY(this.screenRegion.x + 200, this.screenRegion.y + 160);
-		this.inhabitantsIcon.setXY(this.screenRegion.x + 300, this.screenRegion.y + 160);
+		this.goldIcon.setXY(
+			this.screenRegion.x + 200, this.screenRegion.y + 160);
+		this.inhabitantsIcon.setXY(
+			this.screenRegion.x + 300, this.screenRegion.y + 160);
 
 		// minimap
 		this.miniMap.setScreenRegion(
