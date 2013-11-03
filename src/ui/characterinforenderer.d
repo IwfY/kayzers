@@ -47,6 +47,13 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private WidgetInterface motherDynasty;
 	private WidgetInterface motherSex;
 
+	private Label partnerHead;
+	private Line seperator2;
+	private WidgetInterface partnerName;
+	private WidgetInterface partnerDynasty;
+	private WidgetInterface partnerSex;
+	private WidgetInterface proposalButton;
+
 	private LabelButton okButton;
 	private TextInput textInputServer;
 	private Image boxBackground;
@@ -117,7 +124,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			"white_a10pc",
 			new SDL_Rect(0, 0, 100, 28),
 			&(this.okButtonCallback),
-			"OK",
+			_("OK"),
 			STD_FONT);
 		this.allWidgets ~= this.okButton;
 
@@ -196,6 +203,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		}
 
 		this.initWidgetsParents();
+		this.initWidgetsPartner();
 	}
 
 
@@ -318,6 +326,81 @@ class CharacterInfoRenderer : WidgetRenderer {
 	}
 
 
+	private void initWidgetsPartner() {
+		// header
+		this.partnerHead = new Label(
+			this.renderer, "", NULL_TEXTURE,
+			new SDL_Rect(0, 0, 0, 0),
+			_("Partner"));
+		this.allWidgets ~= this.partnerHead;
+
+		this.seperator2 = new Line(this.renderer, "", new SDL_Rect(0, 0, 0, 0));
+		this.allWidgets ~= this.seperator2;
+
+		// partner
+		const(Character) partner = this.character.getPartner();
+		// partner found
+		if (partner !is null) {
+			WidgetInterface tmpWidget = new RoundBorderImage(
+				this.renderer,
+				"partner",
+				((partner.getSex() == Sex.MALE) ?
+					"portrait_male" : "portrait_female"),
+				 new SDL_Rect());
+			this.partnerSex = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.allWidgets ~= this.partnerSex;
+
+			tmpWidget = new Label(
+				this.renderer, "partner", NULL_TEXTURE,
+				new SDL_Rect(), partner.getFullName());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+
+			string popupText = format("%s: %d%s",
+			   _("Age"),
+			   partner.getAge(this.client.getCurrentYear()),
+			   (partner.isDead() ? " ✝" : ""));
+			this.partnerName = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, popupText, "ui_popup_background");
+			this.allWidgets ~= this.partnerName;
+
+			tmpWidget = new RoundBorderImage(
+				this.renderer, "partner", partner.getDynasty.getFlagImageName(),
+				new SDL_Rect());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.partnerDynasty = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, partner.getDynasty().getName(),
+				"ui_popup_background");
+			this.allWidgets ~= this.partnerDynasty;
+		}
+		// partner unknown
+		else {
+			this.partnerSex = new RoundBorderImage(
+				this.renderer,
+				"partner",
+				"",
+				 new SDL_Rect());
+			this.partnerSex.hide();
+			this.allWidgets ~= this.partnerSex;
+
+			this.partnerName = new Label(
+				this.renderer, "partner", NULL_TEXTURE,
+				new SDL_Rect(), "");
+			this.partnerName.hide();
+			this.allWidgets ~= this.partnerName;
+
+			this.partnerDynasty = new RoundBorderImage(
+				this.renderer, "partner", NULL_TEXTURE, new SDL_Rect());
+			this.partnerDynasty.hide();
+			this.allWidgets ~= this.partnerDynasty;
+		}
+	}
+
+
 	private void okButtonCallback(string message) {
 		this.active = false;
 	}
@@ -373,6 +456,22 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.motherName.setXY(
 			this.boxX + (this.boxBackground.getBounds().w / 2) + 100,
 			this.seperator1.getBounds().y + 28);
+
+		// partner
+		this.partnerHead.setXY(this.boxX + 20, this.boxY + 160);
+		this.seperator2.setBounds(
+			this.partnerHead.getBounds().x +
+				this.partnerHead.getBounds().w + 10,
+			this.partnerHead.getBounds().y + 12,
+			this.boxBackground.getBounds().w - 40 -
+				(this.partnerHead.getBounds().w + 10),
+			0);
+		this.partnerDynasty.setXY(
+			this.boxX + 20, this.seperator2.getBounds().y + 20);
+		this.partnerSex.setXY(
+			this.boxX + 60, this.seperator2.getBounds().y + 20);
+		this.partnerName.setXY(
+			this.boxX + 100, this.seperator2.getBounds().y + 28);
 
 		this.okButton.setXY(this.boxX + 420,
 		                    this.boxY + 350);

@@ -120,6 +120,9 @@ public class Game {
 		female.setDynasty(dynasty);
 		dynasty.addMember(female);
 
+		female.setPartner(male);
+		male.setPartner(female);
+
 		if (uniform(0, 2, this.gen) == 0) {
 			newNation.setRuler(male);
 		} else {
