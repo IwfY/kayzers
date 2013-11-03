@@ -87,7 +87,7 @@ class CharacterNameRenderer : WidgetRenderer {
 
 
 	private void okButtonCallback(string message) {
-		//this.client.setCharacterName(this.character, this.inputString);
+		this.client.setCharacterName(this.character, this.inputString);
 		this.active = false;
 	}
 

@@ -106,19 +106,15 @@ public class Game {
 		this.dynasties ~= dynasty;
 
 		// create ruler
-		Character male = new Character();
+		Character male = this.characterFactory(null, null, dynasty);
 		male.setSex(Sex.MALE);
 		male.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		male.setName(language.getRandomMaleName());
-		male.setDynasty(dynasty);
-		dynasty.addMember(male);
 
-		Character female = new Character();
+		Character female = this.characterFactory(null, null, dynasty);
 		female.setSex(Sex.FEMALE);
 		female.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		female.setName(language.getRandomFemaleName());
-		female.setDynasty(dynasty);
-		dynasty.addMember(female);
 
 		female.setPartner(male);
 		male.setPartner(female);
@@ -200,17 +196,14 @@ public class Game {
 				if (character.getSex() == Sex.FEMALE &&
 						!character.isDead() &&
 						father !is null &&
+						father.getAge(this.currentYear) >= 14 &&
+						father.getAge(this.currentYear) <= 45 &&
 						character.getAge(this.currentYear) >= 16 &&
 						character.getAge(this.currentYear) <= 35) {
 					// give birth
 					if (uniform(0.0, 1.0, this.gen) > 0.8) {
-						Character child = new Character();
-						child.setMother(character);
-						character.addChild(child);
-						child.setFather(father);
-						father.addChild(child);
-						child.setDynasty(father.getDynasty());
-						father.getDynasty().addMember(child);
+						Character child = this.characterFactory(
+							father, character, father.getDynasty());
 						child.setBirth(this.currentYear);
 						//TODO: birthNation
 						if (uniform(0.0, 1.0, this.gen) > 0.51) {
@@ -227,6 +220,32 @@ public class Game {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * create a character and link it with parents and dynasty
+	 **/
+	private Character characterFactory(
+			Character father,
+			Character mother,
+			Dynasty dynasty) {
+		Character newCharacter = new Character();
+		newCharacter.setFather(father);
+		newCharacter.setMother(mother);
+		newCharacter.setDynasty(dynasty);
+
+		if (father !is null) {
+			father.addChild(newCharacter);
+		}
+		if (mother !is null) {
+			mother.addChild(newCharacter);
+		}
+		if (dynasty !is null) {
+			dynasty.addMember(newCharacter);
+		}
+
+		return newCharacter;
 	}
 
 
@@ -267,6 +286,26 @@ public class Game {
 								  const(Position) position) const {
 		return this.structureManager.canBuildStructure(
 			structurePrototypeName, nation, position);
+	}
+
+
+	public void setCharacterName(const(Character) character,
+								 string name) {
+		Character unconstCharacter = this.getCharacter(character.getId());
+		if (unconstCharacter.getName() == "") {
+			unconstCharacter.setName(name);
+		}
+	}
+
+	public Character getCharacter(int id) {
+		foreach (Dynasty dynasty; this.dynasties) {
+			foreach (Character character; dynasty.getMembers()) {
+				if (character.getId() == id) {
+					return character;
+				}
+			}
+		}
+		return null;
 	}
 
 

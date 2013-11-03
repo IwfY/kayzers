@@ -7,6 +7,7 @@ import messagebroker;
 import position;
 import ui.renderer;
 import ui.rendererfactory;
+import world.character;
 import world.nation;
 import world.nationprototype;
 import world.scenario;
@@ -121,6 +122,11 @@ public class Client {
 								  const(Position) position) const {
 		return this.game.canBuildStructure(
 			structurePrototypeName, nation, position);
+	}
+
+	public void setCharacterName(const(Character) character,
+								 string name) {
+		this.game.setCharacterName(character, name);
 	}
 
 
