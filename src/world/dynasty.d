@@ -28,6 +28,9 @@ class Dynasty {
 	public const(Character[]) getMembers() const {
 		return this.members;
 	}
+	public Character[] getMembers() {
+		return this.members;
+	}
 	public void setMembers(Character[] members) {
 		this.members = members;
 	}

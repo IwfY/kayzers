@@ -108,14 +108,14 @@ public class Game {
 		// create ruler
 		Character male = new Character();
 		male.setSex(Sex.MALE);
-		male.setBirth(this.currentYear - 18 - uniform(0, 18, this.gen));
+		male.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		male.setName(language.getRandomMaleName());
 		male.setDynasty(dynasty);
 		dynasty.addMember(male);
 
 		Character female = new Character();
 		female.setSex(Sex.FEMALE);
-		female.setBirth(this.currentYear - 18 - uniform(0, 18, this.gen));
+		female.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		female.setName(language.getRandomFemaleName());
 		female.setDynasty(dynasty);
 		dynasty.addMember(female);
@@ -184,6 +184,49 @@ public class Game {
 			writeln("Game::startNewRound run consume script");
 		}
 		this.structureManager.runConsumeScripts();
+
+		this.giveBirth();
+	}
+
+
+	/**
+	 * check every female of every dynasty and check if she could give birth to
+	 * a child; role dice to determine success
+	 **/
+	private void giveBirth() {
+		foreach (Dynasty dynasty; this.dynasties) {
+			foreach (Character character; dynasty.getMembers()) {
+				Character father = character.getPartner();
+				if (character.getSex() == Sex.FEMALE &&
+						!character.isDead() &&
+						father !is null &&
+						character.getAge(this.currentYear) >= 16 &&
+						character.getAge(this.currentYear) <= 35) {
+					// give birth
+					if (uniform(0.0, 1.0, this.gen) > 0.8) {
+						Character child = new Character();
+						child.setMother(character);
+						character.addChild(child);
+						child.setFather(father);
+						father.addChild(child);
+						child.setDynasty(father.getDynasty());
+						father.getDynasty().addMember(child);
+						child.setBirth(this.currentYear);
+						//TODO: birthNation
+						if (uniform(0.0, 1.0, this.gen) > 0.51) {
+							child.setSex(Sex.FEMALE);
+						} else {
+							child.setSex(Sex.MALE);
+						}
+
+						// let client name the child
+						this.client.serverNotify(
+							new ObjectMessage!(const(Character))(
+								"nameCharacter", child));
+					}
+				}
+			}
+		}
 	}
 
 

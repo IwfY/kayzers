@@ -22,12 +22,12 @@ class Character {
 	private Character partner;
 	private Character[] children;
 
-	this() {
+	public this() {
 		Character.lastId++;
 		this.id = Character.lastId;
 	}
 
-	this(int id) {
+	public this(int id) {
 		this.id = id;
 		if (id > Character.lastId) {
 			Character.lastId = id;
@@ -124,9 +124,22 @@ class Character {
 		this.mother = mother;
 	}
 
-	public const(Character) getPartner() const {
-		return this.partner;
-	}
+	public Character getPartner()
+		in {
+			assert(this.partner is null || !this.partner.isDead(),
+				   "Character::getPartner partner must not be dead");
+		}
+		body {
+			return this.partner;
+		}
+	public const(Character) getPartner() const
+		in {
+			assert(this.partner is null || !this.partner.isDead(),
+				   "Character::getPartner partner must not be dead");
+		}
+		body {
+			return this.partner;
+		}
 	public void setPartner(Character partner) {
 		this.partner = partner;
 	}
@@ -137,7 +150,13 @@ class Character {
 	public void setChildren(Character[] children) {
 		this.children = children;
 	}
+	public void addChild(Character child) {
+		this.children ~= child;
+	}
 
+	public Dynasty getDynasty() {
+		return this.dynasty;
+	}
 	public const(Dynasty) getDynasty() const {
 		return this.dynasty;
 	}
