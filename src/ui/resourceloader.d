@@ -118,6 +118,8 @@ class ResourceLoader {
 
 		renderer.registerTextureFromNinePatch("button_9patch", "bg_300_140",
 											  300, 140);
+		renderer.registerTextureFromNinePatch("button_9patch", "bg_350_230",
+											  350, 230);
 		renderer.registerTextureFromNinePatch("button_9patch", "bg_550_600",
 											  550, 600);
 		renderer.registerTextureFromNinePatch("button_thin_9patch",
@@ -126,6 +128,9 @@ class ResourceLoader {
 		renderer.registerTextureFromNinePatch("inputbox_9patch",
 											  "inputbox_260_30",
 											  260, 30);
+		renderer.registerTextureFromNinePatch("inputbox_9patch",
+											  "inputbox_230_30",
+											  230, 30);
 
 		// icons
 		renderer.registerTexture("gold",
