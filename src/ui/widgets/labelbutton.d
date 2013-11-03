@@ -1,5 +1,6 @@
 module ui.labelbutton;
 
+import constants;
 import rect;
 import ui.widgets.button;
 import ui.widgets.label;
@@ -19,7 +20,7 @@ class LabelButton : HoverWidget {
 				SDL_Rect *bounds,
 				void delegate(string) callback,
 				string text,
-				string fontName,
+				string fontName = STD_FONT,
 				SDL_Color *color = null) {
 		super(renderer, name, textureName, hoverTextureName, bounds);
 		this.button = new Button(this.renderer, this.name, "null", "null",

@@ -12,7 +12,7 @@ class Line : Widget {
 
 	public this(RenderHelper renderer,
 				string name,
-				const(SDL_Rect *)bounds,
+				const(SDL_Rect *)bounds = new SDL_Rect(),
 				Color color=new Color(255, 255, 255)) {
 		super(renderer, name, NULL_TEXTURE, bounds);
 		this.color = color;

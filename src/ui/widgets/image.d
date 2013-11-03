@@ -10,7 +10,7 @@ class Image : Widget {
 	public this(RenderHelper renderer,
 				string name,
 				string textureName,
-				const(SDL_Rect *)bounds) {
+				const(SDL_Rect *)bounds = new SDL_Rect()) {
 		super(renderer, name, textureName, bounds);
 	}
 	
