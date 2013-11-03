@@ -34,7 +34,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private Label characterName;
 	private Label characterRulerLabel;
 	private WidgetInterface characterAge;
-	private RoundBorderImage characterDynasty;
+	private WidgetInterface characterDynasty;
 	private RoundBorderImage characterSex;
 	private WidgetInterface[] characterRulingNations;
 
@@ -118,8 +118,8 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.characterRulingNations.length = 0;
 
 		this.boxBackground = new Image(
-			this.renderer, "", "bg_550_400",
-			new SDL_Rect(0, 0, 550, 400));
+			this.renderer, "", "bg_550_600",
+			new SDL_Rect(0, 0, 550, 600));
 		this.boxBackground.setZIndex(-1);
 		this.allWidgets ~= this.boxBackground;
 
@@ -142,11 +142,16 @@ class CharacterInfoRenderer : WidgetRenderer {
 			"std_20");
 		this.allWidgets ~= this.characterName;
 
-		this.characterDynasty = new RoundBorderImage(
+		WidgetInterface tmpWidget = new RoundBorderImage(
 			this.renderer,
 			"",
 			this.character.getDynasty().getFlagImageName(),
 			new SDL_Rect());
+		this.characterDynasty = new PopupWidgetDecorator(
+			tmpWidget,
+			this.renderer, this.character.getDynasty().getName(),
+			"ui_popup_background" );
+		this.characterDynasty.setZIndex(2);
 		this.allWidgets ~= this.characterDynasty;
 
 		this.characterSex = new RoundBorderImage(
@@ -160,7 +165,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		}
 		this.allWidgets ~= this.characterSex;
 
-		WidgetInterface tmpWidget = new Label(
+		tmpWidget = new Label(
 			this.renderer,
 			"",
 			NULL_TEXTURE,
@@ -181,6 +186,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.renderer,
 			popupText,
 			"ui_popup_background");
+		this.characterAge.setZIndex(3);
 		this.allWidgets ~= this.characterAge;
 
 		// ruling nations
@@ -201,6 +207,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 					this.renderer,
 					nation.getName(),
 					"ui_popup_background");
+				nationFlag.setZIndex(4);
 				this.characterRulingNations ~= nationFlag;
 				this.allWidgets ~= nationFlag;
 			}
@@ -246,6 +253,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.fatherName = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");
+			this.fatherName.setZIndex(5);
 			this.allWidgets ~= this.fatherName;
 
 			tmpWidget = new RoundBorderImage(
@@ -256,6 +264,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 				tmpWidget,
 				this.renderer, father.getDynasty().getName(),
 				"ui_popup_background");
+			this.fatherDynasty.setZIndex(5);
 			this.allWidgets ~= this.fatherDynasty;
 		}
 		// father unknown
@@ -298,6 +307,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.motherName = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");
+			this.motherName.setZIndex(5);
 			this.allWidgets ~= this.motherName;
 
 			tmpWidget = new RoundBorderImage(
@@ -308,6 +318,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 				tmpWidget,
 				this.renderer, mother.getDynasty().getName(),
 				"ui_popup_background");
+			this.motherDynasty.setZIndex(5);
 			this.allWidgets ~= this.motherDynasty;
 		}
 		// mother unknown
@@ -376,6 +387,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.partnerName = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");
+			this.partnerName.setZIndex(6);
 			this.allWidgets ~= this.partnerName;
 
 			tmpWidget = new RoundBorderImage(
@@ -387,6 +399,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 				tmpWidget,
 				this.renderer, partner.getDynasty().getName(),
 				"ui_popup_background");
+			this.partnerDynasty.setZIndex(6);
 			this.allWidgets ~= this.partnerDynasty;
 
 			// hide proposal button
@@ -446,6 +459,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 				tmpWidget,
 				this.renderer, child.getDynasty().getName(),
 				"ui_popup_background");
+			tmpWidget.setZIndex(10 + i);
 			this.childrenDynasty ~= tmpWidget;
 			this.allWidgets ~= tmpWidget;
 
@@ -474,6 +488,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			tmpWidget = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");
+			tmpWidget.setZIndex(10 + i);
 			this.childrenNames ~= tmpWidget;
 			this.allWidgets ~= tmpWidget;
 
@@ -579,7 +594,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		}
 
 		this.okButton.setXY(this.boxX + 420,
-		                    this.boxY + 350);
+		                    this.boxY + 550);
 	}
 
 

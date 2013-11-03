@@ -118,8 +118,8 @@ class ResourceLoader {
 
 		renderer.registerTextureFromNinePatch("button_9patch", "bg_300_140",
 											  300, 140);
-		renderer.registerTextureFromNinePatch("button_9patch", "bg_550_400",
-											  550, 400);
+		renderer.registerTextureFromNinePatch("button_9patch", "bg_550_600",
+											  550, 600);
 		renderer.registerTextureFromNinePatch("button_thin_9patch",
 											  "button_100_28",
 											  100, 28);
