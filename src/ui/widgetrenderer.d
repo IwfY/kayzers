@@ -46,7 +46,8 @@ abstract class WidgetRenderer : Renderer {
 					new SDL_Point(event.button.x, event.button.y);
 			foreach (WidgetInterface widget;
 					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
-				if (widget.isPointInBounds(mousePosition)) {
+				if (!widget.isHidden() &&
+						widget.isPointInBounds(mousePosition)) {
 					widget.click();
 					break;
 				}
@@ -59,7 +60,8 @@ abstract class WidgetRenderer : Renderer {
 			bool widgetMouseOver = false; // is there a widget under the mouse?
 			foreach (WidgetInterface widget;
 					 sort!(WidgetInterface.zIndexSortDesc)(this.allWidgets)) {
-				if (widget.isPointInBounds(mousePosition)) {
+				if (!widget.isHidden() &&
+						widget.isPointInBounds(mousePosition)) {
 					widgetMouseOver = true;
 					if (this.mouseOverWidget is null) {
 						this.mouseOverWidget = widget;
