@@ -5,9 +5,11 @@ import constants;
 import textinput;
 import ui.renderhelper;
 import ui.widgetrenderer;
+import ui.widgets.clickwidgetdecorator;
 import ui.widgets.image;
 import ui.widgets.label;
 import ui.widgets.labelbutton;
+import ui.widgets.line;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
 import ui.widgets.widget;
@@ -36,6 +38,15 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private RoundBorderImage characterSex;
 	private WidgetInterface[] characterRulingNations;
 
+	private Label parentsHead;
+	private Line seperator1;
+	private WidgetInterface fatherName;
+	private WidgetInterface fatherDynasty;
+	private WidgetInterface fatherSex;
+	private WidgetInterface motherName;
+	private WidgetInterface motherDynasty;
+	private WidgetInterface motherSex;
+
 	private LabelButton okButton;
 	private TextInput textInputServer;
 	private Image boxBackground;
@@ -59,6 +70,26 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	private const(string) _(string text) const {
 		return this.client.getI18nString(text);
+	}
+
+
+	private void buttonHandler(string message) {
+		if (message == "father") {
+			const(Character) father = this.character.getFather();
+			if (father !is null) {
+				this.setCharacter(father);
+			}
+		} else if (message == "mother") {
+			const(Character) mother = this.character.getMother();
+			if (mother !is null) {
+				this.setCharacter(mother);
+			}
+		} else if (message == "partner") {
+			const(Character) partner = this.character.getPartner();
+			if (partner !is null) {
+				this.setCharacter(partner);
+			}
+		}
 	}
 
 
@@ -122,8 +153,10 @@ class CharacterInfoRenderer : WidgetRenderer {
 			"",
 			NULL_TEXTURE,
 			new SDL_Rect(),
-			format("%s: %d", _("Age"),
-				   this.character.getAge(this.client.getCurrentYear())));
+			format("%s: %d%s",
+				   _("Age"),
+				   this.character.getAge(this.client.getCurrentYear()),
+				   (this.character.isDead() ? " ✝" : "")));
 
 		string popupText = format("%s: %d", _("Born"),
 								  this.character.getBirth());
@@ -162,6 +195,126 @@ class CharacterInfoRenderer : WidgetRenderer {
 			}
 		}
 
+		this.initWidgetsParents();
+	}
+
+
+	private void initWidgetsParents() {
+		// header
+		this.parentsHead = new Label(
+			this.renderer, "", NULL_TEXTURE,
+			new SDL_Rect(0, 0, 0, 0),
+			_("Parents"));
+		this.allWidgets ~= this.parentsHead;
+
+		this.seperator1 = new Line(this.renderer, "", new SDL_Rect(0, 0, 0, 0));
+		this.allWidgets ~= this.seperator1;
+
+		// father
+		const(Character) father = this.character.getFather();
+		WidgetInterface tmpWidget = new RoundBorderImage(
+			this.renderer, "father", "portrait_male", new SDL_Rect());
+		this.fatherSex = new ClickWidgetDecorator(
+			tmpWidget, &this.buttonHandler);
+		this.allWidgets ~= this.fatherSex;
+
+		// father found
+		if (father !is null) {
+			tmpWidget = new Label(
+				this.renderer, "father", NULL_TEXTURE,
+				new SDL_Rect(), father.getName());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+
+			string popupText = format("%s: %d%s",
+			   _("Age"),
+			   father.getAge(this.client.getCurrentYear()),
+			   (father.isDead() ? " ✝" : ""));
+			this.fatherName = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, popupText, "ui_popup_background");
+			this.allWidgets ~= this.fatherName;
+
+			tmpWidget = new RoundBorderImage(
+				this.renderer, "father", father.getDynasty.getFlagImageName(),
+				new SDL_Rect());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.fatherDynasty = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, father.getDynasty().getName(),
+				"ui_popup_background");
+			this.allWidgets ~= this.fatherDynasty;
+		}
+		// father unknown
+		else {
+			tmpWidget = new Label(
+				this.renderer, "father", NULL_TEXTURE,
+				new SDL_Rect(), _("unknown"));
+			this.fatherName = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.allWidgets ~= this.fatherName;
+
+			tmpWidget = new RoundBorderImage(
+				this.renderer, "father", NULL_TEXTURE, new SDL_Rect());
+			tmpWidget.hide();
+			this.fatherDynasty = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.allWidgets ~= this.fatherDynasty;
+		}
+
+		// mother
+		const(Character) mother = this.character.getMother();
+		tmpWidget = new RoundBorderImage(
+			this.renderer, "mother", "portrait_female", new SDL_Rect());
+		this.motherSex = new ClickWidgetDecorator(
+			tmpWidget, &this.buttonHandler);
+		this.allWidgets ~= this.motherSex;
+
+		// mother found
+		if (mother !is null) {
+			tmpWidget = new Label(
+				this.renderer, "mother", NULL_TEXTURE,
+				new SDL_Rect(), mother.getName());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+
+			string popupText = format("%s: %d%s",
+			   _("Age"),
+			   mother.getAge(this.client.getCurrentYear()),
+			   (mother.isDead() ? " ✝" : ""));
+			this.motherName = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, popupText, "ui_popup_background");
+			this.allWidgets ~= this.motherName;
+
+			tmpWidget = new RoundBorderImage(
+				this.renderer, "mother", mother.getDynasty.getFlagImageName(),
+				new SDL_Rect());
+			tmpWidget = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.motherDynasty = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, mother.getDynasty().getName(),
+				"ui_popup_background");
+			this.allWidgets ~= this.motherDynasty;
+		}
+		// mother unknown
+		else {
+			tmpWidget = new Label(
+				this.renderer, "mother", NULL_TEXTURE,
+				new SDL_Rect(), _("unknown"));
+			this.motherName = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.allWidgets ~= this.motherName;
+
+			tmpWidget = new RoundBorderImage(
+				this.renderer, "mother", NULL_TEXTURE, new SDL_Rect());
+			tmpWidget.hide();
+			this.motherDynasty = new ClickWidgetDecorator(
+				tmpWidget, &this.buttonHandler);
+			this.allWidgets ~= this.motherDynasty;
+		}
 	}
 
 
@@ -188,7 +341,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.characterName.setXY(this.boxX + 100,
 								 this.boxY + 23);
 		this.characterAge.setXY(this.boxX + 100, this.boxY + 54);
-		this.characterRulerLabel.setXY(this.boxX + 200, this.boxY + 54);
+		this.characterRulerLabel.setXY(this.boxX + 180, this.boxY + 54);
 
 		int nationStartX = this.characterRulerLabel.getBounds().x +
 			this.characterRulerLabel.getBounds().w + 10;
@@ -196,6 +349,30 @@ class CharacterInfoRenderer : WidgetRenderer {
 			widget.setXY(nationStartX, this.boxY + 50);
 			nationStartX += 40;
 		}
+
+		// parents
+		this.parentsHead.setXY(this.boxX + 20, this.boxY + 90);
+		this.seperator1.setBounds(
+			this.parentsHead.getBounds().x + this.parentsHead.getBounds().w + 10,
+			this.parentsHead.getBounds().y + 12,
+			this.boxBackground.getBounds().w - 40 - (this.parentsHead.getBounds().w + 10),
+			0);
+
+		this.fatherDynasty.setXY(
+			this.boxX + 20, this.seperator1.getBounds().y + 20);
+		this.fatherSex.setXY(
+			this.boxX + 60, this.seperator1.getBounds().y + 20);
+		this.fatherName.setXY(
+			this.boxX + 100, this.seperator1.getBounds().y + 28);
+		this.motherDynasty.setXY(
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 20,
+			this.seperator1.getBounds().y + 20);
+		this.motherSex.setXY(
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 60,
+			this.seperator1.getBounds().y + 20);
+		this.motherName.setXY(
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 100,
+			this.seperator1.getBounds().y + 28);
 
 		this.okButton.setXY(this.boxX + 420,
 		                    this.boxY + 350);
