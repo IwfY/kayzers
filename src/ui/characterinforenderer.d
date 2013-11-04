@@ -19,6 +19,7 @@ import world.nation;
 
 import derelict.sdl2.sdl;
 
+import std.conv;
 import std.string;
 import std.typecons;
 
@@ -101,6 +102,14 @@ class CharacterInfoRenderer : WidgetRenderer {
 			const(Character) partner = this.character.getPartner();
 			if (partner !is null) {
 				this.setCharacter(partner);
+			}
+		} else if (message[0..6] == "child_") {
+			int childIndex = to!int(message[6..$]);
+			assert(childIndex < this.character.getChildren().length,
+			       "CharacterInfoRenderer::buttonHandler child range error");
+			const(Character) child = this.character.getChildren()[childIndex];
+			if (child !is null) {
+				this.setCharacter(child);
 			}
 		}
 	}
