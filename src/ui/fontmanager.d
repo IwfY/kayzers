@@ -42,7 +42,7 @@ class FontManager {
 	 **/
 	public bool registerFont(const string fontName,
 							 const string filename,
-							 const int textSize = 12) {
+							 const int textSize = 13) {
 		
 		TTF_Font *ttf = TTF_OpenFont(toStringz(filename), textSize);
 		if (ttf is null) {

@@ -80,19 +80,26 @@ class ResourceLoader {
 		renderer.registerTexture("minimap_bg",
 								 "resources/img/ui/minimap_bg.png");
 		renderer.registerTexture("ui_background",
-								 "resources/img/ui/ui_background.png");
+								 "resources/img/ui/ui_background.jpg");
 		renderer.registerTexture("button_default",
 								 "resources/img/ui/button_default.png");
 		renderer.registerTexture("button_rename",
 		                         "resources/img/ui/button_rename.png");
 		renderer.registerTexture("mainmenu_bg",
-								 "resources/img/ui/mainmenu_bg.png");
+								 "resources/img/ui/mainmenu_bg.jpg");
 		renderer.registerTexture("mainmenu_button",
 								 "resources/img/ui/mainmenu_button.png");
 		renderer.registerTexture("mainmenu_button_hover",
 				"resources/img/ui/mainmenu_button_hover.png");
 		renderer.registerTexture("border_round_30",
 								 "resources/img/ui/border_round_30.png");
+
+		renderer.registerTexture("bg_550_600",
+		                         "resources/img/ui/oldpaper_550_600.jpg");
+		renderer.registerTexture("bg_350_230",
+		                         "resources/img/ui/oldpaper_350_230.jpg");
+		renderer.registerTexture("bg_300_140",
+		                         "resources/img/ui/oldpaper_300_140.jpg");
 
 		renderer.registerTexture("portrait_male",
 								 "resources/img/portraits/male.png");
@@ -116,12 +123,6 @@ class ResourceLoader {
 		renderer.registerTexture("inputbox_9patch",
 		                         "resources/img/ui/inputbox_9patch.png");
 
-		renderer.registerTextureFromNinePatch("button_9patch", "bg_300_140",
-											  300, 140);
-		renderer.registerTextureFromNinePatch("button_9patch", "bg_350_230",
-											  350, 230);
-		renderer.registerTextureFromNinePatch("button_9patch", "bg_550_600",
-											  550, 600);
 		renderer.registerTextureFromNinePatch("button_thin_9patch",
 											  "button_100_28",
 											  100, 28);
