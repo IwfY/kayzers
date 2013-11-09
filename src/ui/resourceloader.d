@@ -123,7 +123,7 @@ class ResourceLoader {
 		renderer.registerTexture("inputbox_9patch",
 		                         "resources/img/ui/inputbox_9patch.png");
 
-		renderer.registerTextureFromNinePatch("button_thin_9patch",
+		renderer.registerTextureFromNinePatch("inputbox_9patch",
 											  "button_100_28",
 											  100, 28);
 		renderer.registerTextureFromNinePatch("inputbox_9patch",

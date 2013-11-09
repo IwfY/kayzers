@@ -208,7 +208,10 @@ class TextureManager {
 		int patchHeight = ninePatchSurface.h / 3;
 
 		SDL_Surface* newSurface = SDL_CreateRGBSurface(
-			0, width, height, 32, 0, 0, 0, 0);
+			0, width, height, 32, 0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000);
+		// fill with transparency
+		SDL_FillRect(newSurface, null, SDL_MapRGBA(newSurface.format, 0, 0, 0, 0));
+
 		SDL_Rect* src = new SDL_Rect();
 		src.w = patchWidth;
 		src.h = patchHeight;
