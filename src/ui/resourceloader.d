@@ -7,14 +7,21 @@ import world.nation;
 import world.nationprototype;
 import world.structureprototype;
 
+import std.array;
+import std.file;
 import std.stdio;
 import std.string;
 
 class ResourceLoader {
 	public static void loadTexturesAndFonts(RenderHelper renderer) {
-		//TODO declare general resources in a file
+		// load resources from definition files
+		foreach (string filename;
+				 dirEntries("resources/definitions",
+							"*.txt",
+							SpanMode.depth)) {
+			ResourceLoader.loadResourcesFromDefinitionFile(renderer, filename);
+		}
 
-		//renderer.registerTexture("tile_1_2", "resources/img/water.png");
 		renderer.registerTexture(
 				"tile_1",
 				[
@@ -48,81 +55,6 @@ class ResourceLoader {
 				],
 				[12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12]);
 
-		// tile template used to generate colored tile textures
-		renderer.registerTexture("tile_template",
-		                         "resources/img/tile_template.png");
-
-		renderer.registerTexture("tile_0", "resources/img/grass.png");
-		renderer.registerTexture("tile_0_2", "resources/img/grass_2.png");
-		renderer.registerTexture("tile_2", "resources/img/mountain.png");
-		renderer.registerTexture("tile_2_2", "resources/img/mountain.png");
-		renderer.registerTexture("tile_3", "resources/img/trees.png");
-		renderer.registerTexture("tile_3_2", "resources/img/trees2.png");
-
-		renderer.registerTexture("cloud", "resources/img/cloud.png");
-		renderer.registerTexture("cloud2", "resources/img/cloud2.png");
-
-		renderer.registerTexture("mouseTile",
-								 "resources/img/grid_border.png");
-		renderer.registerTexture("selectedTile",
-								 "resources/img/grid_cursor.png");
-		renderer.registerTexture("border_top",
-								 "resources/img/grid_border_top.png");
-		renderer.registerTexture("border_right",
-								 "resources/img/grid_border_right.png");
-		renderer.registerTexture("border_bottom",
-								 "resources/img/grid_border_bottom.png");
-		renderer.registerTexture("border_left",
-								 "resources/img/grid_border_left.png");
-
-		renderer.registerTexture("ui_popup_background",
-								 "resources/img/ui/mainmenu_button.png");
-		renderer.registerTexture("minimap_bg",
-								 "resources/img/ui/minimap_bg.png");
-		renderer.registerTexture("ui_background",
-								 "resources/img/ui/ui_background.jpg");
-		renderer.registerTexture("button_default",
-								 "resources/img/ui/button_default.png");
-		renderer.registerTexture("button_rename",
-		                         "resources/img/ui/button_rename.png");
-		renderer.registerTexture("mainmenu_bg",
-								 "resources/img/ui/mainmenu_bg.jpg");
-		renderer.registerTexture("mainmenu_button",
-								 "resources/img/ui/mainmenu_button.png");
-		renderer.registerTexture("mainmenu_button_hover",
-				"resources/img/ui/mainmenu_button_hover.png");
-		renderer.registerTexture("border_round_30",
-								 "resources/img/ui/border_round_30.png");
-
-		renderer.registerTexture("bg_550_600",
-		                         "resources/img/ui/oldpaper_550_600.jpg");
-		renderer.registerTexture("bg_350_230",
-		                         "resources/img/ui/oldpaper_350_230.jpg");
-		renderer.registerTexture("bg_300_140",
-		                         "resources/img/ui/oldpaper_300_140.jpg");
-
-		renderer.registerTexture("portrait_male",
-								 "resources/img/portraits/male.png");
-		renderer.registerTexture("portrait_female",
-								 "resources/img/portraits/female.png");
-
-		renderer.registerTexture("black",
-								 "resources/img/black.png");
-		renderer.registerTexture("white",
-								 "resources/img/white.png");
-		renderer.registerTexture("grey_a127", "resources/img/grey_a127.png");
-		renderer.registerTexture("white_a10pc", "resources/img/white_a10pc.png");
-
-		renderer.registerTexture(NULL_TEXTURE,
-								 "resources/img/ui/null.png");
-		// nine patch textures
-		renderer.registerTexture("button_9patch",
-		                         "resources/img/ui/button_9patch.png");
-		renderer.registerTexture("button_thin_9patch",
-		                         "resources/img/ui/button_thin_9patch.png");
-		renderer.registerTexture("inputbox_9patch",
-		                         "resources/img/ui/inputbox_9patch.png");
-
 		renderer.registerTextureFromNinePatch("inputbox_9patch",
 											  "button_100_28",
 											  100, 28);
@@ -133,11 +65,6 @@ class ResourceLoader {
 											  "inputbox_230_30",
 											  230, 30);
 
-		// icons
-		renderer.registerTexture("gold",
-								 "resources/img/ui/gold.png");
-		renderer.registerTexture("inhabitants",
-								 "resources/img/ui/inhabitants.png");
 
 		//TODO make portable
 		renderer.registerFont(STD_FONT, "/usr/share/fonts/TTF/DejaVuSans.ttf");
@@ -156,6 +83,36 @@ class ResourceLoader {
 		renderer.registerFont("maprenderer_structure_name",
 							  "/usr/share/fonts/TTF/DejaVuSans.ttf",
 							  9);
+	}
+
+
+	/**
+	 * parse the definition file and load resources
+	 **/
+	private static void loadResourcesFromDefinitionFile(
+			RenderHelper renderer, const(string) filename) {
+		File file = File(filename, "r");
+
+		string line;
+		while ((line = file.readln()) !is null) {
+			string[] fields = line.strip().split(" ");
+			if (fields.length == 0) {
+				continue;
+			}
+			// static texture
+			if (fields[0] == "st") {
+				assert(fields.length == 3);
+
+				string[dchar] translateTable = ['"': ""];
+				string textureName = fields[1];
+				textureName = textureName.translate(translateTable);
+
+				string texturePath = fields[2];
+				texturePath = texturePath.translate(translateTable);
+
+				renderer.registerTexture(textureName, texturePath);
+			}
+		}
 	}
 
 	/**

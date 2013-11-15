@@ -56,7 +56,7 @@ class TextureManager {
 		this.setTexture(textureName, tex);
 
 		debug(2) {
-			writefln("Renderer::registerTexture Load %s as %s",
+			writefln("TextureManager::registerTexture %s as %s",
 					filename, textureName);
 		}
 

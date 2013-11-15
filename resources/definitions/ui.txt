@@ -1,0 +1,55 @@
+st "tile_template" "resources/img/tile_template.png"
+
+st "tile_0" "resources/img/grass.png"
+st "tile_0_2" "resources/img/grass_2.png"
+st "tile_2" "resources/img/mountain.png"
+st "tile_2_2" "resources/img/mountain.png"
+st "tile_3" "resources/img/trees.png"
+st "tile_3_2" "resources/img/trees2.png"
+
+st "cloud" "resources/img/cloud.png"
+st "cloud2" "resources/img/cloud2.png"
+
+st "mouseTile" "resources/img/grid_border.png"
+st "selectedTile" "resources/img/grid_cursor.png"
+st "border_top" "resources/img/grid_border_top.png"
+st "border_right" "resources/img/grid_border_right.png"
+st "border_bottom" "resources/img/grid_border_bottom.png"
+st "border_left" "resources/img/grid_border_left.png"
+
+st "ui_popup_background" "resources/img/ui/mainmenu_button.png"
+st "minimap_bg" "resources/img/ui/minimap_bg.png"
+st "ui_background" "resources/img/ui/ui_background.jpg"
+st "button_default" "resources/img/ui/button_default.png"
+st "button_rename" "resources/img/ui/button_rename.png"
+st "mainmenu_bg" "resources/img/ui/mainmenu_bg.jpg"
+st "mainmenu_button" "resources/img/ui/mainmenu_button.png"
+st "mainmenu_button_hover" "resources/img/ui/mainmenu_button_hover.png"
+st "border_round_30" "resources/img/ui/border_round_30.png"
+
+st "bg_550_600" "resources/img/ui/oldpaper_550_600.jpg"
+st "bg_350_230" "resources/img/ui/oldpaper_350_230.jpg"
+st "bg_300_140" "resources/img/ui/oldpaper_300_140.jpg"
+
+st "portrait_male" "resources/img/portraits/male.png"
+st "portrait_female" "resources/img/portraits/female.png"
+
+st "black" "resources/img/black.png"
+st "white" "resources/img/white.png"
+st "grey_a127" "resources/img/grey_a127.png"
+st "white_a10pc" "resources/img/white_a10pc.png"
+
+st "null" "resources/img/ui/null.png"
+
+# nine patch textures
+st "button_9patch" "resources/img/ui/button_9patch.png"
+st "button_thin_9patch" "resources/img/ui/button_thin_9patch.png"
+st "inputbox_9patch" "resources/img/ui/inputbox_9patch.png"
+
+#renderer.registerTextureFromNinePatch("inputbox_9patch", "button_100_28", 100, 28);
+#renderer.registerTextureFromNinePatch("inputbox_9patch", "inputbox_260_30", 260, 30);
+#renderer.registerTextureFromNinePatch("inputbox_9patch", "inputbox_230_30", 230, 30);
+
+# icons
+st "gold" "resources/img/ui/gold.png"
+st "inhabitants" "resources/img/ui/inhabitants.png"
