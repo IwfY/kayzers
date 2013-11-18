@@ -58,6 +58,7 @@ srcFiles = Split("""
     src/ui/widgets/widgetdecorator.d
     src/ui/widgets/widgetinterface.d
     src/world/character.d
+    src/world/charactermanager.d
     src/world/dynasty.d
     src/world/language.d
     src/world/nation.d

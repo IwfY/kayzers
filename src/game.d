@@ -8,6 +8,7 @@ import player;
 import position;
 import structuremanager;
 import world.character;
+import world.charactermanager;
 import world.dynasty;
 import world.language;
 import world.nation;
@@ -31,7 +32,7 @@ public class Game {
 	private uint currentNationIndex;
 	private NationPrototype[] nationPrototypes;
 	private Language[] languages;
-	private Dynasty[] dynasties;
+	private CharacterManager characterManager;
 	private StructureManager structureManager;
 	private int currentYear;
 	private Random gen;
@@ -52,6 +53,7 @@ public class Game {
 		this.initLanguages();
 		this.initNations();
 		this.structureManager = new StructureManager(this);
+		this.characterManager = new CharacterManager();
 
 		this.initGame(scenario);
 
@@ -103,15 +105,15 @@ public class Game {
 		dynasty.setName(newNation.getName());
 		dynasty.setLanguage(language);
 		dynasty.setFlagImageName(prototype.getFlagImageName());
-		this.dynasties ~= dynasty;
+		this.characterManager.addDynasty(dynasty);
 
 		// create ruler
-		Character male = this.characterFactory(null, null, dynasty);
+		Character male = CharacterManager.characterFactory(null, null, dynasty);
 		male.setSex(Sex.MALE);
 		male.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		male.setName(language.getRandomMaleName());
 
-		Character female = this.characterFactory(null, null, dynasty);
+		Character female = CharacterManager.characterFactory(null, null, dynasty);
 		female.setSex(Sex.FEMALE);
 		female.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
 		female.setName(language.getRandomFemaleName());
@@ -190,7 +192,7 @@ public class Game {
 	 * a child; role dice to determine success
 	 **/
 	private void giveBirth() {
-		foreach (Dynasty dynasty; this.dynasties) {
+		foreach (Dynasty dynasty; this.characterManager.getDynasties()) {
 			foreach (Character character; dynasty.getMembers()) {
 				Character father = character.getPartner();
 				if (character.getSex() == Sex.FEMALE &&
@@ -202,7 +204,7 @@ public class Game {
 						character.getAge(this.currentYear) <= 35) {
 					// give birth
 					if (uniform(0.0, 1.0, this.gen) > 0.8) {
-						Character child = this.characterFactory(
+						Character child = CharacterManager.characterFactory(
 							father, character, father.getDynasty());
 						child.setBirth(this.currentYear);
 						//TODO: birthNation
@@ -220,32 +222,6 @@ public class Game {
 				}
 			}
 		}
-	}
-
-
-	/**
-	 * create a character and link it with parents and dynasty
-	 **/
-	private Character characterFactory(
-			Character father,
-			Character mother,
-			Dynasty dynasty) {
-		Character newCharacter = new Character();
-		newCharacter.setFather(father);
-		newCharacter.setMother(mother);
-		newCharacter.setDynasty(dynasty);
-
-		if (father !is null) {
-			father.addChild(newCharacter);
-		}
-		if (mother !is null) {
-			mother.addChild(newCharacter);
-		}
-		if (dynasty !is null) {
-			dynasty.addMember(newCharacter);
-		}
-
-		return newCharacter;
 	}
 
 
@@ -298,7 +274,7 @@ public class Game {
 	}
 
 	public Character getCharacter(int id) {
-		foreach (Dynasty dynasty; this.dynasties) {
+		foreach (Dynasty dynasty; this.characterManager.getDynasties()) {
 			foreach (Character character; dynasty.getMembers()) {
 				if (character.getId() == id) {
 					return character;
