@@ -18,6 +18,8 @@ import world.structure;
 
 import derelict.sdl2.sdl;
 
+import std.array;
+
 class InGameRenderer : Renderer, Observer {
 	private UI ui;
 	private MapRenderer mapRenderer;
@@ -25,6 +27,8 @@ class InGameRenderer : Renderer, Observer {
 	private CharacterNameRenderer characterNameRenderer;
 	private NotificationRenderer notificationRenderer;
 	private CharacterInfoRenderer characterInfoRenderer;
+
+	private const(Character)[] charactersToName;
 
 	private MessageBroker messageBroker;
 
@@ -118,7 +122,7 @@ class InGameRenderer : Renderer, Observer {
 			ObjectMessage!(const(Character)) objectMessage =
 				cast(ObjectMessage!(const(Character)))message;
 			const(Character) character = objectMessage.object;
-			this.startCharacterNameRenderer(character);
+			this.charactersToName ~= character;
 		}
 	}
 
@@ -163,6 +167,14 @@ class InGameRenderer : Renderer, Observer {
 				   "InGameRenderer::render no game active");
 		}
 		body {
+			// check whether a character should be named
+			if (this.characterNameRenderer is null &&
+					this.charactersToName.length > 0) {
+				const(Character) characterToName = this.charactersToName.front!(const(Character))();
+				this.charactersToName.popFront();
+				this.startCharacterNameRenderer(characterToName);
+			}
+
 			this.updateRendererDrawRegions();
 			this.mapRenderer.render(tick);
 			this.ui.render(tick);
