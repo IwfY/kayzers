@@ -1,12 +1,17 @@
 module world.charactermanager;
 
+import game;
 import world.character;
 import world.dynasty;
 
 class CharacterManager {
 	private Dynasty[] dynasties;
+	private Game game;
 
-	public this() {
+	static int MIN_MARRIAGE_AGE = 14;
+
+	public this(Game game) {
+		this.game = game;
 	}
 
 	public void addDynasty(Dynasty dynasty) {
@@ -19,10 +24,37 @@ class CharacterManager {
 		return this.dynasties;
 	}
 
-	public const(Character[]) getMarryableCharacters(const(Character) character) const {
-		return null;
+	public const(const(Character)[]) getMarryableCharacters(const(Character) character) const {
+		const(Character)[] marryableCharacters;
+		foreach (const(Dynasty) dynasty; this.getDynasties()) {
+			foreach (const(Character) charCursor; dynasty.getMembers()) {
+				if (this.isMarryable(character, charCursor)) {
+					marryableCharacters ~= charCursor;
+				}
+			}
+		}
+		return marryableCharacters;
 	}
 
+	public const(bool) isMarryable(const(Character) c1, const(Character) c2) const {
+		if (c1.getSex() != c1.getSex() &&
+				c1.getAge(this.game.getCurrentYear()) >= CharacterManager.MIN_MARRIAGE_AGE &&
+				c2.getAge(this.game.getCurrentYear()) >= CharacterManager.MIN_MARRIAGE_AGE &&
+				!CharacterManager.isSibling(c1, c2) &&
+				c1.getFather() != c2 && c1.getMother != c2 &&
+				c2.getFather() != c1 && c2.getMother != c1) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * return true if two characters have at least one parent in common
+	 **/
+	public static bool isSibling(const(Character) c1, const(Character) c2) {
+		return (c1.getFather() == c2.getFather() || c1.getMother() == c2.getMother());
+	}
 
 	/**
 	 * create a character and link it with parents and dynasty

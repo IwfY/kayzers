@@ -53,7 +53,7 @@ public class Game {
 		this.initLanguages();
 		this.initNations();
 		this.structureManager = new StructureManager(this);
-		this.characterManager = new CharacterManager();
+		this.characterManager = new CharacterManager(this);
 
 		this.initGame(scenario);
 
