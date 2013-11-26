@@ -273,15 +273,12 @@ public class Game {
 		}
 	}
 
+	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+		return this.characterManager.getMarryableCharacters(characterId);
+	}
+
 	public Character getCharacter(int id) {
-		foreach (Dynasty dynasty; this.characterManager.getDynasties()) {
-			foreach (Character character; dynasty.getMembers()) {
-				if (character.getId() == id) {
-					return character;
-				}
-			}
-		}
-		return null;
+		return this.characterManager.getCharacter(id);
 	}
 
 

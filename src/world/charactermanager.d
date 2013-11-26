@@ -1,5 +1,6 @@
 module world.charactermanager;
 
+import constants;
 import game;
 import world.character;
 import world.dynasty;
@@ -7,8 +8,6 @@ import world.dynasty;
 class CharacterManager {
 	private Dynasty[] dynasties;
 	private Game game;
-
-	static int MIN_MARRIAGE_AGE = 14;
 
 	public this(Game game) {
 		this.game = game;
@@ -24,6 +23,34 @@ class CharacterManager {
 		return this.dynasties;
 	}
 
+	public Character getCharacter(int id) {
+		foreach (Dynasty dynasty; this.getDynasties()) {
+			foreach (Character character; dynasty.getMembers()) {
+				if (character.getId() == id) {
+					return character;
+				}
+			}
+		}
+		return null;
+	}
+	public const(Character) getCharacter(int id) const {
+		foreach (const(Dynasty) dynasty; this.getDynasties()) {
+			foreach (const(Character) character; dynasty.getMembers()) {
+				if (character.getId() == id) {
+					return character;
+				}
+			}
+		}
+		return null;
+	}
+
+	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+		const(Character) character = this.getCharacter(characterId);
+		if (character is null) {
+			return null;
+		}
+		return this.getMarryableCharacters(character);
+	}
 	public const(const(Character)[]) getMarryableCharacters(const(Character) character) const {
 		const(Character)[] marryableCharacters;
 		foreach (const(Dynasty) dynasty; this.getDynasties()) {
@@ -38,8 +65,8 @@ class CharacterManager {
 
 	public const(bool) isMarryable(const(Character) c1, const(Character) c2) const {
 		if (c1.getSex() != c1.getSex() &&
-				c1.getAge(this.game.getCurrentYear()) >= CharacterManager.MIN_MARRIAGE_AGE &&
-				c2.getAge(this.game.getCurrentYear()) >= CharacterManager.MIN_MARRIAGE_AGE &&
+				c1.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
+				c2.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
 				!CharacterManager.isSibling(c1, c2) &&
 				c1.getFather() != c2 && c1.getMother != c2 &&
 				c2.getFather() != c1 && c2.getMother != c1) {

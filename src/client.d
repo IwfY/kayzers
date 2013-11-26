@@ -117,18 +117,23 @@ public class Client {
 	}
 
 
+	// character management
+	public void setCharacterName(const(Character) character,
+	                             string name) {
+		this.game.setCharacterName(character, name);
+	}
+
+	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+		return this.game.getMarryableCharacters(characterId);
+	}
+
+	// structure management
 	public bool canBuildStructure(string structurePrototypeName,
 								  const(Nation) nation,
 								  const(Position) position) const {
 		return this.game.canBuildStructure(
 			structurePrototypeName, nation, position);
 	}
-
-	public void setCharacterName(const(Character) character,
-								 string name) {
-		this.game.setCharacterName(character, name);
-	}
-
 
 	public void setStructureName(const(Structure) structure, string name) {
 		this.game.setStructureName(structure, name);

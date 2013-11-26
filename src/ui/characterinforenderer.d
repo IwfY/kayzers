@@ -416,6 +416,9 @@ class CharacterInfoRenderer : WidgetRenderer {
 		}
 		// partner unknown
 		else {
+			if (this.character.getAge(this.client.getCurrentYear()) < MIN_MARRIAGE_AGE) {
+				this.proposalButton.hide();
+			}
 			this.partnerSex = new RoundBorderImage(
 				this.renderer,
 				"partner",
