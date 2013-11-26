@@ -70,8 +70,7 @@ srcFiles = Split("""
     src/world/structureprototype.d
 """)
 
-dFlags = ['-L-L/usr/lib/dmd',
-		  '-L-ldl',
+dFlags = ['-L-ldl',
 		  '-L-lDerelictSDL2'
 		  '-L-lDerelictUtil']
 
@@ -80,9 +79,10 @@ libs = ['dl',
 		'DerelictUtil',
 		'phobos2']
 
-libPath = ['/usr/lib/dmd']
+libPath = ['libs/derelict']
+#libPath = ['/usr/lib/dmd']
 
-dPath = ['/usr/include/d',
+dPath = ['includes',
 		 'src']
 
 
