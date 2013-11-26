@@ -1,8 +1,13 @@
 module ui.characterinforenderer;
 
+import std.conv;
+import std.string;
+import std.typecons;
+
 import client;
 import constants;
 import textinput;
+import ui.characterproposalrenderer;
 import ui.renderhelper;
 import ui.widgetrenderer;
 import ui.widgets.clickwidgetdecorator;
@@ -19,14 +24,12 @@ import world.nation;
 
 import derelict.sdl2.sdl;
 
-import std.conv;
-import std.string;
-import std.typecons;
-
 class CharacterInfoRenderer : WidgetRenderer {
 	private Rebindable!(const(Character)) character;
 
 	private bool active;
+
+	private CharacterProposalRenderer proposalRenderer;
 
 	// top left coordinates of the message box
 	private int boxX;
@@ -62,13 +65,10 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private WidgetInterface[] childrenSex;
 
 	private LabelButton okButton;
-	private TextInput textInputServer;
 	private Image boxBackground;
-	private string inputString;
 
 	public this(Client client, RenderHelper renderer,
 	            const(Character) character) {
-		this.textInputServer = new TextInput();
 		this.character = character;
 
 		super(client, renderer, "grey_a127");	// calls initWidgets
@@ -78,7 +78,10 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 
 	public ~this() {
-		destroy(this.textInputServer);
+		if (this.proposalRenderer !is null) {
+			destroy(this.proposalRenderer);
+		}
+
 	}
 
 
@@ -111,6 +114,9 @@ class CharacterInfoRenderer : WidgetRenderer {
 			if (child !is null) {
 				this.setCharacter(child);
 			}
+		} else if (message == "proposal") {
+			this.proposalRenderer = new CharacterProposalRenderer(
+				this.client, this.renderer, this.character);
 		}
 	}
 
@@ -623,8 +629,6 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	public override void handleEvent(SDL_Event event) {
 		if (this.active) {
-			// text input
-			this.textInputServer.handleEvent(event);
 
 			// widgets
 			super.handleEvent(event);

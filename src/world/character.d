@@ -1,9 +1,9 @@
 module world.character;
 
+import std.typecons;
+
 import world.dynasty;
 import world.nation;
-
-import std.typecons;
 
 static enum Sex {MALE, FEMALE};
 

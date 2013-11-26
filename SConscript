@@ -22,6 +22,7 @@ srcFiles = Split("""
     src/script/token.d
     src/ui/characterinforenderer.d
     src/ui/characternamerenderer.d
+    src/ui/characterproposalrenderer.d
     src/ui/cloudrenderer.d
     src/ui/fontmanager.d
     src/ui/ingamerenderer.d
