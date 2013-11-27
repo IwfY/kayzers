@@ -65,6 +65,7 @@ class CharacterManager {
 
 	public const(bool) isMarryable(const(Character) c1, const(Character) c2) const {
 		if (c1.getSex() != c2.getSex() &&
+				!c1.isDead() && !c2.isDead() &&
 				c1.getPartner() is null && c2.getPartner() is null &&
 				c1.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
 				c2.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
