@@ -37,6 +37,10 @@ abstract class WidgetRenderer : Renderer {
 		}
 	}
 
+	protected void addWidget(WidgetInterface widget) {
+		this.allWidgets ~= widget;
+	}
+
 	public override void handleEvent(SDL_Event event) {
 		// left mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&

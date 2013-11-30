@@ -1,4 +1,4 @@
-module ui.label;
+module ui.widgets.label;
 
 import constants;
 import rect;

@@ -55,6 +55,7 @@ srcFiles = Split("""
     src/ui/widgets/line.d
     src/ui/widgets/popupwidgetdecorator.d
     src/ui/widgets/roundborderimage.d
+    src/ui/widgets/vbox.d
     src/ui/widgets/widget.d
     src/ui/widgets/widgetdecorator.d
     src/ui/widgets/widgetinterface.d

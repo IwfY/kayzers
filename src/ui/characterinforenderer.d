@@ -117,6 +117,9 @@ class CharacterInfoRenderer : WidgetRenderer {
 		} else if (message == "proposal") {
 			this.proposalRenderer = new CharacterProposalRenderer(
 				this.client, this.renderer, this.character);
+			this.proposalRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
 		}
 	}
 
@@ -616,9 +619,27 @@ class CharacterInfoRenderer : WidgetRenderer {
 	}
 
 
+	public override void setScreenRegion(int x, int y, int w, int h) {
+		this.screenRegion.x = x;
+		this.screenRegion.y = y;
+		this.screenRegion.w = w;
+		this.screenRegion.h = h;
+
+		if (this.proposalRenderer !is null && this.proposalRenderer.isActive()) {
+			this.proposalRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
+		}
+	}
+
+
 	public override void render(int tick=0) {
 		if (this.active) {
-			super.render(tick);
+			if (this.proposalRenderer !is null && this.proposalRenderer.isActive()) {
+				this.proposalRenderer.render();
+			} else {
+				super.render(tick);
+			}
 		}
 	}
 
@@ -629,15 +650,21 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	public override void handleEvent(SDL_Event event) {
 		if (this.active) {
+			if (this.proposalRenderer !is null && this.proposalRenderer.isActive()) {
+				this.proposalRenderer.handleEvent(event);
+				if (!this.proposalRenderer.isActive()) {
+					this.proposalRenderer = null;
+				}
+			} else {
+				// widgets
+				super.handleEvent(event);
 
-			// widgets
-			super.handleEvent(event);
-
-			// key press
-			if (event.type == SDL_KEYDOWN) {
-				// enter input
-				if (event.key.keysym.sym == SDLK_RETURN) {
-					this.okButtonCallback("");
+				// key press
+				if (event.type == SDL_KEYDOWN) {
+					// enter input
+					if (event.key.keysym.sym == SDLK_RETURN) {
+						this.okButtonCallback("");
+					}
 				}
 			}
 		}

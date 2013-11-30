@@ -1,4 +1,4 @@
-module ui.widget;
+module ui.widgets.widget;
 
 import rect;
 import utils;
@@ -63,16 +63,17 @@ abstract class Widget : WidgetInterface {
 	public final const(bool) isHidden() const {
 		return this.hidden;
 	}
-	public final void hide() {
+	public void hide() {
 		this.hidden = true;
 	}
-	public final void unhide() {
+	public void unhide() {
 		this.hidden = false;
 	}
 
 	public void centerHorizontally() {
 		Rect screenRegion = this.renderer.getScreenRegion();
-		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
+		this.setXY((screenRegion.w - this.bounds.w) / 2,
+			this.bounds.y);
 	}
 
 	public void setBounds(int x, int y, int w, int h) {
@@ -94,7 +95,8 @@ abstract class Widget : WidgetInterface {
 		return this.name;
 	}
 
-	public void setText(string text) {}
+	public void setText(string text) {
+	}
 
 	public void click() {
 	}
