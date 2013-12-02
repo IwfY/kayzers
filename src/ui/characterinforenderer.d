@@ -11,6 +11,7 @@ import ui.characterproposalrenderer;
 import ui.renderhelper;
 import ui.widgetrenderer;
 import ui.widgets.clickwidgetdecorator;
+import ui.widgets.hbox;
 import ui.widgets.image;
 import ui.widgets.label;
 import ui.widgets.labelbutton;
@@ -40,7 +41,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private WidgetInterface characterAge;
 	private WidgetInterface characterDynasty;
 	private RoundBorderImage characterSex;
-	private WidgetInterface[] characterRulingNations;
+	private HBox characterRulingNations;
 
 	private Label parentsHead;
 	private Line seperator1;
@@ -132,8 +133,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 
 	protected override void initWidgets() {
-		this.allWidgets.length = 0;	// clear list of old widgets
-		this.characterRulingNations.length = 0;
+		this.clearWidgets();	// clear list of old widgets
 
 		this.boxBackground = new Image(
 			this.renderer, "", "bg_550_600",
@@ -214,6 +214,8 @@ class CharacterInfoRenderer : WidgetRenderer {
 			_("Ruler of") ~ ":");
 		this.allWidgets ~= this.characterRulerLabel;
 
+		this.characterRulingNations = new HBox(this.renderer, "", NULL_TEXTURE, new SDL_Rect());
+
 		foreach (const(Nation) nation; this.client.getNations()) {
 			if (this.character == nation.getRuler()) {
 				WidgetInterface tmpNationWidget = new RoundBorderImage(
@@ -226,7 +228,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 					nation.getName(),
 					"ui_popup_background");
 				nationFlag.setZIndex(4);
-				this.characterRulingNations ~= nationFlag;
+				this.characterRulingNations.addChild(nationFlag);
 				this.allWidgets ~= nationFlag;
 			}
 		}
@@ -260,7 +262,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		if (father !is null) {
 			tmpWidget = new Label(
 				this.renderer, "father", NULL_TEXTURE,
-				new SDL_Rect(), father.getName());
+				new SDL_Rect(), father.getFullName());
 			tmpWidget = new ClickWidgetDecorator(
 				tmpWidget, &this.buttonHandler);
 
@@ -314,7 +316,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		if (mother !is null) {
 			tmpWidget = new Label(
 				this.renderer, "mother", NULL_TEXTURE,
-				new SDL_Rect(), mother.getName());
+				new SDL_Rect(), mother.getFullName());
 			tmpWidget = new ClickWidgetDecorator(
 				tmpWidget, &this.buttonHandler);
 
@@ -545,10 +547,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 		int nationStartX = this.characterRulerLabel.getBounds().x +
 			this.characterRulerLabel.getBounds().w + 10;
-		foreach (WidgetInterface widget; this.characterRulingNations) {
-			widget.setXY(nationStartX, this.boxY + 50);
-			nationStartX += 40;
-		}
+		this.characterRulingNations.setXY(nationStartX, this.boxY + 50);
 
 		// parents
 		this.parentsHead.setXY(this.boxX + 20, this.boxY + 90);
@@ -565,13 +564,13 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.fatherName.setXY(
 			this.boxX + 100, this.seperator1.getBounds().y + 23);
 		this.motherDynasty.setXY(
-			this.boxX + (this.boxBackground.getBounds().w / 2) + 20,
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 0,
 			this.seperator1.getBounds().y + 15);
 		this.motherSex.setXY(
-			this.boxX + (this.boxBackground.getBounds().w / 2) + 60,
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 40,
 			this.seperator1.getBounds().y + 15);
 		this.motherName.setXY(
-			this.boxX + (this.boxBackground.getBounds().w / 2) + 100,
+			this.boxX + (this.boxBackground.getBounds().w / 2) + 80,
 			this.seperator1.getBounds().y + 23);
 
 		// partner
@@ -662,7 +661,8 @@ class CharacterInfoRenderer : WidgetRenderer {
 				// key press
 				if (event.type == SDL_KEYDOWN) {
 					// enter input
-					if (event.key.keysym.sym == SDLK_RETURN) {
+					if (event.key.keysym.sym == SDLK_RETURN ||
+							event.key.keysym.sym == SDLK_ESCAPE) {
 						this.okButtonCallback("");
 					}
 				}

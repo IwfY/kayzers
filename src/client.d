@@ -196,17 +196,6 @@ public class Client {
 					this.running = false;
 				}
 
-				if (event.type == SDL_KEYDOWN) {
-					// quit
-					if (event.key.keysym.sym == SDLK_q) {
-						this.running = false;
-					}
-					debug(2) {
-						writefln("The %s key was pressed!\n",
-						   event.key.keysym);
-					}
-				}
-
 				this.renderer.handleEvent(event);
 			}
 

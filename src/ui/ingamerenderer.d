@@ -231,5 +231,12 @@ class InGameRenderer : Renderer, Observer {
 
 			this.mapRenderer.handleEvent(event);
 			this.ui.handleEvent(event);
+
+			if (event.type == SDL_KEYDOWN) {
+				// enter input
+				if (event.key.keysym.sym == SDLK_ESCAPE) {
+					this.client.stop();
+				}
+			}
 		}
 }
