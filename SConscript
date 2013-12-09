@@ -47,6 +47,7 @@ srcFiles = Split("""
     src/ui/widgetrenderer.d
     src/ui/widgets/button.d
     src/ui/widgets/clickwidgetdecorator.d
+    src/ui/widgets/containerwidget.d
     src/ui/widgets/hbox.d
     src/ui/widgets/hoverwidget.d
     src/ui/widgets/image.d
