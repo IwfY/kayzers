@@ -51,6 +51,7 @@ srcFiles = Split("""
     src/ui/widgets/hoverwidget.d
     src/ui/widgets/image.d
     src/ui/widgets/inputbox.d
+    src/ui/widgets/iwidget.d
     src/ui/widgets/label.d
     src/ui/widgets/labelbutton.d
     src/ui/widgets/line.d
