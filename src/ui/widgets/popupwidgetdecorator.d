@@ -2,10 +2,10 @@ module ui.widgets.popupwidgetdecorator;
 
 import constants;
 import position;
-import ui.widgets.label;
 import ui.renderhelper;
+import ui.widgets.iwidget;
+import ui.widgets.label;
 import ui.widgets.widgetdecorator;
-import ui.widgets.widgetinterface;
 
 import derelict.sdl2.sdl;
 

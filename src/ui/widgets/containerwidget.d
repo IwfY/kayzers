@@ -7,7 +7,7 @@ import ui.widgets.widget;
 import derelict.sdl2.sdl;
 
 abstract class ContainerWidget : Widget {
-	private IWidget[] children;
+	protected IWidget[] children;
 
 	public this(RenderHelper renderer,
 	            const(SDL_Rect *)bounds = new SDL_Rect()) {

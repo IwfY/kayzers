@@ -1,6 +1,6 @@
 module ui.widgets.widgetdecorator;
 
-import ui.widgets.widgetinterface;
+import ui.widgets.iwidget;
 
 import derelict.sdl2.sdl;
 

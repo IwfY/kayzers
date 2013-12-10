@@ -33,6 +33,11 @@ class RoundBorderImage : Widget {
 	}
 
 
+	public void setTextureName(string textureName) {
+		this.textureName = textureName;
+	}
+
+
 	protected override void draw() {
 		SDL_Rect* bgBounds = new SDL_Rect(
 			this.bounds.x + 1, this.bounds.y + 1, 28, 28);

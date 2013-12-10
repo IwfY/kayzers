@@ -10,16 +10,17 @@ import textinput;
 import ui.characterproposalrenderer;
 import ui.renderhelper;
 import ui.widgetrenderer;
+import ui.widgets.characterdetails;
 import ui.widgets.clickwidgetdecorator;
 import ui.widgets.hbox;
 import ui.widgets.image;
+import ui.widgets.iwidget;
 import ui.widgets.label;
 import ui.widgets.labelbutton;
 import ui.widgets.line;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
 import ui.widgets.widget;
-import ui.widgets.widgetinterface;
 import world.character;
 import world.nation;
 
@@ -36,34 +37,29 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private int boxX;
 	private int boxY;
 
-	private Label characterName;
-	private Label characterRulerLabel;
-	private WidgetInterface characterAge;
-	private WidgetInterface characterDynasty;
-	private RoundBorderImage characterSex;
-	private HBox characterRulingNations;
+	private CharacterDetails characterDetails;
 
 	private Label parentsHead;
 	private Line seperator1;
-	private WidgetInterface fatherName;
-	private WidgetInterface fatherDynasty;
-	private WidgetInterface fatherSex;
-	private WidgetInterface motherName;
-	private WidgetInterface motherDynasty;
-	private WidgetInterface motherSex;
+	private IWidget fatherName;
+	private IWidget fatherDynasty;
+	private IWidget fatherSex;
+	private IWidget motherName;
+	private IWidget motherDynasty;
+	private IWidget motherSex;
 
 	private Label partnerHead;
 	private Line seperator2;
-	private WidgetInterface partnerName;
-	private WidgetInterface partnerDynasty;
-	private WidgetInterface partnerSex;
-	private WidgetInterface proposalButton;
+	private IWidget partnerName;
+	private IWidget partnerDynasty;
+	private IWidget partnerSex;
+	private IWidget proposalButton;
 
 	private Label childrenHead;
 	private Line seperator3;
-	private WidgetInterface[] childrenNames;
-	private WidgetInterface[] childrenDynasty;
-	private WidgetInterface[] childrenSex;
+	private IWidget[] childrenNames;
+	private IWidget[] childrenDynasty;
+	private IWidget[] childrenSex;
 
 	private LabelButton okButton;
 	private Image boxBackground;
@@ -136,102 +132,26 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.clearWidgets();	// clear list of old widgets
 
 		this.boxBackground = new Image(
-			this.renderer, "", "bg_550_600",
+			this.renderer, "bg_550_600",
 			new SDL_Rect(0, 0, 550, 600));
 		this.boxBackground.setZIndex(-1);
-		this.allWidgets ~= this.boxBackground;
+		this.addWidget(this.boxBackground);
 
 		this.okButton = new LabelButton(
 			this.renderer,
 			"okButton",
 			"button_100_28",
 			"white_a10pc",
-			new SDL_Rect(0, 0, 100, 28),
 			&(this.okButtonCallback),
 			_("OK"),
-			STD_FONT);
-		this.allWidgets ~= this.okButton;
+			STD_FONT,
+			new SDL_Rect(0, 0, 100, 28));
+		this.addWidget(this.okButton);
 
 		// focus character
-		this.characterName = new Label(
-			this.renderer, "", NULL_TEXTURE,
-			new SDL_Rect(0, 0, 0, 0),
-			this.character.getFullName(),
-			"std_20");
-		this.allWidgets ~= this.characterName;
-
-		WidgetInterface tmpWidget = new RoundBorderImage(
-			this.renderer,
-			"",
-			this.character.getDynasty().getFlagImageName(),
-			new SDL_Rect());
-		this.characterDynasty = new PopupWidgetDecorator(
-			tmpWidget,
-			this.renderer, this.character.getDynasty().getName(),
-			"ui_popup_background" );
-		this.characterDynasty.setZIndex(2);
-		this.allWidgets ~= this.characterDynasty;
-
-		this.characterSex = new RoundBorderImage(
-			this.renderer,
-			"",
-			NULL_TEXTURE);
-		if (this.character.getSex() == Sex.MALE) {
-			this.characterSex.setTextureName("portrait_male");
-		} else {
-			this.characterSex.setTextureName("portrait_female");
-		}
-		this.allWidgets ~= this.characterSex;
-
-		tmpWidget = new Label(
-			this.renderer,
-			"",
-			NULL_TEXTURE,
-			new SDL_Rect(),
-			format("%s: %d%s",
-				   _("Age"),
-				   this.character.getAge(this.client.getCurrentYear()),
-				   (this.character.isDead() ? " ✝" : "")));
-
-		string popupText = format("%s: %d", _("Born"),
-								  this.character.getBirth());
-		if (this.character.isDead()) {
-			popupText ~= format("\n%s: %d", _("Death"),
-								this.character.getDeath());
-		}
-		this.characterAge = new PopupWidgetDecorator(
-			tmpWidget,
-			this.renderer,
-			popupText,
-			"ui_popup_background");
-		this.characterAge.setZIndex(3);
-		this.allWidgets ~= this.characterAge;
-
-		// ruling nations
-		this.characterRulerLabel = new Label(
-			this.renderer, "", NULL_TEXTURE,
-			new SDL_Rect(0, 0, 0, 0),
-			_("Ruler of") ~ ":");
-		this.allWidgets ~= this.characterRulerLabel;
-
-		this.characterRulingNations = new HBox(this.renderer, "", NULL_TEXTURE, new SDL_Rect());
-
-		foreach (const(Nation) nation; this.client.getNations()) {
-			if (this.character == nation.getRuler()) {
-				WidgetInterface tmpNationWidget = new RoundBorderImage(
-					this.renderer,
-					"",
-					nation.getPrototype().getFlagImageName());
-				WidgetInterface nationFlag = new PopupWidgetDecorator(
-					tmpNationWidget,
-					this.renderer,
-					nation.getName(),
-					"ui_popup_background");
-				nationFlag.setZIndex(4);
-				this.characterRulingNations.addChild(nationFlag);
-				this.allWidgets ~= nationFlag;
-			}
-		}
+		this.characterDetails = new CharacterDetails(
+			this.client, this.renderer, this.character);
+		this.addWidget(this.characterDetails);
 
 		this.initWidgetsParents();
 		this.initWidgetsPartner();
@@ -252,7 +172,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 		// father
 		const(Character) father = this.character.getFather();
-		WidgetInterface tmpWidget = new RoundBorderImage(
+		IWidget tmpWidget = new RoundBorderImage(
 			this.renderer, "father", "portrait_male");
 		this.fatherSex = new ClickWidgetDecorator(
 			tmpWidget, &this.buttonHandler);
@@ -385,7 +305,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		const(Character) partner = this.character.getPartner();
 		// partner found
 		if (partner !is null) {
-			WidgetInterface tmpWidget = new RoundBorderImage(
+			IWidget tmpWidget = new RoundBorderImage(
 				this.renderer,
 				"partner",
 				((partner.getSex() == Sex.MALE) ?
@@ -473,7 +393,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		int i = 0;
 		foreach (const(Character) child; this.character.getChildren()) {
 			// dynasty
-			WidgetInterface tmpWidget = new RoundBorderImage(
+			IWidget tmpWidget = new RoundBorderImage(
 				this.renderer, format("child_%d", i),
 				child.getDynasty.getFlagImageName());
 			tmpWidget = new ClickWidgetDecorator(
@@ -538,16 +458,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		                         this.boxY);
 
 		// focus character
-		this.characterDynasty.setXY(this.boxX + 20, this.boxY + 20);
-		this.characterSex.setXY(this.boxX + 60, this.boxY + 20);
-		this.characterName.setXY(this.boxX + 100,
-								 this.boxY + 23);
-		this.characterAge.setXY(this.boxX + 100, this.boxY + 54);
-		this.characterRulerLabel.setXY(this.boxX + 180, this.boxY + 54);
-
-		int nationStartX = this.characterRulerLabel.getBounds().x +
-			this.characterRulerLabel.getBounds().w + 10;
-		this.characterRulingNations.setXY(nationStartX, this.boxY + 50);
+		this.characterDetails.setXY(this.boxX + 20, this.boxY + 20);
 
 		// parents
 		this.parentsHead.setXY(this.boxX + 20, this.boxY + 90);
