@@ -30,18 +30,12 @@ class ScenarioListRenderer : WidgetRenderer {
 
 	protected override void initWidgets() {
 		this.head = new Label(this.renderer,
-							  "head",
-							  "null",
-							  new SDL_Rect(0, 0, 0, 0),
 							  "Kayzers",
 							  "menuHead",
 							  new SDL_Color(162, 59, 0));
 		this.allWidgets ~= this.head;
 
 		this.head2 = new Label(this.renderer,
-							  "head",
-							  "null",
-							  new SDL_Rect(0, 0, 0, 0),
 							  "Scenarios",
 							  "menuHead2");
 		this.allWidgets ~= this.head2;
@@ -88,9 +82,13 @@ class ScenarioListRenderer : WidgetRenderer {
 
 	protected override void updateWidgets() {
 		this.head.setXY(0, 10);
-		this.head.centerHorizontally();
+		this.head.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
+
 		this.head2.setXY(0, 110);
-		this.head2.centerHorizontally();
+		this.head2.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
+
 		this.backButton.setXY(
 			this.screenRegion.x + this.screenRegion.w - 300,
 			this.screenRegion.y + this.screenRegion.h - 100);
@@ -98,7 +96,8 @@ class ScenarioListRenderer : WidgetRenderer {
 		int scenarioButtonY = 200;
 		foreach (Widget widget; this.scenarioButtons) {
 			widget.setXY(0, scenarioButtonY);
-			widget.centerHorizontally();
+			widget.centerHorizontally(
+				this.screenRegion.x, this.screenRegion.w);
 			scenarioButtonY += 70;
 		}
 	}
