@@ -40,7 +40,6 @@ srcFiles = Split("""
     src/ui/resourceloader.d
     src/ui/scenariolistrenderer.d
     src/ui/structurenamerenderer.d
-    src/ui/textinputrenderer.d
     src/ui/texture.d
     src/ui/texturemanager.d
     src/ui/ui.d
