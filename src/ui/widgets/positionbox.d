@@ -20,7 +20,7 @@ class PositionBox : ContainerWidget {
 		super(renderer, bounds);
 	}
 
-	protected void updateChildren() {
+	protected override void updateChildren() {
 		int maxWidth = 0;
 		int maxHeight = 0;
 		for (int i = 0; i < this.children.length; ++i) {

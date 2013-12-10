@@ -1,8 +1,11 @@
 module ui.widgets.characterdetails;
 
-import std.typecons;
+import std.string;
+
+import derelict.sdl2.sdl;
 
 import client;
+import constants;
 import ui.renderhelper;
 import ui.widgets.containerwidget;
 import ui.widgets.hbox;
@@ -16,7 +19,7 @@ import world.nation;
 
 class CharacterDetails : ContainerWidget {
 	private const(Client) client;
-	private Rebindable!(const(Character)) character;
+	private const(Character) character;
 
 	private Label characterName;
 	private Label characterRulerLabel;
@@ -35,6 +38,11 @@ class CharacterDetails : ContainerWidget {
 
 		this.initWidgets();
 	}
+
+	private const(string) _(string text) const {
+		return this.client.getI18nString(text);
+	}
+
 
 	private void initWidgets() {
 		// name label
@@ -91,7 +99,7 @@ class CharacterDetails : ContainerWidget {
 			this.renderer, _("Ruler of") ~ ":");
 		this.addChild(this.characterRulerLabel);
 
-		this.characterRulingNations = new HBox(this.renderer, "", NULL_TEXTURE, new SDL_Rect());
+		this.characterRulingNations = new HBox(this.renderer);
 
 		foreach (const(Nation) nation; this.client.getNations()) {
 			if (this.character == nation.getRuler()) {

@@ -16,6 +16,10 @@ class Image : Widget {
 		this.textureName = textureName;
 	}
 
+	public void setTextureName(const(string) textureName) {
+		this.textureName = textureName;
+	}
+
 	protected override void draw() {
 		this.renderer.drawTexture(this.bounds, this.textureName);
 	}

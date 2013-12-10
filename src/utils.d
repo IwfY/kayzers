@@ -27,7 +27,7 @@ double getDistance(double x1, double y1, double x2, double y2) {
 }
 
 
-bool rectContainsPoint(SDL_Rect *rect, int x, int y) {
+bool rectContainsPoint(const(SDL_Rect*) rect, int x, int y) {
 	if (x < rect.x || y < rect.y) {
 		return false;
 	}
@@ -39,7 +39,7 @@ bool rectContainsPoint(SDL_Rect *rect, int x, int y) {
 }
 
 
-bool rectContainsPoint(SDL_Rect *rect, SDL_Point *point) {
+bool rectContainsPoint(const(SDL_Rect*) rect, const(SDL_Point*) point) {
 	if (point.x < rect.x || point.y < rect.y) {
 		return false;
 	}
@@ -51,7 +51,7 @@ bool rectContainsPoint(SDL_Rect *rect, SDL_Point *point) {
 }
 
 
-bool rectContainsPoint(Rect rect, SDL_Point *point) {
+bool rectContainsPoint(const(Rect) rect, const(SDL_Point*) point) {
 	if (point.x < rect.x || point.y < rect.y) {
 		return false;
 	}

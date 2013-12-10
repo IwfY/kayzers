@@ -33,7 +33,7 @@ class RoundBorderImage : Widget {
 	}
 
 
-	public void setTextureName(string textureName) {
+	public void setTextureName(const(string) textureName) {
 		this.textureName = textureName;
 	}
 

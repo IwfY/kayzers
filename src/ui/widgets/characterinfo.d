@@ -1,24 +1,29 @@
 module ui.widgets.characterinfo;
 
-import std.typecons;
+import std.string;
 
 import client;
+import constants;
 import ui.renderhelper;
+import ui.widgets.clickwidgetdecorator;
 import ui.widgets.containerwidget;
 import ui.widgets.iwidget;
+import ui.widgets.label;
+import ui.widgets.popupwidgetdecorator;
+import ui.widgets.roundborderimage;
 import world.character;
 import world.dynasty;
 import world.nation;
 
 class CharacterInfo : ContainerWidget {
 	private const(Client) client;
-	private Rebindable!(const(Character)) character;
+	private const(Character) character;
 	private string message;
 	private void delegate(string) callback;	// callback function pointer
 
 	private IWidget name;
 	private IWidget dynasty;
-	private IWidget sex;
+	private RoundBorderImage sex;
 
 	public this(const(Client) client,
 	            RenderHelper renderer,
@@ -46,14 +51,15 @@ class CharacterInfo : ContainerWidget {
 
 			// name label
 			tmpWidget = new Label(
-				this.renderer, child.getFullName(), "std_20");
+				this.renderer, this.character.getFullName(), "std_20");
 			tmpWidget = new ClickWidgetDecorator(
 				tmpWidget, this.message, this.callback);
 
 			string popupText = format("%s: %d%s",
-			   _("Age"),
-			   child.getAge(this.client.getCurrentYear()),
-			   (child.isDead() ? " ✝" : ""));
+				_("Age"),
+				this.character.getAge(this.client.getCurrentYear()),
+			    (this.character.isDead() ? " ✝" : ""));
+
 			this.name = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");

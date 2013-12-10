@@ -17,10 +17,10 @@ import ui.renderhelper;
 import ui.widgets.button;
 import ui.widgets.clickwidgetdecorator;
 import ui.widgets.image;
+import ui.widgets.iwidget;
 import ui.widgets.label;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
-import ui.widgets.widgetinterface;
 import world.character;
 import world.nation;
 import world.nationprototype;
@@ -39,17 +39,20 @@ import std.string;
 class UI : Renderer, Observer {
 	private const(Map) map;
 
-	private WidgetInterface[] widgets;
-	private WidgetInterface mouseOverWidget; // reference to widget under mouse
-	private WidgetInterface[string] structureButtons;
-	private WidgetInterface renameButton;
+	private IWidget[] widgets;
+	private IWidget mouseOverWidget; // reference to widget under mouse
+	private Button[string] structureButtons;
+	private IWidget[string] structureButtonsDecorated;
+	private IWidget renameButton;
 	private Image tileImage;
 	private Image structureImage;
 	private Label yearLabel;
 	private Label nationName;
 	private RoundBorderImage nationFlag;
-	private WidgetInterface rulerLabel;
-	private WidgetInterface rulerImage;
+	private Label rulerLabel;
+	private IWidget rulerLabelDecorated;
+	private RoundBorderImage rulerImage;
+	private IWidget rulerImageDecorated;
 	private Image goldIcon;
 	private Image inhabitantsIcon;
 
@@ -116,34 +119,30 @@ class UI : Renderer, Observer {
 		foreach (const StructurePrototype structurePrototype;
 				 this.client.getStructurePrototypes()) {
 			Button button = new Button(
-					this.renderer,
-					structurePrototype.getName(),
-					structurePrototype.getIconImageName(),
-					NULL_TEXTURE,
-					new SDL_Rect(0, 0, 35, 35),
-					&this.addStructureHandler);
+				this.renderer,
+				structurePrototype.getName(),
+				structurePrototype.getIconImageName(),
+				NULL_TEXTURE,
+				&this.addStructureHandler,
+				new SDL_Rect(0, 0, 35, 35));
 
-			WidgetInterface decoratedButton = new PopupWidgetDecorator(
+			IWidget decoratedButton = new PopupWidgetDecorator(
 				button,
 				this.renderer,
 				structurePrototype.getPopupText(),
 				"ui_popup_background");
 
 			this.structureButtons[structurePrototype.getIconImageName()] =
+				button;
+			this.structureButtonsDecorated[structurePrototype.getIconImageName()] =
 				decoratedButton;
 			this.widgets ~= decoratedButton;
 		}
 
 		// selected structure and tile display
-		this.tileImage = new Image(this.renderer,
-								   "",
-								   NULL_TEXTURE,
-								   new SDL_Rect(0, 0, 20, 20));
+		this.tileImage = new Image(this.renderer, NULL_TEXTURE, new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.tileImage;
-		this.structureImage = new Image(this.renderer,
-									    "",
-									    NULL_TEXTURE,
-									    new SDL_Rect(0, 0, 20, 20));
+		this.structureImage = new Image(this.renderer, NULL_TEXTURE, new SDL_Rect(0, 0, 20, 20));
 		this.widgets ~= this.structureImage;
 
 		// rename button
@@ -152,8 +151,8 @@ class UI : Renderer, Observer {
 			"rename",
 			"button_rename",
 			"white_a10pc",
-			new SDL_Rect(0, 0, 11, 11),
-			&this.renameStructureHandler);
+			&this.renameStructureHandler,
+			new SDL_Rect(0, 0, 11, 11));
 
 		this.renameButton = new PopupWidgetDecorator(
 				tmpButton,
@@ -164,39 +163,36 @@ class UI : Renderer, Observer {
 
 
 		// nation flag and label
-		this.nationName = new Label(
-			this.renderer, "", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
+		this.nationName = new Label(this.renderer, "");
 		this.widgets ~= this.nationName;
 
 		this.nationFlag = new RoundBorderImage(
-			this.renderer, "", NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
+			this.renderer, NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
 		this.widgets ~= this.nationFlag;
 
 		// year
-		this.yearLabel = new Label(
-			this.renderer, "", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
+		this.yearLabel = new Label(this.renderer, "");
 		this.widgets ~= this.yearLabel;
 
 		// ruler
-		WidgetInterface tmpWidget = new Label(
-			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(), "", STD_FONT);
-		this.rulerLabel = new ClickWidgetDecorator(
-			tmpWidget, &this.buttonHandler);
-		this.widgets ~= this.rulerLabel;
+		this.rulerLabel = new Label(this.renderer, "");
+		this.rulerLabelDecorated = new ClickWidgetDecorator(
+			this.rulerLabel, "ruler", &this.buttonHandler);
+		this.widgets ~= this.rulerLabelDecorated;
 
-		tmpWidget = new RoundBorderImage(
-			this.renderer, "ruler", NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
-		this.rulerImage = new ClickWidgetDecorator(
-			tmpWidget, &this.buttonHandler);
-		this.widgets ~= this.rulerImage;
+		this.rulerImage = new RoundBorderImage(
+			this.renderer, NULL_TEXTURE, new SDL_Rect(0, 0, 30, 30));
+		this.rulerImageDecorated = new ClickWidgetDecorator(
+			this.rulerImage, "ruler", &this.buttonHandler);
+		this.widgets ~= this.rulerImageDecorated;
 
 		// resources
 		this.goldIcon = new Image(
-			this.renderer, "", "gold", new SDL_Rect(0, 0, 18, 18));
+			this.renderer, "gold", new SDL_Rect(0, 0, 18, 18));
 		this.widgets ~= this.goldIcon;
 
 		this.inhabitantsIcon = new Image(
-			this.renderer, "", "inhabitants", new SDL_Rect(0, 0, 18, 18));
+			this.renderer, "inhabitants", new SDL_Rect(0, 0, 18, 18));
 		this.widgets ~= this.inhabitantsIcon;
 
 
@@ -281,7 +277,7 @@ class UI : Renderer, Observer {
 		// structure buttons
 		int structureButtonX = 300;
 		int structureButtonY = this.screenRegion.y + 30;
-		foreach(WidgetInterface button; this.structureButtons.values) {
+		foreach(IWidget button; this.structureButtonsDecorated.values) {
 			button.setXY(structureButtonX, structureButtonY);
 			structureButtonX += 45;
 		}
@@ -296,10 +292,10 @@ class UI : Renderer, Observer {
 		                     this.screenRegion.y + 160);
 
 		// ruler
-		this.rulerImage.setXY(this.screenRegion.x + 470,
-							  this.screenRegion.y + 145);
-		this.rulerLabel.setXY(this.screenRegion.x + 504,
-							  this.screenRegion.y + 160);
+		this.rulerImageDecorated.setXY(this.screenRegion.x + 470,
+									   this.screenRegion.y + 145);
+		this.rulerLabelDecorated.setXY(this.screenRegion.x + 504,
+									   this.screenRegion.y + 160);
 
 		// resource icons
 		this.goldIcon.setXY(
@@ -363,7 +359,7 @@ class UI : Renderer, Observer {
 	public void updateStructureButtonBuildable() {
 		const(Nation) currentNation = this.client.getCurrentNation();
 		const(Position) position = this.mapRenderer.getSelectedPosition();
-		foreach (string buttonImageName, WidgetInterface button;
+		foreach (string buttonImageName, Button button;
 				 this.structureButtons) {
 			bool buildable = this.client.canBuildStructure(
 				button.getName(),
@@ -380,47 +376,13 @@ class UI : Renderer, Observer {
 
 
 	public override void handleEvent(SDL_Event event) {
-		// left mouse down
-		if (event.type == SDL_MOUSEBUTTONDOWN &&
-				event.button.button == SDL_BUTTON_LEFT) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			foreach (WidgetInterface widget;
-					 sort!(WidgetInterface.zIndexSortDesc)(this.widgets)) {
-				if (widget.isPointInBounds(mousePosition)) {
-					widget.click();
-					break;
-				}
-			}
+		foreach (IWidget widget;
+				 sort!(IWidget.zIndexSortDesc)(this.widgets)) {
+			widget.handleEvent(event);
 		}
-		// mouse motion --> hover effects
-		else if (event.type == SDL_MOUSEMOTION) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			bool widgetMouseOver = false; // is there a widget under the mouse?
-			foreach (WidgetInterface widget;
-					 sort!(WidgetInterface.zIndexSortDesc)(this.widgets)) {
-				if (widget.isPointInBounds(mousePosition)) {
-					widgetMouseOver = true;
-					if (this.mouseOverWidget is null) {
-						this.mouseOverWidget = widget;
-						this.mouseOverWidget.mouseEnter();
-					} else if (this.mouseOverWidget != widget) {
-						this.mouseOverWidget.mouseLeave();
-						this.mouseOverWidget = widget;
-						this.mouseOverWidget.mouseEnter();
-					}
-					break;
-				}
-			}
-			// no widget under mouse but there was one before
-			if (!widgetMouseOver && this.mouseOverWidget !is null) {
-				this.mouseOverWidget.mouseLeave();
-				this.mouseOverWidget = null;
-			}
-		}
+
 		// key press
-		else if (event.type == SDL_KEYDOWN) {
+		if (event.type == SDL_KEYDOWN) {
 			// end turn
 			if (event.key.keysym.sym == SDLK_RETURN) {
 				this.client.endTurn();
@@ -462,8 +424,8 @@ class UI : Renderer, Observer {
 
 		this.updateWidgets();
 
-		foreach (WidgetInterface widget;
-				 sort!(WidgetInterface.zIndexSort)(this.widgets)) {
+		foreach (IWidget widget;
+				 sort!(IWidget.zIndexSort)(this.widgets)) {
 			widget.render();
 		}
 

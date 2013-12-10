@@ -23,6 +23,14 @@ class Button : HoverWidget {
 	}
 
 
+	public const(string) getName() const {
+		return this.name;
+	}
+
+	public void setTextureName(const(string) textureName) {
+		this.textureName = textureName;
+	}
+
 	public void click() {
 		this.callback(this.name);
 	}

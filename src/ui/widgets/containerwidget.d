@@ -1,10 +1,12 @@
 module ui.widgets.containerwidget;
 
+import std.algorithm;
+
+import derelict.sdl2.sdl;
+
 import ui.renderhelper;
 import ui.widgets.iwidget;
 import ui.widgets.widget;
-
-import derelict.sdl2.sdl;
 
 abstract class ContainerWidget : Widget {
 	protected IWidget[] children;

@@ -22,9 +22,9 @@ class LabelButton : ContainerWidget {
 				string text,
 				string fontName = STD_FONT,
 				SDL_Color *color = null) {
-		super(renderer, textureName, hoverTextureName, bounds);
+		super(renderer, bounds);
 
-		this.button = new Button(this.renderer, this.name, "null", "null",
+		this.button = new Button(this.renderer, name, textureName, hoverTextureName,
 								 callback, this.bounds);
 		this.button.setZIndex(1);
 		this.addChild(this.button);
