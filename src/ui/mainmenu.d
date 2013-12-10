@@ -33,7 +33,7 @@ class MainMenu : WidgetRenderer {
 								&this.mainMenuCallbackHandler,
 								"New Game",
 								"std");
-		this.allWidgets ~= this.newGameButton;
+		this.addWidget(this.newGameButton);
 		this.settingsButton =
 				new LabelButton(this.renderer,
 								"settings",
@@ -43,7 +43,7 @@ class MainMenu : WidgetRenderer {
 								&this.mainMenuCallbackHandler,
 								"DEBUG",
 								"std");
-		this.allWidgets ~= this.settingsButton;
+		this.addWidget(this.settingsButton);
 		this.exitButton =
 				new LabelButton(this.renderer,
 								"exit",
@@ -53,13 +53,13 @@ class MainMenu : WidgetRenderer {
 								&this.mainMenuCallbackHandler,
 								"Exit",
 								"std");
-		this.allWidgets ~= this.exitButton;
+		this.addWidget(this.exitButton);
 
 		this.head = new Label(this.renderer,
 							  "Kayzers",
 							  "menuHead",
 							  new SDL_Color(162, 59, 0));
-		this.allWidgets ~= this.head;
+		this.addWidget(this.head);
 	}
 
 	protected override void updateWidgets() {

@@ -10,25 +10,28 @@ import ui.widgets.widget;
 
 abstract class ContainerWidget : Widget {
 	protected IWidget[] children;
+	protected bool dirty;
 
 	public this(RenderHelper renderer,
 	            const(SDL_Rect *)bounds = new SDL_Rect()) {
 		super(renderer, bounds);
+
+		this.dirty = true;
 	}
 
 	public void addChild(IWidget child) {
 		this.children ~= child;
-		this.updateChildren();
+		this.dirty = true;
 	}
 
 	public override void setXY(int x, int y) {
 		super.setXY(x, y);
-		this.updateChildren();
+		this.dirty = true;
 	}
 
 	public override void setBounds(int x, int y, int w, int h) {
 		super.setBounds(x, y, w, h);
-		this.updateChildren();
+		this.dirty = true;
 	}
 
 	public override void setHidden(const(bool) hidden) {
@@ -41,6 +44,11 @@ abstract class ContainerWidget : Widget {
 	protected abstract void updateChildren();
 
 	protected override void draw() {
+		if (dirty) {
+			this.updateChildren();
+			this.dirty = false;
+		}
+
 		foreach (IWidget widget;
 				 sort!(IWidget.zIndexSortDesc)(this.children)) {
 			widget.render();

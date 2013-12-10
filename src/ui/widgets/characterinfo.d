@@ -99,11 +99,6 @@ class CharacterInfo : ContainerWidget {
 	}
 
 	protected override void updateChildren() {
-		// wait until all widgets are created
-		if (this.sex is null) {
-			return;
-		}
-
 		this.dynasty.setXY(this.x(), this.y());
 		this.sex.setXY(this.x() + 40, this.y());
 		this.name.setXY(this.x() + 80, this.y() + 3);
