@@ -56,9 +56,6 @@ class MainMenu : WidgetRenderer {
 		this.allWidgets ~= this.exitButton;
 
 		this.head = new Label(this.renderer,
-							  "head",
-							  "null",
-							  new SDL_Rect(0, 0, 0, 0),
 							  "Kayzers",
 							  "menuHead",
 							  new SDL_Color(162, 59, 0));
@@ -67,13 +64,20 @@ class MainMenu : WidgetRenderer {
 
 	protected override void updateWidgets() {
 		this.newGameButton.setXY(0, 200);
-		this.newGameButton.centerHorizontally();
+		this.newGameButton.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
+
 		this.settingsButton.setXY(0, 400);
-		this.settingsButton.centerHorizontally();
+		this.settingsButton.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
+
 		this.exitButton.setXY(0, 500);
-		this.exitButton.centerHorizontally();
+		this.exitButton.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
+
 		this.head.setXY(0, 10);
-		this.head.centerHorizontally();
+		this.head.centerHorizontally(
+			this.screenRegion.x, this.screenRegion.w);
 	}
 
 	public void mainMenuCallbackHandler(string message) {
