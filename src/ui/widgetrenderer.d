@@ -28,13 +28,13 @@ abstract class WidgetRenderer : Renderer {
 	public override void render(int tick=0) {
 		this.updateWidgets();
 		this.renderer.drawTexture(this.screenRegion, this.backgroundImage);
-		foreach (WidgetInterface widget;
-				 sort!(WidgetInterface.zIndexSort)(this.allWidgets)) {
+		foreach (IWidget widget;
+				 sort!(IWidget.zIndexSort)(this.allWidgets)) {
 			widget.render();
 		}
 	}
 
-	protected void addWidget(WidgetInterface widget) {
+	protected void addWidget(IWidget widget) {
 		this.allWidgets ~= widget;
 	}
 

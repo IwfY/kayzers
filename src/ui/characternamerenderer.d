@@ -9,12 +9,12 @@ import ui.widgetrenderer;
 
 import ui.widgets.image;
 import ui.widgets.inputbox;
+import ui.widgets.iwidget;
 import ui.widgets.label;
 import ui.widgets.labelbutton;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
 import ui.widgets.widget;
-import ui.widgets.widgetinterface;
 
 import world.character;
 
@@ -37,12 +37,12 @@ class CharacterNameRenderer : WidgetRenderer {
 	private LabelButton okButton;
 	private Image boxBackground;
 
-	private WidgetInterface characterSex;
-	private WidgetInterface characterDynasty;
-	private WidgetInterface fatherName;
-	private WidgetInterface fatherDynasty;
-	private WidgetInterface motherName;
-	private WidgetInterface motherDynasty;
+	private IWidget characterSex;
+	private IWidget characterDynasty;
+	private IWidget fatherName;
+	private IWidget fatherDynasty;
+	private IWidget motherName;
+	private IWidget motherDynasty;
 
 	private TextInput textInputServer;
 	private string inputString;
@@ -70,18 +70,16 @@ class CharacterNameRenderer : WidgetRenderer {
 
 	protected override void initWidgets() {
 		this.boxBackground = new Image(
-			this.renderer, "", "bg_350_230",
-			new SDL_Rect(0, 0, 350, 230));
+			this.renderer, "bg_350_230", new SDL_Rect(0, 0, 350, 230));
 		this.boxBackground.setZIndex(-1);
-		this.allWidgets ~= this.boxBackground;
+		this.addWidget(this.boxBackground);
 
 		this.inputBox = new InputBox(
 			this.renderer, this.textInputServer,
-			"inputBox",
 			"inputbox_230_30",
 			new SDL_Rect(0, 0, 230, 30),
 			STD_FONT);
-		this.allWidgets ~= this.inputBox;
+		this.addWidget(this.inputBox);
 
 		this.inputBox.setTextPointer(&this.inputString);
 
@@ -94,67 +92,64 @@ class CharacterNameRenderer : WidgetRenderer {
 			&(this.okButtonCallback),
 			"OK",
 			STD_FONT);
-		this.allWidgets ~= this.okButton;
+		this.addWidget(this.okButton);
 
 		this.label = new Label(
-			this.renderer, "", NULL_TEXTURE,
-			new SDL_Rect(0, 0, 280, 25),
+			this.renderer,
 			format(_("celebrate the birth of a %s.\n%s name shall be:"),
 				   (this.character.getSex() == Sex.MALE ?
 						_("son") : _("daughter")),
 					(this.character.getSex() == Sex.MALE ?
 						_("His") : _("Her"))),
 			STD_FONT);
-		this.allWidgets ~= this.label;
+		this.addWidget(this.label);
 
 		// father
 		const(Character) father = this.character.getFather();
 		this.fatherName = new Label(
-			this.renderer, "father", NULL_TEXTURE,
-			new SDL_Rect(), father.getFullName());
-		this.allWidgets ~= this.fatherName;
+			this.renderer, father.getFullName());
+		this.addWidget(this.fatherName);
 
-		WidgetInterface tmpWidget = new RoundBorderImage(
-			this.renderer, "father", father.getDynasty.getFlagImageName());
+		IWidget tmpWidget = new RoundBorderImage(
+			this.renderer, father.getDynasty.getFlagImageName());
 		this.fatherDynasty = new PopupWidgetDecorator(
 			tmpWidget,
 			this.renderer, father.getDynasty().getName(),
 			"ui_popup_background");
 		this.fatherDynasty.setZIndex(2);
-		this.allWidgets ~= this.fatherDynasty;
+		this.addWidget(this.fatherDynasty);
 
 		// mother
 		const(Character) mother = this.character.getMother();
 		this.motherName = new Label(
-			this.renderer, "mother", NULL_TEXTURE,
-			new SDL_Rect(), mother.getFullName());
-		this.allWidgets ~= this.motherName;
+			this.renderer, mother.getFullName());
+		this.addWidget(this.motherName);
 
 		tmpWidget = new RoundBorderImage(
-			this.renderer, "mother", mother.getDynasty.getFlagImageName());
+			this.renderer, mother.getDynasty.getFlagImageName());
 		this.motherDynasty = new PopupWidgetDecorator(
 			tmpWidget,
 			this.renderer, mother.getDynasty().getName(),
 			"ui_popup_background");
 		this.motherDynasty.setZIndex(3);
-		this.allWidgets ~= this.motherDynasty;
+		this.addWidget(this.motherDynasty);
 
 		// character
 		tmpWidget = new RoundBorderImage(
-			this.renderer, "", character.getDynasty.getFlagImageName());
+			this.renderer, character.getDynasty.getFlagImageName());
 		this.characterDynasty = new PopupWidgetDecorator(
 			tmpWidget,
 			this.renderer, character.getDynasty().getName(),
 			"ui_popup_background");
 		this.characterDynasty.setZIndex(4);
-		this.allWidgets ~= this.characterDynasty;
+		this.addWidget(this.characterDynasty);
 
 		this.characterSex = new RoundBorderImage(
-			this.renderer, "",
+			this.renderer,
 			(this.character.getSex() == Sex.MALE) ?
 				"portrait_male" : "portrait_female");
 		this.characterSex.setZIndex(4);
-		this.allWidgets ~= this.characterSex;
+		this.addWidget(this.characterSex);
 	}
 
 
