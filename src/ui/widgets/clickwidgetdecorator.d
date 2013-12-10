@@ -1,32 +1,34 @@
 module ui.widgets.clickwidgetdecorator;
 
+import ui.widgets.iwidget;
 import ui.widgets.widgetdecorator;
-import ui.widgets.widgetinterface;
 
 /**
  * make a widget clickable by providing a callback method
  **/
 class ClickWidgetDecorator : WidgetDecorator {
+	private string name;
 	private void delegate(string) callback;	// callback function pointer
 
-	public this(WidgetInterface decoratedWidget,
+	public this(IWidget decoratedWidget,
+				string name,
 				void delegate(string) callback) {
 		super(decoratedWidget);
 		this.callback = callback;
 	}
 
-	public override void click() {
-		this.decoratedWidget.click();
-		this.callback(this.decoratedWidget.getName());
-	}
+	public override void handleEvent(SDL_Event event) {
+		if (this.isHidden()) {
+			return;
+		}
 
-	public override void mouseEnter() {
-		this.decoratedWidget.mouseEnter();
-		//TODO change mouse pointer
-	}
-
-	public override void mouseLeave() {
-		this.decoratedWidget.mouseLeave();
-		//TODO change mouse pointer
+		super.handleEvent(event);
+		// left mouse down
+		if (event.type == SDL_MOUSEBUTTONDOWN &&
+				event.button.button == SDL_BUTTON_LEFT) {
+			if (this.isPointInBounds(event.button.x, event.button.y)) {
+				this.callback(this.name);
+			}
+		}
 	}
 }

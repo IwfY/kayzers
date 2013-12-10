@@ -37,9 +37,7 @@ class Button : HoverWidget {
 		// left mouse down
 		if (event.type == SDL_MOUSEBUTTONDOWN &&
 				event.button.button == SDL_BUTTON_LEFT) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			if (this.isPointInBounds(mousePosition)) {
+			if (this.isPointInBounds(event.button.x, event.button.y)) {
 				this.click();
 			}
 		}

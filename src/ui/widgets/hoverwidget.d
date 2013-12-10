@@ -9,7 +9,7 @@ import derelict.sdl2.sdl;
 abstract class HoverWidget : Widget {
 	protected string textureName;
 	protected string hoverTextureName;
-	bool mouseOver;
+	protected bool mouseOver;
 
 	public this(RenderHelper renderer,
 				string textureName,
@@ -39,9 +39,7 @@ abstract class HoverWidget : Widget {
 		
 		// mouse motion --> hover effects
 		if (event.type == SDL_MOUSEMOTION) {
-			SDL_Point *mousePosition =
-					new SDL_Point(event.button.x, event.button.y);
-			if (this.isPointInBounds(mousePosition)) {
+			if (this.isPointInBounds(event.motion.x, event.motion.y)) {
 				if (!this.mouseOver) {
 					this.mouseOver = true;
 				}

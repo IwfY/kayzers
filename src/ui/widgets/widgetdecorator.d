@@ -4,10 +4,10 @@ import ui.widgets.widgetinterface;
 
 import derelict.sdl2.sdl;
 
-abstract class WidgetDecorator : WidgetInterface {
-	protected WidgetInterface decoratedWidget;
+abstract class WidgetDecorator : IWidget {
+	protected IWidget decoratedWidget;
 
-	public this(WidgetInterface decoratedWidget) {
+	public this(IWidget decoratedWidget) {
 		this.decoratedWidget = decoratedWidget;
 	}
 
@@ -18,63 +18,62 @@ abstract class WidgetDecorator : WidgetInterface {
 		this.decoratedWidget.setZIndex(zIndex);
 	}
 
-	public bool isPointInBounds(SDL_Point *point) {
+	public const(bool) isPointInBounds(SDL_Point *point) const {
 		return this.decoratedWidget.isPointInBounds(point);
 	}
 
-	public void render() {
-		this.draw();
-	}
-
-	protected override void draw() {
-		this.decoratedWidget.render();
+	public const(bool) isPointInBounds(int x, int y) const {
+		return this.decoratedWidget.isPointInBounds(x, y);
 	}
 
 	public void setXY(int x, int y) {
 		this.decoratedWidget.setXY(x, y);
 	}
+	public void setBounds(int x, int y, int w, int h) {
+		this.decoratedWidget.setBounds(x, y, w, h);
+	}
+	public void centerHorizontally(int start, int width) {
+		this.decoratedWidget.centerHorizontally(start, width);
+	}
+
+	public const(SDL_Rect *) getBounds() const {
+		return this.decoratedWidget.getBounds();
+	}
+	public const(int) x() const {
+		return this.decoratedWidget.x();
+	}
+	public const(int) y() const {
+		return this.decoratedWidget.y();
+	}
+	public const(int) w() const {
+		return this.decoratedWidget.w();
+	}
+	public const(int) h() const {
+		return this.decoratedWidget.h();
+	}
 
 	public const(bool) isHidden() const {
 		return this.decoratedWidget.isHidden();
 	}
-	public void hide() {
-		this.decoratedWidget.hide();
+	public void setHidden(const(bool) hidden) {
+		this.decoratedWidget.setHidden(hidden);
 	}
-	public void unhide() {
-		this.decoratedWidget.unhide();
+	public final void hide() {
+		this.setHidden(true);
 	}
-
-	public void centerHorizontally() {
-		this.decoratedWidget.centerHorizontally();
-	}
-
-	public void setBounds(int x, int y, int w, int h) {
-		this.decoratedWidget.setBounds(x, y, w, h);
-	}
-	public const(SDL_Rect *) getBounds() const {
-		return this.decoratedWidget.getBounds();
+	public final void unhide() {
+		this.setHidden(false);
 	}
 
-	public void click() {
-		this.decoratedWidget.click();
+	public void render() {
+		if (!this.isHidden()) {
+			this.draw();
+		}
+	}
+	protected void draw() {
 	}
 
-	public void mouseEnter() {
-		this.decoratedWidget.mouseEnter();
-	}
-
-	public void mouseLeave() {
-		this.decoratedWidget.mouseLeave();
-	}
-
-	public void setTextureName(string textureName) {
-		this.decoratedWidget.setTextureName(textureName);
-	}
-	public const(string) getName() const {
-		return this.decoratedWidget.getName();
-	}
-
-	public void setText(string text) {
-		this.decoratedWidget.setText(text);
+	public void handleEvent(SDL_Event event) {
+		this.decoratedWidget.handleEvent(event);
 	}
 }

@@ -62,7 +62,6 @@ srcFiles = Split("""
     src/ui/widgets/vbox.d
     src/ui/widgets/widget.d
     src/ui/widgets/widgetdecorator.d
-    src/ui/widgets/widgetinterface.d
     src/world/character.d
     src/world/charactermanager.d
     src/world/dynasty.d

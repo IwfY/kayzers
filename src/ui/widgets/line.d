@@ -11,19 +11,18 @@ class Line : Widget {
 	private Color color;
 
 	public this(RenderHelper renderer,
-				string name,
 				const(SDL_Rect *)bounds = new SDL_Rect(),
 				Color color=new Color(255, 255, 255)) {
-		super(renderer, name, NULL_TEXTURE, bounds);
+		super(renderer, bounds);
 		this.color = color;
 	}
 
 	protected override void draw() {
 		this.renderer.drawLine(
-				this.bounds.x,
-				this.bounds.y,
-				this.bounds.x + this.bounds.w,
-				this.bounds.y + this.bounds.h,
+				this.x(),
+				this.y(),
+				this.x() + this.w(),
+				this.y() + this.h(),
 				this.color);
 	}
 }

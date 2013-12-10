@@ -34,8 +34,12 @@ abstract class Widget : IWidget {
 		this.zIndex = zIndex;
 	}
 
-	public final bool isPointInBounds(SDL_Point *point) {
+	public final const(bool) isPointInBounds(SDL_Point *point) const {
 		return rectContainsPoint(this.bounds, point);
+	}
+
+	public final const(bool) isPointInBounds(int x, int y) const {
+		return rectContainsPoint(this.bounds, x, y);
 	}
 
 
@@ -56,10 +60,10 @@ abstract class Widget : IWidget {
 	public final const(bool) isHidden() const {
 		return this.hidden;
 	}
-	public void hide() {
+	public final void hide() {
 		this.setHidden(true);
 	}
-	public void unhide() {
+	public final void unhide() {
 		this.setHidden(false);
 	}
 	public void setHidden(const(bool) hidden) {

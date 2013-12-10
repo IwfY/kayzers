@@ -6,7 +6,8 @@ interface IWidget {
 	public const(int) getZIndex() const;
 	public void setZIndex(int zIndex);
 
-	public bool isPointInBounds(SDL_Point *point);
+	public const(bool) isPointInBounds(SDL_Point *point) const;
+	public const(bool) isPointInBounds(int x, int y) const;
 
 	public void setXY(int x, int y);
 	public void setBounds(int x, int y, int w, int h);

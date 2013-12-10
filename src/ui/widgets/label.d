@@ -14,6 +14,7 @@ import std.array;
 class Label : Widget {
 	private string[] text;
 	private string fontName;
+	private string textureName;
 	// x and y of padding mark the distance of text to widget border
 	private Rect padding;
 	private SDL_Color *color;
@@ -21,8 +22,11 @@ class Label : Widget {
 	public this(RenderHelper renderer,
 				string textIn,
 				string fontName=STD_FONT,
-				SDL_Color *color=null) {
+				SDL_Color *color=null,
+				string textureName = NULL_TEXTURE) {
 		super(renderer);
+
+		this.textureName = textureName;
 		this.fontName = fontName;
 		if (color is null) {
 			this.color = new SDL_Color(255, 255, 255);
@@ -81,6 +85,7 @@ class Label : Widget {
 	}
 
 	protected override void draw() {
+		this.renderer.drawTexture(this.bounds, this.textureName);
 		this.renderer.drawTextMultiline(
 				this.bounds.x + this.padding.x,
 				this.bounds.y + this.padding.y,

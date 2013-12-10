@@ -16,12 +16,13 @@ import std.string;
  **/
 class PopupWidgetDecorator : WidgetDecorator {
 	private Label label;
+	protected bool mouseOver;
 
 	// interpreted as pixel vector from top-left widget coordinate to
 	// bottom-left popup coordinate
 	private Position offset;
 
-	public this(WidgetInterface decoratedWidget,
+	public this(IWidget decoratedWidget,
 				RenderHelper renderer,
 				string labelText,
 				string labelBackground,
@@ -36,19 +37,19 @@ class PopupWidgetDecorator : WidgetDecorator {
 			this.offset = new Position(5, -5);
 		}
 
+		// create popup label
 		const(SDL_Rect*) widgetBounds = this.decoratedWidget.getBounds();
 		SDL_Rect* bounds = new SDL_Rect(
 			0, 0,
 			0, 0);	// zeroes as Label ignores width and height settings
 
 		this.label = new Label(
-			renderer,
-			format("%s popup", this.decoratedWidget.getName()),
-			labelBackground, bounds, labelText, fontName, color);
+			renderer, labelText, fontName, color, labelBackground);
 		this.label.setPadding(5, 3);
-		this.label.hide();
 
 		this.repositionPopup();
+
+		this.mouseOver = false;
 	}
 
 
@@ -79,24 +80,34 @@ class PopupWidgetDecorator : WidgetDecorator {
 	}
 
 	protected override void draw() {
-		super.draw();
-		this.label.render();
-	}
+		if (this.isHidden()) {
+			return;
+		}
 
-	public override void mouseEnter() {
-		super.mouseEnter();
-		if (!this.decoratedWidget.isHidden()) {
-			this.label.unhide();
+		super.draw();
+		if (this.mouseOver) {
+			this.label.render();
 		}
 	}
 
-	public override void mouseLeave() {
-		super.mouseLeave();
-		this.label.hide();
-	}
+	public override void handleEvent(SDL_Event event) {
+		if (this.isHidden()) {
+			return;
+		}
 
-	public override void hide() {
-		super.hide();
-		this.label.hide();
+		super.handleEvent(event);
+
+		// mouse motion --> hover effects
+		if (event.type == SDL_MOUSEMOTION) {
+			if (this.isPointInBounds(event.motion.x, event.motion.y)) {
+				if (!this.mouseOver) {
+					this.mouseOver = true;
+				}
+			} else {
+				if (this.mouseOver) {
+					this.mouseOver = false;
+				}
+			}
+		}
 	}
 }
