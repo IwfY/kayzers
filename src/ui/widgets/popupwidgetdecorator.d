@@ -64,8 +64,8 @@ class PopupWidgetDecorator : WidgetDecorator {
 	}
 
 
-	public override void centerHorizontally() {
-		super.centerHorizontally();
+	public override void centerHorizontally(int start, int width) {
+		super.centerHorizontally(start, width);
 		this.repositionPopup();
 	}
 

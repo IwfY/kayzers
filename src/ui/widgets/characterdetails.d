@@ -1,5 +1,7 @@
 module ui.widgets.characterdetails;
 
+import std.typecons;
+
 import client;
 import ui.renderhelper;
 import ui.widgets.containerwidget;

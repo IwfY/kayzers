@@ -3,6 +3,8 @@ module ui.widgets.clickwidgetdecorator;
 import ui.widgets.iwidget;
 import ui.widgets.widgetdecorator;
 
+import derelict.sdl2.sdl;
+
 /**
  * make a widget clickable by providing a callback method
  **/
