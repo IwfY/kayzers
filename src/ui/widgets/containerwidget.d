@@ -14,13 +14,6 @@ abstract class ContainerWidget : Widget {
 		super(renderer, bounds);
 	}
 
-	public override void setZIndex(int zIndex) {
-		this.zIndex = zIndex;
-		foreach (IWidget widget; this.children) {
-			widget.setZIndex(zIndex + 1);
-		}
-	}
-
 	public void addChild(IWidget child) {
 		this.children ~= child;
 		this.updateChildren();
@@ -46,8 +39,16 @@ abstract class ContainerWidget : Widget {
 	protected abstract void updateChildren();
 
 	protected override void draw() {
-		foreach (IWidget widget; this.children) {
+		foreach (IWidget widget;
+				 sort!(IWidget.zIndexSortDesc)(this.children)) {
 			widget.render();
+		}
+	}
+
+	public override void handleEvent(SDL_Event event) {
+		foreach (IWidget widget;
+				 sort!(IWidget.zIndexSort)(this.children)) {
+			widget.handleEvent(event);
 		}
 	}
 }

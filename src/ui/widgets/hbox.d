@@ -12,7 +12,7 @@ import derelict.sdl2.sdl;
  **/
 class HBox : ContainerWidget {
 	private IWidget[] children;
-	private int margin;	// vertical gap between child widgets
+	private int margin;	// horizontal gap between child widgets
 
 	public this(RenderHelper renderer,
 	            const(SDL_Rect *)bounds = new SDL_Rect()) {

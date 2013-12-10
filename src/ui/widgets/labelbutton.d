@@ -3,13 +3,13 @@ module ui.labelbutton;
 import constants;
 import rect;
 import ui.widgets.button;
+import ui.widgets.containerwidget;
 import ui.widgets.label;
-import ui.widgets.hoverwidget;
 import ui.renderhelper;
 
 import derelict.sdl2.sdl;
 
-class LabelButton : HoverWidget {
+class LabelButton : ContainerWidget {
 	protected Button button;
 	protected Label label;
 
@@ -22,33 +22,16 @@ class LabelButton : HoverWidget {
 				string text,
 				string fontName = STD_FONT,
 				SDL_Color *color = null) {
-		super(renderer, name, textureName, hoverTextureName, bounds);
+		super(renderer, textureName, hoverTextureName, bounds);
+
 		this.button = new Button(this.renderer, this.name, "null", "null",
-								 this.bounds, callback);
-		this.label = new Label(this.renderer, this.name, "null",
-							   this.bounds, text, fontName, color);
-	}
+								 callback, this.bounds);
+		this.button.setZIndex(1);
+		this.addChild(this.button);
 
-	protected override void draw() {
-		this.button.render();
-		this.label.render();
-	}
-
-
-	public override void setXY(int x, int y) {
-		this.bounds.x = x;
-		this.bounds.y = y;
-
-		this.button.setXY(x, y);
-		this.centerLabel();
-	}
-
-	public override void centerHorizontally() {
-		Rect screenRegion = this.renderer.getScreenRegion();
-		this.bounds.x = (screenRegion.w - this.bounds.w) / 2;
-
-		this.button.centerHorizontally();
-		this.centerLabel();
+		this.label = new Label(this.renderer, text, fontName, color);
+		this.label.setZIndex(2);
+		this.addChild(this.label);
 	}
 
 
@@ -63,17 +46,8 @@ class LabelButton : HoverWidget {
 		this.label.setXY(labelX, labelY);
 	}
 
-	public override void setBounds(int x, int y, int w, int h) {
-		this.bounds.x = x;
-		this.bounds.y = y;
-		this.bounds.w = w;
-		this.bounds.h = h;
-
-		this.button.setBounds(x, y, w, h);
+	protected override void updateChildren() {
+		this.button.setBounds(this.x(), this.y(), this.w(), this.h());
 		this.centerLabel();
-	}
-
-	public override void click() {
-		this.button.click();
 	}
 }

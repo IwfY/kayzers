@@ -67,8 +67,7 @@ abstract class Widget : IWidget {
 	}
 
 	public void centerHorizontally(int start, int width) {
-		this.setXY(start + (width - this.bounds.w) / 2,
-			this.bounds.y);
+		this.setXY(start + ((width - this.w()) / 2), this.y());
 	}
 
 	public void setBounds(int x, int y, int w, int h) {
@@ -95,5 +94,6 @@ abstract class Widget : IWidget {
 		return this.bounds.h;
 	}
 
-	public abstract void handleEvent(SDL_Event event);
+	public void handleEvent(SDL_Event event) {
+	}
 }

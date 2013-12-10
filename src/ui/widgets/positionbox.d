@@ -3,69 +3,24 @@ module ui.widgets.positionbox;
 import position;
 import utils;
 import ui.renderhelper;
-import ui.widgets.widget;
-import ui.widgets.widgetinterface;
+import ui.widgets.containerwidget;
+import ui.widgets.iwidget;
 
 import derelict.sdl2.sdl;
 
 /**
  * widget container that arranges its children by position
  **/
-class PositionBox : Widget {
-	private WidgetInterface[] children;
+class PositionBox : ContainerWidget {
+	private IWidget[] children;
 	private Position[] childrenPositions;
 
 	public this(RenderHelper renderer,
-	            string name,
-	            string textureName,
 	            const(SDL_Rect *)bounds = new SDL_Rect()) {
-		super(renderer, name, textureName, bounds);
+		super(renderer, bounds);
 	}
 
-	public override void setZIndex(int zIndex) {
-		this.zIndex = zIndex;
-		foreach (WidgetInterface widget; this.children) {
-			widget.setZIndex(zIndex + 1);
-		}
-	}
-
-	public void addChild(WidgetInterface child, Position position) {
-		this.children ~= child;
-		this.childrenPositions ~= position;
-		this.arrangeChildren();
-	}
-
-	protected override void draw() {
-	}
-
-
-	public override void hide() {
-		super.hide();
-		foreach (WidgetInterface widget; this.children) {
-			widget.hide();
-		}
-	}
-	public override void unhide() {
-		super.unhide();
-		foreach (WidgetInterface widget; this.children) {
-			widget.unhide();
-		}
-	}
-
-
-	public override void setXY(int x, int y) {
-		this.bounds.x = x;
-		this.bounds.y = y;
-		this.arrangeChildren();
-	}
-
-	public override void setBounds(int x, int y, int w, int h) {
-		this.bounds.x = x;
-		this.bounds.y = y;
-		this.arrangeChildren();
-	}
-
-	private void arrangeChildren() {
+	protected void updateChildren() {
 		int maxWidth = 0;
 		int maxHeight = 0;
 		for (int i = 0; i < this.children.length; ++i) {

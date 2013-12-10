@@ -16,17 +16,19 @@ import std.datetime;
 class InputBox : Widget, Observer {
 	private string *text;
 	private string fontName;
+	private string textureName;
 	private SDL_Color *color;
 	private TextInput textInputServer;
+	private bool inputServerRegistered;
 
 	public this(RenderHelper renderer,
 				TextInput textInputServer,
-				string name,
 				string textureName,
 				SDL_Rect *bounds,
 				string fontName,
 				SDL_Color *color = null) {
-		super(renderer, name, textureName, bounds);
+		super(renderer, bounds);
+		this.textureName = textureName;
 		this.fontName = fontName;
 		if (color is null) {
 			this.color = new SDL_Color(255, 255, 255);
@@ -35,6 +37,7 @@ class InputBox : Widget, Observer {
 		}
 
 		this.textInputServer = textInputServer;
+		this.inputServerRegistered = false;
 	}
 
 
@@ -52,16 +55,6 @@ class InputBox : Widget, Observer {
 		}
 
 
-	public override void click() {
-		if (this.text is null) {
-			return;
-		}
-
-		if (this.textInputServer.registerObserver(this)) {
-			this.textInputServer.start();
-		}
-	}
-
 	public override void notify(const(Message) message) {
 		if (this.text is null) {
 			return;
@@ -72,6 +65,7 @@ class InputBox : Widget, Observer {
 		// if input server stopped reading we unregister
 		if (!this.textInputServer.isReading()) {
 			this.textInputServer.unregisterObserver(this);
+			this.inputServerRegistered = false;
 		}
 	}
 
@@ -80,8 +74,7 @@ class InputBox : Widget, Observer {
 			return;
 		}
 
-		int boundsY = this.bounds.y +
-				(this.bounds.h - this.getTextSize().h) / 2;
+		int boundsY = this.y() + (this.h() - this.getTextSize().h) / 2;
 		string printText = *(this.text);
 		if (this.textInputServer.isReading()) {
 			SysTime time = Clock.currTime();
@@ -89,8 +82,39 @@ class InputBox : Widget, Observer {
 				printText ~= "|";
 			}
 		}
-		this.renderer.drawText(this.bounds.x + 5, boundsY,
+		this.renderer.drawText(this.x() + 5, boundsY,
 							   printText,
 							   this.fontName, this.color);
+	}
+
+
+	public void click() {
+		if (this.text is null) {
+			return;
+		}
+
+		if (this.textInputServer.registerObserver(this) &&
+				!this.inputServerRegistered) {
+			this.textInputServer.start();
+			this.inputServerRegistered = true;
+		}
+	}
+
+	public override void handleEvent(SDL_Event event) {
+		if (this.isHidden()) {
+			return;
+		}
+
+		super.handleEvent(event);
+
+		// left mouse down
+		if (event.type == SDL_MOUSEBUTTONDOWN &&
+				event.button.button == SDL_BUTTON_LEFT) {
+			SDL_Point *mousePosition =
+					new SDL_Point(event.button.x, event.button.y);
+			if (this.isPointInBounds(mousePosition)) {
+				this.click();
+			}
+		}
 	}
 }
