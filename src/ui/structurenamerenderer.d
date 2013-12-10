@@ -51,14 +51,13 @@ class StructureNameRenderer : WidgetRenderer {
 
 	protected override void initWidgets() {
 		this.boxBackground = new Image(
-			this.renderer, "", "bg_300_140",
+			this.renderer, "bg_300_140",
 			new SDL_Rect(0, 0, 300, 140));
 		this.boxBackground.setZIndex(-1);
 		this.allWidgets ~= this.boxBackground;
 
 		this.inputBox = new InputBox(
 			this.renderer, this.textInputServer,
-			"inputBox",
 			"inputbox_260_30",
 			new SDL_Rect(0, 0, 260, 30),
 			STD_FONT);
@@ -78,8 +77,7 @@ class StructureNameRenderer : WidgetRenderer {
 		this.allWidgets ~= this.okButton;
 
 		this.label = new Label(
-			this.renderer, "", NULL_TEXTURE,
-			new SDL_Rect(0, 0, 280, 25),
+			this.renderer,
 			format("Name your %s:", this.structure.getPrototype().getName()),
 			STD_FONT);
 		this.allWidgets ~= this.label;
