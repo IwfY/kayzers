@@ -82,5 +82,18 @@ abstract class Widget : IWidget {
 		return this.bounds;
 	}
 
+	public const(int) x() const {
+		return this.bounds.x;
+	}
+	public const(int) y() const {
+		return this.bounds.y;
+	}
+	public const(int) w() const {
+		return this.bounds.w;
+	}
+	public const(int) h() const {
+		return this.bounds.h;
+	}
+
 	public abstract void handleEvent(SDL_Event event);
 }

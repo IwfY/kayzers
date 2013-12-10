@@ -7,16 +7,16 @@ import ui.widgets.widget;
 import derelict.sdl2.sdl;
 
 class Image : Widget {
+	private string textureName;
+
 	public this(RenderHelper renderer,
-				string name,
 				string textureName,
 				const(SDL_Rect *)bounds = new SDL_Rect()) {
-		super(renderer, name, textureName, bounds);
-	}
-	
-	override public void click() {
+		super(renderer, bounds);
+		this.textureName = textureName;
 	}
 
 	protected override void draw() {
+		this.renderer.drawTexture(this.bounds, this.textureName);
 	}
 }

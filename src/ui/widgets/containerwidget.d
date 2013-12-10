@@ -1,7 +1,10 @@
 module ui.widgets.containerwidget;
 
+import ui.renderhelper;
 import ui.widgets.iwidget;
 import ui.widgets.widget;
+
+import derelict.sdl2.sdl;
 
 abstract class ContainerWidget : Widget {
 	private IWidget[] children;
@@ -33,7 +36,7 @@ abstract class ContainerWidget : Widget {
 		this.updateChildren();
 	}
 
-	public void setHidden(const(bool) hidden) {
+	public override void setHidden(const(bool) hidden) {
 		super.setHidden(hidden);
 		foreach (IWidget widget; this.children) {
 			widget.setHidden(hidden);
@@ -42,3 +45,9 @@ abstract class ContainerWidget : Widget {
 
 	protected abstract void updateChildren();
 
+	protected override void draw() {
+		foreach (IWidget widget; this.children) {
+			widget.render();
+		}
+	}
+}
