@@ -96,6 +96,7 @@ dPath = ['includes',
 
 env = Environment()
 env.Append(DPATH   = dPath)
+# add '-g' to allow debugging with gdb
 env.Append(DFLAGS  = ['-debug=1', '-unittest'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)

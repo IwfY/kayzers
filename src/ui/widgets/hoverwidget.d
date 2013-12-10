@@ -28,6 +28,10 @@ abstract class HoverWidget : Widget {
 		}
 	}
 
+	public void setTextureName(string textureName) {
+		this.textureName = textureName;
+	}
+
 	public void setHoverTextureName(string hoverTextureName) {
 		this.hoverTextureName = hoverTextureName;
 	}

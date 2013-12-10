@@ -50,14 +50,14 @@ abstract class ContainerWidget : Widget {
 		}
 
 		foreach (IWidget widget;
-				 sort!(IWidget.zIndexSortDesc)(this.children)) {
+				 sort!(IWidget.zIndexSort)(this.children)) {
 			widget.render();
 		}
 	}
 
 	public override void handleEvent(SDL_Event event) {
 		foreach (IWidget widget;
-				 sort!(IWidget.zIndexSort)(this.children)) {
+				 sort!(IWidget.zIndexSortDesc)(this.children)) {
 			widget.handleEvent(event);
 		}
 	}
