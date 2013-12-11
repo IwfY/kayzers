@@ -130,10 +130,10 @@ class CharacterDetails : ContainerWidget {
 			this.characterRulerLabel.x() + this.characterRulerLabel.w() + 10;
 		this.characterRulingNations.setXY(nationStartX, this.y() + 30);
 
-		this.bounds.w = max(
+		this.bounds.w = -this.x() + max(
 			this.characterName.x() + this.characterName.w(),
 			this.characterRulingNations.x() + this.characterRulingNations.w());
 		this.bounds.h =
-			this.characterRulingNations.y() + this.characterRulingNations.h();
+			this.characterRulingNations.y() - this.y() + this.characterRulingNations.h();
 	}
 }

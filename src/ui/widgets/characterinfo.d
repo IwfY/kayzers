@@ -104,7 +104,7 @@ class CharacterInfo : ContainerWidget {
 		this.sex.setXY(this.x() + 40, this.y());
 		this.name.setXY(this.x() + 80, this.y() + 3);
 
-		this.bounds.w = this.name.x() + this.name.w();
+		this.bounds.w = this.name.x() - this.x() + this.name.w();
 		this.bounds.h = 30;
 	}
 
