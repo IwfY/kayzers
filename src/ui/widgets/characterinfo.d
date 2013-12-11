@@ -30,7 +30,7 @@ class CharacterInfo : ContainerWidget {
 	            const(Character) character,
 	            void delegate(string) callback,
 	            string message) {
-		super(renderer, bounds);
+		super(renderer);
 
 		this.callback = callback;
 		this.message = message;
@@ -51,7 +51,7 @@ class CharacterInfo : ContainerWidget {
 
 			// name label
 			tmpWidget = new Label(
-				this.renderer, this.character.getFullName(), "std_20");
+				this.renderer, this.character.getFullName());
 			tmpWidget = new ClickWidgetDecorator(
 				tmpWidget, this.message, this.callback);
 
@@ -63,6 +63,7 @@ class CharacterInfo : ContainerWidget {
 			this.name = new PopupWidgetDecorator(
 				tmpWidget,
 				this.renderer, popupText, "ui_popup_background");
+			this.addChild(this.name);
 
 			// dynasty flag
 			tmpWidget = new RoundBorderImage(
@@ -85,7 +86,7 @@ class CharacterInfo : ContainerWidget {
 			this.addChild(this.sex);
 		} else {	// null character
 			this.name = new Label(
-				this.renderer, _("unknown"), "std_20");
+				this.renderer, _("unknown"));
 			this.addChild(this.name);
 
 			this.dynasty = new RoundBorderImage(
@@ -102,6 +103,9 @@ class CharacterInfo : ContainerWidget {
 		this.dynasty.setXY(this.x(), this.y());
 		this.sex.setXY(this.x() + 40, this.y());
 		this.name.setXY(this.x() + 80, this.y() + 3);
+
+		this.bounds.w = this.name.x() + this.name.w();
+		this.bounds.h = 30;
 	}
 
 }

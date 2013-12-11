@@ -11,7 +11,6 @@ import derelict.sdl2.sdl;
  * widget container that arranges its children horizontally
  **/
 class HBox : ContainerWidget {
-	private IWidget[] children;
 	private int margin;	// horizontal gap between child widgets
 
 	public this(RenderHelper renderer,
@@ -26,7 +25,7 @@ class HBox : ContainerWidget {
 	}
 	public void setMargin(int margin) {
 		this.margin = margin;
-		this.updateChildren();
+		this.dirty = true;
 	}
 
 	protected override void updateChildren() {

@@ -11,7 +11,6 @@ import derelict.sdl2.sdl;
  * widget container that arranges its children vertically
  **/
 class VBox : ContainerWidget {
-	private IWidget[] children;
 	private int margin;	// vertical gap between child widgets
 
 	public this(RenderHelper renderer,

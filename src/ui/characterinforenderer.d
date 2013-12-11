@@ -13,7 +13,6 @@ import ui.widgetrenderer;
 import ui.widgets.characterdetails;
 import ui.widgets.characterinfo;
 import ui.widgets.clickwidgetdecorator;
-import ui.widgets.hbox;
 import ui.widgets.image;
 import ui.widgets.iwidget;
 import ui.widgets.label;
@@ -21,6 +20,7 @@ import ui.widgets.labelbutton;
 import ui.widgets.line;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
+import ui.widgets.vbox;
 import ui.widgets.widget;
 import world.character;
 import world.nation;
@@ -52,7 +52,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	private Label childrenHead;
 	private Line seperator3;
-	private HBox childrenInfo;
+	private VBox childrenInfo;
 
 	private LabelButton okButton;
 	private Image boxBackground;
@@ -219,7 +219,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 		// children loop
 		// TODO: sort by age
-		this.childrenInfo = new HBox(this.renderer);
+		this.childrenInfo = new VBox(this.renderer);
 		int i = 0;
 		foreach (const(Character) child; this.character.getChildren()) {
 			CharacterInfo childInfo = new CharacterInfo(
@@ -285,7 +285,16 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.boxX + 20, this.seperator2.getBounds().y + 15);
 
 		// children
-		this.childrenInfo.setXY(this.boxX + 20, this.boxY + 230);
+		this.childrenHead.setXY(this.boxX + 20, this.boxY + 230);
+		this.seperator3.setBounds(
+			this.childrenHead.getBounds().x +
+				this.childrenHead.getBounds().w + 10,
+			this.childrenHead.getBounds().y + 12,
+			this.boxBackground.getBounds().w - 40 -
+				(this.childrenHead.getBounds().w + 10),
+			0);
+		this.childrenInfo.setXY(
+			this.boxX + 20, this.seperator3.getBounds().y + 15);
 
 		this.okButton.setXY(this.boxX + 420,
 		                    this.boxY + 550);

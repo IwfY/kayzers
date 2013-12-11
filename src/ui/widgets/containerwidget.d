@@ -44,7 +44,7 @@ abstract class ContainerWidget : Widget {
 	protected abstract void updateChildren();
 
 	protected override void draw() {
-		if (dirty) {
+		if (this.dirty) {
 			this.updateChildren();
 			this.dirty = false;
 		}

@@ -6,6 +6,7 @@ import derelict.sdl2.sdl;
 
 import client;
 import constants;
+import utils;
 import ui.renderhelper;
 import ui.widgets.containerwidget;
 import ui.widgets.hbox;
@@ -31,7 +32,7 @@ class CharacterDetails : ContainerWidget {
 	public this(const(Client) client,
 	            RenderHelper renderer,
 	            const(Character) character) {
-		super(renderer, bounds);
+		super(renderer);
 
 		this.client = client;
 		this.character = character;
@@ -128,5 +129,11 @@ class CharacterDetails : ContainerWidget {
 		int nationStartX =
 			this.characterRulerLabel.x() + this.characterRulerLabel.w() + 10;
 		this.characterRulingNations.setXY(nationStartX, this.y() + 30);
+
+		this.bounds.w = max(
+			this.characterName.x() + this.characterName.w(),
+			this.characterRulingNations.x() + this.characterRulingNations.w());
+		this.bounds.h =
+			this.characterRulingNations.y() + this.characterRulingNations.h();
 	}
 }
