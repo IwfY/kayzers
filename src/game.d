@@ -280,6 +280,9 @@ public class Game {
 	public Character getCharacter(int id) {
 		return this.characterManager.getCharacter(id);
 	}
+	public const(Character) getCharacter(const(int) id) const {
+		return this.characterManager.getCharacter(id);
+	}
 
 
 	/**

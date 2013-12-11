@@ -8,6 +8,7 @@ import position;
 import ui.renderer;
 import ui.rendererfactory;
 import world.character;
+import world.dynasty;
 import world.nation;
 import world.nationprototype;
 import world.scenario;
@@ -116,6 +117,12 @@ public class Client {
 		return this.game.getCurrentNation();
 	}
 
+	public const(Dynasty) getCurrentDynasty() const {
+		const(Nation) currentNation = this.getCurrentNation();
+		const(Character) ruler = currentNation.getRuler();
+		return ruler.getDynasty();
+	}
+
 
 	// character management
 	public void setCharacterName(const(Character) character,
@@ -125,6 +132,14 @@ public class Client {
 
 	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
 		return this.game.getMarryableCharacters(characterId);
+	}
+
+	public const(Character) getCharacter(int id) const {
+		return this.game.getCharacter(id);
+	}
+
+	public void sendProposal(int senderCharId, int receiverCharId) const {
+		//this.game.sendProposal(senderCharId, receiverCharId);
 	}
 
 	// structure management

@@ -1,17 +1,22 @@
 module ui.characterproposalrenderer;
 
+import std.conv;
 import std.string;
 
 import derelict.sdl2.sdl;
 
 import constants;
 import client;
+import ui.characterinforenderer;
 import ui.renderer;
 import ui.renderhelper;
 import ui.widgetrenderer;
 import ui.widgets.characterdetails;
+import ui.widgets.characterinfo;
+import ui.widgets.hbox;
 import ui.widgets.image;
 import ui.widgets.label;
+import ui.widgets.labelbutton;
 import ui.widgets.line;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
@@ -20,6 +25,7 @@ import world.character;
 import world.nation;
 
 class CharacterProposalRenderer : WidgetRenderer {
+	private CharacterInfoRenderer charInfoRenderer;
 	private const(Character) character;
 	private bool active;
 
@@ -31,10 +37,14 @@ class CharacterProposalRenderer : WidgetRenderer {
 
 	private CharacterDetails characterDetails;
 
+	private Label proposalHead;
 	private Line seperator;
 	private VBox marryableCharacters;
+	private LabelButton backButton;
 
-	public this(Client client, RenderHelper renderer, const(Character) character) {
+	public this(Client client, RenderHelper renderer,
+	            CharacterInfoRenderer charInfoRenderer, const(Character) character) {
+		this.charInfoRenderer = charInfoRenderer;
 		this.character = character;
 		super(client, renderer, "grey_a127");
 		this.active = true;
@@ -42,6 +52,23 @@ class CharacterProposalRenderer : WidgetRenderer {
 
 	private const(string) _(string text) const {
 		return this.client.getI18nString(text);
+	}
+
+	private void callback(string message) {
+		this.active = false;
+	}
+
+	private void proposalCallback(string message) {
+		this.client.sendProposal(this.character.getId(), to!(int)(message));
+		this.active = false;
+	}
+
+	private void charInfoCallback(string message) {
+		int charId = to!(int)(message);
+		const(Character) character = this.client.getCharacter(charId);
+		this.charInfoRenderer.setCharacter(character);
+		this.active = false;
+
 	}
 
 
@@ -52,11 +79,18 @@ class CharacterProposalRenderer : WidgetRenderer {
 		this.boxBackground.setZIndex(-1);
 		this.addWidget(this.boxBackground);
 
+		this.backButton = new LabelButton(
+			this.renderer, "backButton", "button_100_28", "white_a10pc",
+			new SDL_Rect(0, 0, 100, 28), &(this.callback), _("Back"));
+		this.addWidget(this.backButton);
+
 		// focus character
 		this.characterDetails = new CharacterDetails(
 			this.client, this.renderer, this.character);
 		this.addWidget(this.characterDetails);
 
+		this.proposalHead = new Label(this.renderer, _("Send proposal to:"));
+		this.addWidget(this.proposalHead);
 		this.seperator = new Line(this.renderer);
 		this.addWidget(this.seperator);
 
@@ -65,10 +99,20 @@ class CharacterProposalRenderer : WidgetRenderer {
 
 		foreach (const(Character) characterCursor;
 		         this.client.getMarryableCharacters(this.character.getId())) {
-			Label tmpLabel = new Label(
-				this.renderer, characterCursor.getFullName());
-			this.addWidget(tmpLabel);
-			this.marryableCharacters.addChild(tmpLabel);
+			LabelButton send = new LabelButton(
+				this.renderer, text(characterCursor.getId()),
+				"button_30_30", "white_a10pc", new SDL_Rect(0, 0, 30, 30),
+				&this.proposalCallback, ">", "std_20");
+
+			CharacterInfo charInfo = new CharacterInfo(
+				this.client, this.renderer, characterCursor,
+				&this.charInfoCallback, text(characterCursor.getId()));
+
+			HBox hbox = new HBox(this.renderer);
+			hbox.setMargin(15);
+			hbox.addChild(send);
+			hbox.addChild(charInfo);
+			this.marryableCharacters.addChild(hbox);
 		}
 		this.addWidget(this.marryableCharacters);
 	}
@@ -76,23 +120,26 @@ class CharacterProposalRenderer : WidgetRenderer {
 
 	protected override void updateWidgets() {
 		this.boxX = this.screenRegion.x +
-			(this.screenRegion.w - this.boxBackground.getBounds().w) / 2;
+			(this.screenRegion.w - this.boxBackground.w()) / 2;
 		this.boxY = this.screenRegion.y +
-			(this.screenRegion.h - this.boxBackground.getBounds().h) / 2;
+			(this.screenRegion.h - this.boxBackground.h()) / 2;
 
-		this.boxBackground.setXY(this.boxX,
-		                         this.boxY);
+		this.boxBackground.setXY(this.boxX, this.boxY);
+		this.backButton.setXY(this.boxX + 420, this.boxY + 550);
 
 		// focus character
 		this.characterDetails.setXY(this.boxX + 20, this.boxY + 20);
 
+		this.proposalHead.setXY(this.boxX + 20, this.boxY + 90);
 		this.seperator.setBounds(
-			this.boxX + 20, this.boxY + 102,
-			this.boxBackground.getBounds().w - 40, 0);
+			this.proposalHead.x() + this.proposalHead.w() + 10,
+			this.proposalHead.y() + 12,
+			this.boxBackground.w() - 40 - (this.proposalHead.w() + 10),
+			0);
 
 		// marryable characters
 		this.marryableCharacters.setXY(
-			this.boxX + 20, this.seperator.getBounds().y + 20);
+			this.boxX + 20, this.seperator.y() + 20);
 
 	}
 

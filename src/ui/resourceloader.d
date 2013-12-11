@@ -59,6 +59,9 @@ class ResourceLoader {
 											  "button_100_28",
 											  100, 28);
 		renderer.registerTextureFromNinePatch("inputbox_9patch",
+		                                      "button_30_30",
+		                                      30, 30);
+		renderer.registerTextureFromNinePatch("inputbox_9patch",
 											  "inputbox_260_30",
 											  260, 30);
 		renderer.registerTextureFromNinePatch("inputbox_9patch",

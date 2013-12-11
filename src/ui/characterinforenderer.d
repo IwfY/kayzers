@@ -106,7 +106,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			}
 		} else if (message == "proposal") {
 			this.proposalRenderer = new CharacterProposalRenderer(
-				this.client, this.renderer, this.character);
+				this.client, this.renderer, this, this.character);
 			this.proposalRenderer.setScreenRegion(
 				this.screenRegion.x, this.screenRegion.y,
 				this.screenRegion.w, this.screenRegion.h);
@@ -114,7 +114,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 	}
 
 
-	private void setCharacter(const(Character) character) {
+	public void setCharacter(const(Character) character) {
 		this.character = character;
 		this.initWidgets();
 	}
@@ -202,7 +202,10 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 		if (this.character.getPartner() is null) {
 			this.partnerInfo.hide();
-		} else {
+		}
+		if (this.character.getPartner() !is null ||
+		    this.character.getAge(this.client.getCurrentYear()) < MIN_MARRIAGE_AGE ||
+		    this.character.getDynasty() != this.client.getCurrentDynasty()) {
 			this.proposalButton.hide();
 		}
 	}
