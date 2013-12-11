@@ -29,6 +29,7 @@ import derelict.sdl2.sdl;
 
 class CharacterInfoRenderer : WidgetRenderer {
 	private Rebindable!(const(Character)) character;
+	private Rebindable!(const(Character)) lastCharacter;
 
 	private bool active;
 
@@ -55,11 +56,13 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private VBox childrenInfo;
 
 	private LabelButton okButton;
+	private LabelButton backButton;
 	private Image boxBackground;
 
 	public this(Client client, RenderHelper renderer,
 	            const(Character) character) {
 		this.character = character;
+		this.lastCharacter = character;
 
 		super(client, renderer, "grey_a127");	// calls initWidgets
 
@@ -110,11 +113,14 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.proposalRenderer.setScreenRegion(
 				this.screenRegion.x, this.screenRegion.y,
 				this.screenRegion.w, this.screenRegion.h);
+		} else if (message == "backButton") {
+			this.setCharacter(this.lastCharacter);
 		}
 	}
 
 
 	public void setCharacter(const(Character) character) {
+		this.lastCharacter = this.character;
 		this.character = character;
 		this.initWidgets();
 	}
@@ -140,6 +146,17 @@ class CharacterInfoRenderer : WidgetRenderer {
 			_("OK"),
 			STD_FONT);
 		this.addWidget(this.okButton);
+
+		this.backButton = new LabelButton(
+			this.renderer,
+			"backButton",
+			"button_100_28",
+			"white_a10pc",
+			new SDL_Rect(0, 0, 100, 28),
+			&(this.buttonHandler),
+			_("Back"),
+			STD_FONT);
+		this.addWidget(this.backButton);
 
 		// focus character
 		this.characterDetails = new CharacterDetails(
@@ -299,6 +316,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.childrenInfo.setXY(
 			this.boxX + 20, this.seperator3.getBounds().y + 15);
 
+		this.backButton.setXY(this.boxX + 20, this.boxY + 550);
 		this.okButton.setXY(this.boxX + 420,
 		                    this.boxY + 550);
 	}
