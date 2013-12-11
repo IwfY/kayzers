@@ -17,6 +17,7 @@ class ClickWidgetDecorator : WidgetDecorator {
 				void delegate(string) callback) {
 		super(decoratedWidget);
 		this.callback = callback;
+		this.name = name;
 	}
 
 	public override void handleEvent(SDL_Event event) {

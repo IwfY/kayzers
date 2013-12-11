@@ -65,12 +65,13 @@ abstract class WidgetDecorator : IWidget {
 		this.setHidden(false);
 	}
 
-	public void render() {
+	public final void render() {
 		if (!this.isHidden()) {
 			this.draw();
 		}
 	}
 	protected void draw() {
+		this.decoratedWidget.render();
 	}
 
 	public void handleEvent(SDL_Event event) {

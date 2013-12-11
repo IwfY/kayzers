@@ -70,6 +70,8 @@ class InputBox : Widget, Observer {
 	}
 
 	protected override void draw() {
+		this.renderer.drawTexture(this.bounds, this.textureName);
+
 		if (this.text is null) {
 			return;
 		}
