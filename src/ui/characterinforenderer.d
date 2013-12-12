@@ -6,6 +6,7 @@ import std.typecons;
 
 import client;
 import constants;
+import serverstub;
 import textinput;
 import ui.characterproposalrenderer;
 import ui.renderhelper;
@@ -32,6 +33,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private Rebindable!(const(Character)) lastCharacter;
 
 	private bool active;
+	private ServerStub serverStub;
 
 	private CharacterProposalRenderer proposalRenderer;
 
@@ -65,6 +67,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.lastCharacter = character;
 
 		super(client, renderer, "grey_a127");	// calls initWidgets
+		this.serverStub = this.client.getServerStub();
 
 		this.active = true;
 	}
@@ -221,8 +224,8 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.partnerInfo.hide();
 		}
 		if (this.character.getPartner() !is null ||
-		    this.character.getAge(this.client.getCurrentYear()) < MIN_MARRIAGE_AGE ||
-		    this.character.getDynasty() != this.client.getCurrentDynasty()) {
+		    this.character.getAge(this.serverStub.getCurrentYear()) < MIN_MARRIAGE_AGE ||
+		    this.character.getDynasty() != this.serverStub.getCurrentDynasty()) {
 			this.proposalButton.hide();
 		}
 	}

@@ -8,6 +8,7 @@ import messagebroker;
 import observer;
 import position;
 import rect;
+import serverstub;
 import utils;
 import ui.ingamerenderer;
 import ui.maprenderer;
@@ -38,6 +39,7 @@ import std.string;
 
 class UI : Renderer, Observer {
 	private const(Map) map;
+	private ServerStub serverStub;
 
 	private IWidget[] widgets;
 	private IWidget mouseOverWidget; // reference to widget under mouse
@@ -68,10 +70,11 @@ class UI : Renderer, Observer {
 	            MapRenderer mapRenderer,
 	            MessageBroker messageBroker) {
 		super(client, renderer);
+		this.serverStub = this.client.getServerStub();
 		this.messageBroker = messageBroker;
 		this.inGameRenderer = inGameRenderer;
 		this.mapRenderer = mapRenderer;
-		this.map = this.client.getMap();
+		this.map = this.serverStub.getMap();
 
 		this.initWidgets();
 
@@ -88,7 +91,7 @@ class UI : Renderer, Observer {
 		// active nation changed
 		if (message.text == "nationChanged") {
 			// nation flag and name
-			const(Nation) nation = this.client.getCurrentNation();
+			const(Nation) nation = this.serverStub.getCurrentNation();
 			this.nationName.setText(nation.getName());
 			this.nationFlag.setTextureName(
 				nation.getPrototype().getFlagImageName());
@@ -104,7 +107,7 @@ class UI : Renderer, Observer {
 
 			// year
 			this.yearLabel.setText(
-				_("Year ") ~ text(this.client.getCurrentYear()));
+				_("Year ") ~ text(this.serverStub.getCurrentYear()));
 		}
 	}
 
@@ -117,7 +120,7 @@ class UI : Renderer, Observer {
 	public void initWidgets() {
 		// structure buttons
 		foreach (const StructurePrototype structurePrototype;
-				 this.client.getStructurePrototypes()) {
+				 this.serverStub.getStructurePrototypes()) {
 			Button button = new Button(
 				this.renderer,
 				structurePrototype.getName(),
@@ -224,7 +227,7 @@ class UI : Renderer, Observer {
 
 				// structure
 				const(Structure) structure =
-					this.client.getStructure(selectedPosition.i,
+					this.serverStub.getStructure(selectedPosition.i,
 											 selectedPosition.j);
 				if (structure !is null) {
 					const(StructurePrototype) prototype =
@@ -250,7 +253,7 @@ class UI : Renderer, Observer {
 							this.screenRegion.y + 40 + tileDimensions.h + 5,
 							resourceString);
 					// rename button
-					if (structure.getNation() == this.client.getCurrentNation() &&
+					if (structure.getNation() == this.serverStub.getCurrentNation() &&
 							prototype.isNameable()) {
 						this.renameButton.unhide();
 						this.renameButton.setXY(this.screenRegion.x + 20,
@@ -313,7 +316,7 @@ class UI : Renderer, Observer {
 
 	private void buttonHandler(string message) {
 		if (message == "ruler") {
-			const(Nation) nation = this.client.getCurrentNation();
+			const(Nation) nation = this.serverStub.getCurrentNation();
 			const(Character) ruler = nation.getRuler();
 			this.inGameRenderer.startCharacterInfoRenderer(ruler);
 		}
@@ -321,13 +324,13 @@ class UI : Renderer, Observer {
 
 
 	public void addStructureHandler(string structureName) {
-		bool success = this.client.addStructure(
+		bool success = this.serverStub.addStructure(
 			structureName,
-			this.client.getCurrentNation(),
+			this.serverStub.getCurrentNation(),
 			this.mapRenderer.getSelectedPosition());
 
 		if (success) {
-			const(Structure) newStructure = this.client.getStructure(
+			const(Structure) newStructure = this.serverStub.getStructure(
 				this.mapRenderer.getSelectedPosition().i,
 				this.mapRenderer.getSelectedPosition().j);
 			// name new nameable structures
@@ -341,13 +344,13 @@ class UI : Renderer, Observer {
 
 
 	public void renameStructureHandler(string message) {
-		const(Structure) structure = this.client.getStructure(
+		const(Structure) structure = this.serverStub.getStructure(
 			this.mapRenderer.getSelectedPosition().i,
 			this.mapRenderer.getSelectedPosition().j);
 		// name nameable structures
 		if (structure !is null) {
 			if (structure.getPrototype().isNameable() &&
-					structure.getNation() == this.client.getCurrentNation()) {
+					structure.getNation() == this.serverStub.getCurrentNation()) {
 				this.inGameRenderer.startStructureNameRenderer(structure);
 			}
 		}
@@ -357,11 +360,11 @@ class UI : Renderer, Observer {
 	 * grey out buttons for structures that can't be built
 	 **/
 	public void updateStructureButtonBuildable() {
-		const(Nation) currentNation = this.client.getCurrentNation();
+		const(Nation) currentNation = this.serverStub.getCurrentNation();
 		const(Position) position = this.mapRenderer.getSelectedPosition();
 		foreach (string buttonImageName, Button button;
 				 this.structureButtons) {
-			bool buildable = this.client.canBuildStructure(
+			bool buildable = this.serverStub.canBuildStructure(
 				button.getName(),
 				currentNation,
 				position);
@@ -385,7 +388,7 @@ class UI : Renderer, Observer {
 		if (event.type == SDL_KEYDOWN) {
 			// end turn
 			if (event.key.keysym.sym == SDLK_RETURN) {
-				this.client.endTurn();
+				this.serverStub.endTurn();
 			}
 		}
 
@@ -400,7 +403,7 @@ class UI : Renderer, Observer {
 		this.renderer.drawTexture(0, this.screenRegion.y, "ui_background");
 
 		// ruler portrait and name
-		const(Nation) nation = this.client.getCurrentNation();
+		const(Nation) nation = this.serverStub.getCurrentNation();
 
 		// resource text
 		string resourceString;

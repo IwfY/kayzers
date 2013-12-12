@@ -1,19 +1,12 @@
 module client;
 
 import game;
-import map;
 import message;
 import messagebroker;
-import position;
+import serverstub;
 import ui.renderer;
 import ui.rendererfactory;
-import world.character;
-import world.dynasty;
-import world.nation;
-import world.nationprototype;
 import world.scenario;
-import world.structure;
-import world.structureprototype;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
@@ -29,6 +22,7 @@ public class Client {
 	private bool running;
 	private Scenario[string] scenarios;
 	private MessageBroker messageBroker;
+	private ServerStub serverStub;
 
 	public this() {
 		this.window = SDL_CreateWindow("Kayzers",
@@ -61,6 +55,8 @@ public class Client {
 		}
 
 		this.game = new Game(this, this.scenarios[scenarioName]);
+		this.serverStub = new ServerStub(this.game);
+
 		this.game.startNewRound();
 
 		this.gameActive = true;
@@ -69,6 +65,7 @@ public class Client {
 
 		return true;
 	}
+
 
 	public void stopGame() {
 		this.gameActive = false;
@@ -99,97 +96,22 @@ public class Client {
 	}
 
 
-	public const(StructurePrototype[]) getStructurePrototypes() const {
-		return this.game.getStructurePrototypes();
-	}
-
-	public const(NationPrototype[]) getNationPrototypes() const {
-		return this.game.getNationPrototypes();
-	}
-
-
-	public const(Nation[]) getNations() const {
-		return this.game.getNations();
-	}
-
-
-	public const(Nation) getCurrentNation() const {
-		return this.game.getCurrentNation();
-	}
-
-	public const(Dynasty) getCurrentDynasty() const {
-		const(Nation) currentNation = this.getCurrentNation();
-		const(Character) ruler = currentNation.getRuler();
-		return ruler.getDynasty();
-	}
-
-
-	// character management
-	public void setCharacterName(const(Character) character,
-	                             string name) {
-		this.game.setCharacterName(character, name);
-	}
-
-	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
-		return this.game.getMarryableCharacters(characterId);
-	}
-
-	public const(Character) getCharacter(int id) const {
-		return this.game.getCharacter(id);
-	}
-
-	public void sendProposal(int senderCharId, int receiverCharId) const {
-		//this.game.sendProposal(senderCharId, receiverCharId);
-	}
-
-	// structure management
-	public bool canBuildStructure(string structurePrototypeName,
-								  const(Nation) nation,
-								  const(Position) position) const {
-		return this.game.canBuildStructure(
-			structurePrototypeName, nation, position);
-	}
-
-	public void setStructureName(const(Structure) structure, string name) {
-		this.game.setStructureName(structure, name);
-	}
-
-
-	public bool addStructure(string structurePrototypeName,
-							 const(Nation) nation,
-							 const(Position) position) {
-		return this.game.addStructure(structurePrototypeName, nation, position);
-	}
-
-	public const(Structure[]) getStructures() const {
-		return this.game.getStructures();
-	}
-	public const(Structure) getStructure(int i, int j) const {
-		return this.game.getStructure(i, j);
-	}
-
-	public const(Map) getMap() const {
-		return this.game.getMap();
-	}
-
-	public const(int) getCurrentYear() const {
-		return this.game.getCurrentYear();
-	}
-
-
 	public const(Scenario[]) getScenarios() const {
 		return this.scenarios.values;
+	}
+
+
+	public ServerStub getServerStub() {
+		return this.serverStub;
+	}
+	public const(ServerStub) getServerStub() const {
+		return this.serverStub;
 	}
 
 
 	public void stop() {
 		this.running = false;
 	}
-
-	public void endTurn() {
-		this.game.endTurn();
-	}
-
 
 	/**
 	 * client main loop

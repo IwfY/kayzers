@@ -57,7 +57,7 @@ class CharacterInfo : ContainerWidget {
 
 			string popupText = format("%s: %d%s",
 				_("Age"),
-				this.character.getAge(this.client.getCurrentYear()),
+				this.character.getAge(this.client.getServerStub().getCurrentYear()),
 			    (this.character.isDead() ? " ✝" : ""));
 
 			this.name = new PopupWidgetDecorator(

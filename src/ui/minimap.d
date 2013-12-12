@@ -5,6 +5,7 @@ import color;
 import map;
 import position;
 import rect;
+import serverstub;
 import utils;
 import ui.maprenderer;
 import ui.renderer;
@@ -17,6 +18,7 @@ import std.conv;
 import std.math;
 
 class MiniMap : Renderer {
+	private ServerStub serverStub;
 	private MapRenderer mapRenderer;
 	private const(Map) map;
 	private int tileWidth;
@@ -28,7 +30,8 @@ class MiniMap : Renderer {
 	public this(Client client, RenderHelper renderer,
 				MapRenderer mapRenderer) {
 		super(client, renderer);
-		this.map = this.client.getMap();
+		this.serverStub = this.client.getServerStub();
+		this.map = this.serverStub.getMap();
 		this.mapRenderer = mapRenderer;
 
 		this.tileWidth = 2;
@@ -140,7 +143,7 @@ class MiniMap : Renderer {
 		this.renderer.drawTexture(0, 0, "minimap_terrain");
 
 		// render structures
-		foreach (const(Structure) structure; this.client.getStructures()) {
+		foreach (const(Structure) structure; this.serverStub.getStructures()) {
 			this.drawTileIJ(structure.getPosition().i,
 			                structure.getPosition().j,
 			                "tile_" ~ structure.getNation().getColor().getHex());

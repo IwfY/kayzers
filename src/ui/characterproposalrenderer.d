@@ -7,6 +7,7 @@ import derelict.sdl2.sdl;
 
 import constants;
 import client;
+import serverstub;
 import ui.characterinforenderer;
 import ui.renderer;
 import ui.renderhelper;
@@ -28,6 +29,7 @@ class CharacterProposalRenderer : WidgetRenderer {
 	private CharacterInfoRenderer charInfoRenderer;
 	private const(Character) character;
 	private bool active;
+	private ServerStub serverStub;
 
 	// top left coordinates of the message box
 	private int boxX;
@@ -47,6 +49,7 @@ class CharacterProposalRenderer : WidgetRenderer {
 		this.charInfoRenderer = charInfoRenderer;
 		this.character = character;
 		super(client, renderer, "grey_a127");
+		this.serverStub = this.client.getServerStub();
 		this.active = true;
 	}
 
@@ -59,13 +62,13 @@ class CharacterProposalRenderer : WidgetRenderer {
 	}
 
 	private void proposalCallback(string message) {
-		this.client.sendProposal(this.character.getId(), to!(int)(message));
+		this.serverStub.sendProposal(this.character.getId(), to!(int)(message));
 		this.active = false;
 	}
 
 	private void charInfoCallback(string message) {
 		int charId = to!(int)(message);
-		const(Character) character = this.client.getCharacter(charId);
+		const(Character) character = this.serverStub.getCharacter(charId);
 		this.charInfoRenderer.setCharacter(character);
 		this.active = false;
 
@@ -98,7 +101,7 @@ class CharacterProposalRenderer : WidgetRenderer {
 		this.marryableCharacters = new VBox(this.renderer);
 
 		foreach (const(Character) characterCursor;
-		         this.client.getMarryableCharacters(this.character.getId())) {
+		         this.serverStub.getMarryableCharacters(this.character.getId())) {
 			LabelButton send = new LabelButton(
 				this.renderer, text(characterCursor.getId()),
 				"button_30_30", "white_a10pc", new SDL_Rect(0, 0, 30, 30),

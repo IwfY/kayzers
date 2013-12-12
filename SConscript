@@ -13,6 +13,7 @@ srcFiles = Split("""
     src/player.d
     src/position.d
     src/rect.d
+    src/serverstub.d
     src/utils.d
     src/structuremanager.d
     src/textinput.d

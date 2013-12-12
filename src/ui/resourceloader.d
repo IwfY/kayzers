@@ -1,7 +1,7 @@
 module ui.resourceloader;
 
-import client;
 import constants;
+import serverstub;
 import ui.renderhelper;
 import world.nation;
 import world.nationprototype;
@@ -121,10 +121,10 @@ class ResourceLoader {
 	/**
 	 * load all textures that are specific to the started game
 	 **/
-	public static void loadGameTextures(Client client, RenderHelper renderer) {
+	public static void loadGameTextures(const(ServerStub) serverStub, RenderHelper renderer) {
 		// load textures for structures
 		foreach (const(StructurePrototype) structurePrototype;
-				 client.getStructurePrototypes()) {
+				 serverStub.getStructurePrototypes()) {
 			debug(2) {
 				writefln("load texture(s) for structure %s",
 						 structurePrototype.getName());
@@ -153,7 +153,7 @@ class ResourceLoader {
 
 		// load textures for nations
 		foreach (const(NationPrototype) prototype;
-				 client.getNationPrototypes()) {
+				 serverStub.getNationPrototypes()) {
 			debug(2) {
 				writefln("load texture(s) for nation %s",
 						 prototype.getName());
@@ -167,7 +167,7 @@ class ResourceLoader {
 						   prototype.getFlagImage()));
 		}
 
-		foreach (const(Nation) nation; client.getNations()) {
+		foreach (const(Nation) nation; serverStub.getNations()) {
 			// create nation colored tiles
 			bool success = renderer.registerColoredTexture(
 				"tile_template", "tile_" ~ nation.getColor().getHex(),

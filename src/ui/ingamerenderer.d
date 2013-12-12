@@ -99,7 +99,7 @@ class InGameRenderer : Renderer, Observer {
 		// a game was started
 		if (message.text == "gameStarted") {
 			// load game specific assets
-			ResourceLoader.loadGameTextures(this.client, this.renderer);
+			ResourceLoader.loadGameTextures(this.client.getServerStub(), this.renderer);
 
 			// create renderer
 			this.mapRenderer = new MapRenderer(

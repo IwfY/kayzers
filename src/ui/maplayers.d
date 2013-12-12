@@ -58,7 +58,7 @@ class StructureMapLayer : MapLayer {
 	}
 
 	public override string getTextureName(int i, int j) {
-		const(Structure) structure = this.client.getStructure(i, j);
+		const(Structure) structure = this.client.getServerStub().getStructure(i, j);
 		if (structure !is null) {
 			const(StructurePrototype) prototype = structure.getPrototype();
 			if (prototype !is null) {

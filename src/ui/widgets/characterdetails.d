@@ -78,7 +78,7 @@ class CharacterDetails : ContainerWidget {
 			this.renderer,
 			format("%s: %d%s",
 				   _("Age"),
-				   this.character.getAge(this.client.getCurrentYear()),
+				   this.character.getAge(this.client.getServerStub().getCurrentYear()),
 				   (this.character.isDead() ? " ✝" : "")));
 
 		string popupText = format("%s: %d", _("Born"),
@@ -102,7 +102,7 @@ class CharacterDetails : ContainerWidget {
 
 		this.characterRulingNations = new HBox(this.renderer);
 
-		foreach (const(Nation) nation; this.client.getNations()) {
+		foreach (const(Nation) nation; this.client.getServerStub().getNations()) {
 			if (this.character == nation.getRuler()) {
 				IWidget tmpNationWidget = new RoundBorderImage(
 					this.renderer,

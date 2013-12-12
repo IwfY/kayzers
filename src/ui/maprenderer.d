@@ -9,6 +9,7 @@ import messagebroker;
 import observer;
 import position;
 import rect;
+import serverstub;
 import ui.cloudrenderer;
 import ui.maplayer;
 import ui.maplayers;
@@ -32,6 +33,7 @@ class MapRenderer : Renderer, Observer {
 	private Rect tileDimensions;
 	private MapLayer[int] mapLayers;
 	private CloudRenderer cloudRenderer;
+	private ServerStub serverStub;
 
 	// store selected positions by nation
 	private Position[const(Nation)] nationSelectedPositions;
@@ -50,9 +52,10 @@ class MapRenderer : Renderer, Observer {
 	public this(Client client, RenderHelper renderer,
 				MessageBroker messageBroker) {
 		super(client, renderer);
+		this.serverStub = this.client.getServerStub();
 		this.messageBroker = messageBroker;
 
-		this.map = this.client.getMap();
+		this.map = this.serverStub.getMap();
 		this.selectedPosition = new Position();
 		this.offset = new SDL_Point(0, 0);
 		this.mouseCoordinate = new SDL_Point(0, 0);
@@ -89,7 +92,7 @@ class MapRenderer : Renderer, Observer {
 		// active nation changed
 		if (message.text == "nationChanged") {
 			// pan to new nation's seat
-			const(Nation) currentNation = this.client.getCurrentNation();
+			const(Nation) currentNation = this.serverStub.getCurrentNation();
 			if (this.nationSelectedPositions.get(currentNation, null) is null) {
 				this.nationSelectedPositions[currentNation] = new Position();
 				this.nationSelectedPositions[currentNation] <<
@@ -511,7 +514,7 @@ class MapRenderer : Renderer, Observer {
 		}
 
 		// update selected positions
-		this.nationSelectedPositions[this.client.getCurrentNation()] <<
+		this.nationSelectedPositions[this.serverStub.getCurrentNation()] <<
 			this.selectedPosition;
 	}
 
@@ -561,7 +564,7 @@ class MapRenderer : Renderer, Observer {
 			}
 
 			// draw structures
-			foreach (const(Structure) structure; this.client.getStructures()) {
+			foreach (const(Structure) structure; this.serverStub.getStructures()) {
 				const(StructurePrototype) prototype = structure.getPrototype();
 				const(Position) position = structure.getPosition();
 				const(Nation) nation = structure.getNation();
@@ -571,7 +574,7 @@ class MapRenderer : Renderer, Observer {
 
 				// top neighbor border
 				Rebindable!(const(Structure)) neighbor =
-						this.client.getStructure(position.i, position.j - 1);
+						this.serverStub.getStructure(position.i, position.j - 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -580,7 +583,7 @@ class MapRenderer : Renderer, Observer {
 				}
 				// right neighbor border
 				neighbor =
-						this.client.getStructure(position.i + 1, position.j);
+						this.serverStub.getStructure(position.i + 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -589,7 +592,7 @@ class MapRenderer : Renderer, Observer {
 				}
 				// bottom neighbor border
 				neighbor =
-						this.client.getStructure(position.i, position.j + 1);
+						this.serverStub.getStructure(position.i, position.j + 1);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -598,7 +601,7 @@ class MapRenderer : Renderer, Observer {
 				}
 				// left neighbor border
 				neighbor =
-						this.client.getStructure(position.i - 1, position.j);
+						this.serverStub.getStructure(position.i - 1, position.j);
 				if (neighbor is null ||
 						neighbor.getNation() != structure.getNation()) {
 					this.drawBorder(position.i, position.j,
@@ -610,7 +613,7 @@ class MapRenderer : Renderer, Observer {
 			// draw structure names
 			if (this.zoom <= 2) {	// if small zoom draw every town name
 				foreach (const(Structure) structure;
-							this.client.getStructures()) {
+							this.serverStub.getStructures()) {
 					const(StructurePrototype) prototype =
 						structure.getPrototype();
 					if (prototype.isNameable()) {
@@ -653,7 +656,7 @@ class MapRenderer : Renderer, Observer {
 					}
 				}
 			} else {	// zoom > 2 --> draw capital names
-				foreach(const(Nation) nation; this.client.getNations()) {
+				foreach(const(Nation) nation; this.serverStub.getNations()) {
 					const(Structure) structure = nation.getSeat();
 					const(StructurePrototype) prototype =
 						structure.getPrototype();

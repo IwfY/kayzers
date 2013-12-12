@@ -85,7 +85,7 @@ class StructureNameRenderer : WidgetRenderer {
 
 
 	private void okButtonCallback(string message) {
-		this.client.setStructureName(this.structure, this.inputString);
+		this.client.getServerStub().setStructureName(this.structure, this.inputString);
 		this.active = false;
 	}
 

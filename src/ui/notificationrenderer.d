@@ -4,6 +4,7 @@ import client;
 import message;
 import messagebroker;
 import observer;
+import serverstub;
 import utils;
 import ui.renderer;
 import ui.renderhelper;
@@ -22,6 +23,7 @@ import std.conv;
  **/
 class NotificationRenderer : Renderer, Observer {
 	private MessageBroker messageBroker;
+	private ServerStub serverStub;
 
 	// sdl_tick when last notification started
 	private uint startNotifyNation;
@@ -29,6 +31,7 @@ class NotificationRenderer : Renderer, Observer {
 	public this(Client client, RenderHelper renderer,
 				MessageBroker messageBroker) {
 		super(client, renderer);
+		this.serverStub = this.client.getServerStub();
 		this.messageBroker = messageBroker;
 
 		this.messageBroker.register(this, "nationChanged");
@@ -57,7 +60,7 @@ class NotificationRenderer : Renderer, Observer {
 				"black", cast(ubyte)alpha);
 		}
 		if (diffStartNotifyNation < 1000) {
-			const(Nation) nation = this.client.getCurrentNation();
+			const(Nation) nation = this.serverStub.getCurrentNation();
 			const(NationPrototype) nationPrototype = nation.getPrototype();
 			// flag
 			this.renderer.drawTexture(
@@ -75,7 +78,7 @@ class NotificationRenderer : Renderer, Observer {
 			this.renderer.drawText(
 				this.screenRegion.x + this.screenRegion.w - 200,
 				this.screenRegion.y + 38,
-				"Year " ~ text(this.client.getCurrentYear()),
+				"Year " ~ text(this.serverStub.getCurrentYear()),
 				"notificationLarge");
 		}
 	}
