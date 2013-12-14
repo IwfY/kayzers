@@ -66,7 +66,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.character = character;
 		this.lastCharacter = character;
 
-		this.serverStub = this.client.getServerStub();
+		this.serverStub = client.getServerStub();
 		super(client, renderer, "grey_a127");	// calls initWidgets
 
 		this.active = true;
@@ -223,7 +223,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 		if (this.character.getPartner() is null) {
 			this.partnerInfo.hide();
 		}
-		if (this.character.getDynasty() != this.serverStub.getCurrentDynasty() &&
+		if (this.character.getDynasty() != this.serverStub.getCurrentDynasty() ||
 				!this.serverStub.isMarryable(this.character)) {
 			this.proposalButton.hide();
 		}

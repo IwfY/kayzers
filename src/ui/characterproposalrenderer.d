@@ -48,7 +48,7 @@ class CharacterProposalRenderer : WidgetRenderer {
 	            CharacterInfoRenderer charInfoRenderer, const(Character) character) {
 		this.charInfoRenderer = charInfoRenderer;
 		this.character = character;
-		this.serverStub = this.client.getServerStub();
+		this.serverStub = client.getServerStub();
 
 		super(client, renderer, "grey_a127");
 		this.active = true;
