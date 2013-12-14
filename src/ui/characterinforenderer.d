@@ -43,8 +43,10 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	private CharacterDetails characterDetails;
 
-	private Label parentsHead;
+	private Label fatherHead;
 	private Line seperator1;
+	private Label motherHead;
+	private Line seperator1_2;
 	private CharacterInfo fatherInfo;
 	private CharacterInfo motherInfo;
 
@@ -174,12 +176,17 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	private void initWidgetsParents() {
 		// header
-		this.parentsHead = new Label(
-			this.renderer, _("Parents"));
-		this.addWidget(this.parentsHead);
+		this.fatherHead = new Label(
+			this.renderer, _("Father"));
+		this.addWidget(this.fatherHead);
+		this.motherHead = new Label(
+			this.renderer, _("Mother"));
+		this.addWidget(this.motherHead);
 
 		this.seperator1 = new Line(this.renderer);
 		this.addWidget(this.seperator1);
+		this.seperator1_2 = new Line(this.renderer);
+		this.addWidget(this.seperator1_2);
 
 		// father
 		this.fatherInfo = new CharacterInfo(
@@ -275,17 +282,24 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.characterDetails.setXY(this.boxX + 20, this.boxY + 20);
 
 		// parents
-		this.parentsHead.setXY(this.boxX + 20, this.boxY + 90);
+		int halfWidth = this.boxBackground.getBounds().w / 2;
+		this.fatherHead.setXY(this.boxX + 20, this.boxY + 90);
 		this.seperator1.setBounds(
-			this.parentsHead.getBounds().x + this.parentsHead.getBounds().w + 10,
-			this.parentsHead.getBounds().y + 12,
-			this.boxBackground.getBounds().w - 40 - (this.parentsHead.getBounds().w + 10),
+			this.fatherHead.getBounds().x + this.fatherHead.getBounds().w + 10,
+			this.fatherHead.getBounds().y + 12,
+			halfWidth - 40 - (this.fatherHead.getBounds().w + 10),
+			0);
+		this.motherHead.setXY(this.boxX + halfWidth, this.boxY + 90);
+		this.seperator1_2.setBounds(
+			this.motherHead.getBounds().x + this.motherHead.getBounds().w + 10,
+			this.motherHead.getBounds().y + 12,
+			halfWidth - 20 - (this.motherHead.getBounds().w + 10),
 			0);
 
 		this.fatherInfo.setXY(
 			this.boxX + 20, this.seperator1.getBounds().y + 15);
 		this.motherInfo.setXY(
-			this.boxX + (this.boxBackground.getBounds().w / 2) + 0,
+			this.boxX + halfWidth + 0,
 			this.seperator1.getBounds().y + 15);
 
 		// partner

@@ -102,7 +102,7 @@ class CharacterInfo : ContainerWidget {
 	protected override void updateChildren() {
 		this.dynasty.setXY(this.x(), this.y());
 		this.sex.setXY(this.x() + 40, this.y());
-		this.name.setXY(this.x() + 80, this.y() + 3);
+		this.name.setXY(this.x() + 80, this.y() + 7);
 
 		this.bounds.w = this.name.x() - this.x() + this.name.w();
 		this.bounds.h = 30;

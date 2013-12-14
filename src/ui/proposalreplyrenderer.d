@@ -68,10 +68,12 @@ class ProposalReplyRenderer : WidgetRenderer {
 
 		this.senderInfo = new CharacterInfo(
 			this.client, this.renderer, this.sender, &(this.callback), "");
+		this.senderInfo.setZIndex(2);
 		this.addWidget(this.senderInfo);
 
 		this.receiverInfo = new CharacterInfo(
 			this.client, this.renderer, this.receiver, &(this.callback), "");
+		this.receiverInfo.setZIndex(2);
 		this.addWidget(this.receiverInfo);
 
 		this.proposeLabel = new Label(this.renderer, _("proposes to"));
