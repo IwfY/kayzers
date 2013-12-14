@@ -4,13 +4,13 @@ import client;
 import message;
 import messagebroker;
 import observer;
-import serverstub;
 import ui.characterinforenderer;
 import ui.characternamerenderer;
 import ui.renderer;
 import ui.renderhelper;
 import ui.maprenderer;
 import ui.notificationrenderer;
+import ui.proposalreplyrenderer;
 import ui.resourceloader;
 import ui.structurenamerenderer;
 import ui.ui;
@@ -29,8 +29,10 @@ class InGameRenderer : Renderer, Observer {
 	private CharacterNameRenderer characterNameRenderer;
 	private NotificationRenderer notificationRenderer;
 	private CharacterInfoRenderer characterInfoRenderer;
+	private ProposalReplyRenderer proposalReplyRenderer;
 
 	private const(Character)[] charactersToName;
+	private Tuple!(int, int)[] proposalsToReply;
 
 	private MessageBroker messageBroker;
 
@@ -80,8 +82,17 @@ class InGameRenderer : Renderer, Observer {
 		if (this.characterInfoRenderer !is null) {
 			destroy(this.characterInfoRenderer);
 		}
+
+		if (this.proposalReplyRenderer !is null) {
+			destroy(this.proposalReplyRenderer);
+		}
 	}
 
+
+	public void startProposalReplyRenderer(Tuple!(int, int) characterIds) {
+		this.proposalReplyRenderer = new ProposalReplyRenderer(
+			this.client, this.renderer, characterIds[0], characterIds[1]);
+	}
 
 	public void startStructureNameRenderer(const(Structure) structure) {
 		this.structureNameRenderer = new StructureNameRenderer(
@@ -131,17 +142,11 @@ class InGameRenderer : Renderer, Observer {
 
 		// proposal sent
 		else if (message.text == "proposal") {
-			ServerStub serverStub = this.client.getServerStub();
 			assert(typeid(message) == typeid(ObjectMessage!(Tuple!(int, int))));
 			ObjectMessage!(Tuple!(int, int)) objectMessage =
 				cast(ObjectMessage!(Tuple!(int, int)))message;
-			const(Character) receiver =
-				serverStub.getCharacter(objectMessage.object[1]);
-			assert(receiver !is null);
 
-			//TODO check if this client is up to respond
-			serverStub.proposalAnswered(
-				objectMessage.object[0], objectMessage.object[1], true);
+			this.proposalsToReply ~= objectMessage.object;
 		}
 	}
 
@@ -177,6 +182,12 @@ class InGameRenderer : Renderer, Observer {
 				this.screenRegion.x, this.screenRegion.y,
 				this.screenRegion.w, this.screenRegion.h);
 		}
+
+		if (this.proposalReplyRenderer !is null) {
+			this.proposalReplyRenderer.setScreenRegion(
+				this.screenRegion.x, this.screenRegion.y,
+				this.screenRegion.w, this.screenRegion.h);
+		}
 	}
 
 
@@ -186,8 +197,15 @@ class InGameRenderer : Renderer, Observer {
 				   "InGameRenderer::render no game active");
 		}
 		body {
+			// check whether a proposal needs to be replied to
+			if (this.proposalReplyRenderer is null &&
+		   			this.proposalsToReply.length > 0) {
+				Tuple!(int, int) ids = this.proposalsToReply.front!(Tuple!(int, int))();
+				this.proposalsToReply.popFront();
+				this.startProposalReplyRenderer(ids);
+			}
 			// check whether a character should be named
-			if (this.characterNameRenderer is null &&
+			else if (this.characterNameRenderer is null &&
 					this.charactersToName.length > 0) {
 				const(Character) characterToName = this.charactersToName.front!(const(Character))();
 				this.charactersToName.popFront();
@@ -210,6 +228,10 @@ class InGameRenderer : Renderer, Observer {
 			// character info
 			else if (this.characterInfoRenderer !is null) {
 				this.characterInfoRenderer.render(tick);
+			}
+			// proposal reply
+			else if(this.proposalReplyRenderer !is null) {
+				this.proposalReplyRenderer.render(tick);
 			}
 		}
 
@@ -244,6 +266,15 @@ class InGameRenderer : Renderer, Observer {
 				// if event triggered deactivation of renderer - delete it
 				if (!this.characterInfoRenderer.isActive()) {
 					this.characterInfoRenderer = null;
+				}
+				return;
+			}
+			// proposal reply
+			else if (this.proposalReplyRenderer !is null) {
+				this.proposalReplyRenderer.handleEvent(event);
+				// if event triggered deactivation of renderer - delete it
+				if (!this.proposalReplyRenderer.isActive()) {
+					this.proposalReplyRenderer = null;
 				}
 				return;
 			}
