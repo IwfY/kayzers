@@ -26,8 +26,8 @@ class List(T) {
 		body {
 			return this.list[i];
 		}
-	
-	
+
+
 	/**
 	 * remove the item at the given index; return removed item
 	 **/
@@ -41,11 +41,11 @@ class List(T) {
 			this.list =
 					this.list[0..i] ~
 					this.list[(i + 1) .. this.list.length];
-			
+
 			return ret;
 		}
-	
-	
+
+
 	/**
 	 * remove the first occurance of the given item from the list
 	 * return removed item
@@ -62,7 +62,7 @@ class List(T) {
 					break;
 				}
 			}
-			
+
 			return this.removeIndex(index);
 		}
 
@@ -86,7 +86,7 @@ class List(T) {
 	 *
 	 * see http://dlang.org/statement.html#ForeachStatement
 	 **/
-	int opApply(int delegate(ref T) dg) {
+	public int opApply(int delegate(ref T) dg) {
 		int result;
 
 		for (ulong i = 0; i < this.list.length; ++i) {
@@ -96,6 +96,27 @@ class List(T) {
 			}
 		}
 		return result;
+	}
+
+	public int opApply(int delegate(ref const(T)) dg) const {
+		int result;
+
+		for (ulong i = 0; i < this.list.length; ++i) {
+			result = dg(this.list[i]);
+			if (result) {
+				break;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * overload for "~=" operator
+	 **/
+	public void opOpAssign(string op)(T t) {
+		if (op == "~") {
+			list ~= t;
+		}
 	}
 }
 
@@ -112,7 +133,7 @@ unittest {
 	A a2 = new A(2);
 	A a3 = new A(19);
 	A a4 = new A(19);
-	
+
 	List!(A) c = new List!(A)();
 	assert(c.length == 0);
 	c.append(a1);
@@ -120,10 +141,10 @@ unittest {
 	c.append(a3);
 	assert(c.length == 3);
 	assert(c.get(0) == a1);
-	
+
 	assert(c.contains(a3) == true);
 	assert(c.contains(a4) == false);
-	
+
 	assert(c.removeFirst(a2) == a2);
 	assert(c.length == 2);
 	assert(c.get(1) == a3);
@@ -140,7 +161,7 @@ unittest {
 	List!(int) c = new List!(int)();
 	c.append(20);
 	c.append(30);
-	
+
 	int i = 0;
 	foreach(int j; c) {
 		if (i == 0) {
@@ -148,7 +169,32 @@ unittest {
 		} else if (i == 1) {
 			assert(j == 30);
 		}
-		
+
 		++i;
+	}
+}
+
+unittest {
+	List!(int) c = new List!(int)();
+	c ~= 20;
+	c ~= 30;
+
+	int i = 0;
+	foreach(int j; c) {
+		if (i == 0) {
+			assert(j == 20);
+		} else if (i == 1) {
+			assert(j == 30);
+		}
+
+		++i;
+	}
+}
+
+unittest {
+	List!(int) c = new List!(int)();
+
+	foreach(int i; c) {
+		;
 	}
 }
