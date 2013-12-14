@@ -59,6 +59,9 @@ class ServerStub {
 	public const(Character) getCharacter(int id) const {
 		return this.game.getCharacter(id);
 	}
+	public const(bool) isMarryable(const(Character) c) const {
+		return this.game.isMarryable(c);
+	}
 
 	public void sendProposal(int senderCharId, int receiverCharId) const {
 		//this.game.sendProposal(senderCharId, receiverCharId);

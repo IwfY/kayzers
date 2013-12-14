@@ -65,13 +65,20 @@ class CharacterManager {
 
 	public const(bool) isMarryable(const(Character) c1, const(Character) c2) const {
 		if (c1.getSex() != c2.getSex() &&
-				!c1.isDead() && !c2.isDead() &&
-				c1.getPartner() is null && c2.getPartner() is null &&
-				c1.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
-				c2.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
+				this.isMarryable(c1) && this.isMarryable(c2) &&
 				!CharacterManager.isSibling(c1, c2) &&
 				c1.getFather() != c2 && c1.getMother() != c2 &&
 				c2.getFather() != c1 && c2.getMother() != c1) {
+			return true;
+		}
+		return false;
+	}
+
+	public const(bool) isMarryable(const(Character) c) const {
+		import std.stdio;writeln("CharManager::isMarryable pre");
+		if (!c.isDead() &&
+				c.getPartner() is null &&
+				c.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE) {
 			return true;
 		}
 		return false;

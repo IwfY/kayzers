@@ -273,6 +273,10 @@ public class Game {
 		}
 	}
 
+	public const(bool) isMarryable(const(Character) c) const {
+		return this.characterManager.isMarryable(c);
+	}
+
 	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
 		return this.characterManager.getMarryableCharacters(characterId);
 	}
