@@ -21,6 +21,7 @@ import world.structureprototype;
 import std.file;
 import std.json;
 import std.stdio;
+import std.typecons;
 import std.random;
 
 public class Game {
@@ -167,24 +168,36 @@ public class Game {
 	 * method is called every time a new round is started and at the beginning
 	 * of the game
 	 **/
-	public void startNewRound() {
-		++this.currentYear;
-
-		foreach (Nation nation; this.nations) {
-			nation.getResources().setResource("structureToken", 3.0);
+	public void startNewRound()
+		out {
+			// check if proposals were sent
+			foreach (const(Proposal) proposal;
+					 this.characterManager.getProposalQueue()) {
+				if (!proposal.isSent) {
+					assert(false,
+						   "Game::startNewRound: not all proposals were sent");
+				}
+			}
 		}
+		body {
+			++this.currentYear;
 
-		debug(script) {
-			writeln("Game::startNewRound run produce script");
-		}
-		this.structureManager.runProduceScripts();
-		debug(script) {
-			writeln("Game::startNewRound run consume script");
-		}
-		this.structureManager.runConsumeScripts();
+			foreach (Nation nation; this.nations) {
+				nation.getResources().setResource("structureToken", 3.0);
+			}
 
-		this.giveBirth();
-	}
+			debug(script) {
+				writeln("Game::startNewRound run produce script");
+			}
+			this.structureManager.runProduceScripts();
+			debug(script) {
+				writeln("Game::startNewRound run consume script");
+			}
+			this.structureManager.runConsumeScripts();
+
+			this.giveBirth();
+			this.sendProposals();
+		}
 
 
 	/**
@@ -221,6 +234,21 @@ public class Game {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * send proposal to receiver for answer
+	 **/
+	private void sendProposals() {
+		foreach (Proposal proposal;
+				 this.characterManager.getProposalQueue()) {
+			this.client.serverNotify(
+				new ObjectMessage!(Tuple!(int, int))(
+					"proposal",
+					Tuple!(int, int)(proposal.sender.getId(),
+									 proposal.receiver.getId())));
+			proposal.isSent = true;
 		}
 	}
 
@@ -279,6 +307,19 @@ public class Game {
 
 	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
 		return this.characterManager.getMarryableCharacters(characterId);
+	}
+
+	/**
+	 * a proposal was sent from a client
+	 **/
+	public void sendProposal(int senderCharId, int receiverCharId) {
+		this.characterManager.sendProposal(senderCharId, receiverCharId);
+	}
+
+	public void proposalAnswered(
+			int senderCharId, int receiverCharId, bool answer) {
+		this.characterManager.proposalAnswered(
+			senderCharId, receiverCharId, answer);
 	}
 
 	public Character getCharacter(int id) {

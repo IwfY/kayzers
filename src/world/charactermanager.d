@@ -1,16 +1,37 @@
 module world.charactermanager;
 
+import std.typecons;
+
 import constants;
 import game;
+import list;
 import world.character;
 import world.dynasty;
+
+class Proposal {
+	public const(Character) sender;
+	public const(Character) receiver;
+	public bool isSent;
+
+	public this(
+			const(Character) sender,
+			const(Character) receiver,
+			bool isSent=false) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.isSent = isSent;
+	}
+}
 
 class CharacterManager {
 	private Dynasty[] dynasties;
 	private Game game;
 
+	private List!(Proposal) proposalQueue;
+
 	public this(Game game) {
 		this.game = game;
+		this.proposalQueue = new List!(Proposal)();
 	}
 
 	public void addDynasty(Dynasty dynasty) {
@@ -75,13 +96,67 @@ class CharacterManager {
 	}
 
 	public const(bool) isMarryable(const(Character) c) const {
-		import std.stdio;writeln("CharManager::isMarryable pre");
 		if (!c.isDead() &&
 				c.getPartner() is null &&
-				c.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE) {
+				c.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
+				this.characterProposedTo(c.getId()) is null) {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * get character that a given character proposed to
+	 **/
+	public const(Character) characterProposedTo(int charId) const {
+		foreach (const(Proposal) proposal; this.proposalQueue) {
+			if (proposal.sender.getId() == charId) {
+				return proposal.receiver;
+			}
+		}
+		return null;
+	}
+
+	public List!(Proposal) getProposalQueue() {
+		return this.proposalQueue;
+	}
+
+	/**
+	 * a proposal was send - request answer
+	 **/
+	public void sendProposal(int senderCharId, int receiverCharId) {
+		Character sender = this.getCharacter(senderCharId);
+		Character receiver = this.getCharacter(receiverCharId);
+
+		if (!this.isMarryable(sender, receiver)) {
+			return;
+		}
+
+		this.proposalQueue ~= new Proposal(sender, receiver, false);
+	}
+
+	public void proposalAnswered(
+			int senderCharId, int receiverCharId, bool answer) {
+		Character sender = this.getCharacter(senderCharId);
+		Character receiver = this.getCharacter(receiverCharId);
+
+		if (answer) {	// receiver said Yes
+			sender.setPartner(receiver);
+			receiver.setPartner(sender);
+		}
+		// remove proposal from queue
+		int i = 0;
+		int proposalIndex = -1;
+		foreach (const(Proposal) proposal; this.proposalQueue) {
+			if (proposal.sender == sender && proposal.receiver == receiver) {
+				proposalIndex = i;
+				break;
+			}
+			++i;
+		}
+		assert(proposalIndex >= 0,
+			   "CharacterManger::proposalAnswered proposal not found");
+		this.proposalQueue.removeIndex(proposalIndex);
 	}
 
 

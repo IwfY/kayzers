@@ -359,6 +359,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 				this.proposalRenderer.handleEvent(event);
 				if (!this.proposalRenderer.isActive()) {
 					this.proposalRenderer = null;
+					this.initWidgets();
 				}
 			} else {
 				// widgets

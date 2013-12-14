@@ -4,6 +4,7 @@ import client;
 import message;
 import messagebroker;
 import observer;
+import serverstub;
 import ui.characterinforenderer;
 import ui.characternamerenderer;
 import ui.renderer;
@@ -19,6 +20,7 @@ import world.structure;
 import derelict.sdl2.sdl;
 
 import std.array;
+import std.typecons;
 
 class InGameRenderer : Renderer, Observer {
 	private UI ui;
@@ -41,6 +43,7 @@ class InGameRenderer : Renderer, Observer {
 		this.messageBroker.register(this, "gameStarted");
 		this.messageBroker.register(this, "gameStopped");
 		this.messageBroker.register(this, "nameCharacter");
+		this.messageBroker.register(this, "proposal");
 	}
 
 
@@ -48,6 +51,7 @@ class InGameRenderer : Renderer, Observer {
 		this.messageBroker.unregister(this, "gameStarted");
 		this.messageBroker.unregister(this, "gameStopped");
 		this.messageBroker.unregister(this, "nameCharacter");
+		this.messageBroker.unregister(this, "proposal");
 
 		this.destroyChildRenderer();
 	}
@@ -123,6 +127,21 @@ class InGameRenderer : Renderer, Observer {
 				cast(ObjectMessage!(const(Character)))message;
 			const(Character) character = objectMessage.object;
 			this.charactersToName ~= character;
+		}
+
+		// proposal sent
+		else if (message.text == "proposal") {
+			ServerStub serverStub = this.client.getServerStub();
+			assert(typeid(message) == typeid(ObjectMessage!(Tuple!(int, int))));
+			ObjectMessage!(Tuple!(int, int)) objectMessage =
+				cast(ObjectMessage!(Tuple!(int, int)))message;
+			const(Character) receiver =
+				serverStub.getCharacter(objectMessage.object[1]);
+			assert(receiver !is null);
+
+			//TODO check if this client is up to respond
+			serverStub.proposalAnswered(
+				objectMessage.object[0], objectMessage.object[1], true);
 		}
 	}
 

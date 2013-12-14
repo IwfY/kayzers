@@ -63,8 +63,14 @@ class ServerStub {
 		return this.game.isMarryable(c);
 	}
 
-	public void sendProposal(int senderCharId, int receiverCharId) const {
-		//this.game.sendProposal(senderCharId, receiverCharId);
+	public void sendProposal(int senderCharId, int receiverCharId) {
+		this.game.sendProposal(senderCharId, receiverCharId);
+	}
+
+	public void proposalAnswered(
+			int senderCharId, int receiverCharId, bool answer) {
+		this.game.proposalAnswered(
+			senderCharId, receiverCharId, answer);
 	}
 
 
