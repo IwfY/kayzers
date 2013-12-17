@@ -3,6 +3,7 @@ srcFiles = Split("""
     src/color.d
     src/constants.d
     src/game.d
+    src/gamedb.d
     src/list.d
     src/main.d
     src/map.d
@@ -76,15 +77,18 @@ srcFiles = Split("""
     src/world/settlementcreator.d
     src/world/structure.d
     src/world/structureprototype.d
+    includes/d2sqlite/d2sqlite3.d
 """)
 
-dFlags = ['-L-ldl',
-		  '-L-lDerelictSDL2'
-		  '-L-lDerelictUtil']
+#dFlags = ['-L-ldl',
+#		  '-L-lDerelictSDL2',
+#		  '-L-lDerelictUtil',
+#		  '-L-lsqlite3']
 
 libs = ['dl',
 		'DerelictSDL2',
 		'DerelictUtil',
+		'sqlite3',
 		'phobos2']
 
 libPath = ['libs/derelict']
