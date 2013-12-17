@@ -24,7 +24,7 @@ class Character {
 
 	public this() {
 		Character.lastId++;
-		this.id = Character.lastId;
+		this(Character.lastId);
 	}
 
 	public this(int id) {

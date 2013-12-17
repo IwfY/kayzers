@@ -6,10 +6,28 @@ import world.language;
 import std.typecons;
 
 class Dynasty {
+	private static int lastId = 0;
+	private int id;
 	private string name;
 	private Character[] members;
 	private Rebindable!(const(Language)) language;
 	private string flagImageName;
+
+	public this() {
+		Dynasty.lastId++;
+		this(Dynasty.lastId);
+	}
+
+	public this(int id) {
+		this.id = id;
+		if (id > Dynasty.lastId) {
+			Dynasty.lastId = id;
+		}
+	}
+
+	public const(int) getId() const {
+		return this.id;
+	}
 
 	public const(string) getName() const {
 		return this.name;

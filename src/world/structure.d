@@ -13,6 +13,8 @@ import std.typecons;
  * represents a tile filling structure on the map belonging to one nation
  **/
 class Structure : ScriptContext {
+	private static int lastId = 0;
+	private int id;
 	private StructurePrototype prototype;
 	private Position position;
 	private Nation nation;
@@ -23,7 +25,20 @@ class Structure : ScriptContext {
 	private Script produceScript;
 
 	public this() {
+		Structure.lastId++;
+		this(Structure.lastId);
+	}
+
+	public this(int id) {
+		this.id = id;
+		if (id > Structure.lastId) {
+			Structure.lastId = id;
+		}
 		this.resources = new ResourceManager();
+	}
+
+	public const(int) getId() const {
+		return this.id;
 	}
 
 	/************************

@@ -6,12 +6,29 @@ import std.random;
 import std.typecons;
 
 class NationPrototype {
+	private static int lastId = 0;
+	private int id;
 	private string name;
 	private Rebindable!(const(Language)) language;
 	private string flagImage;	// file path to image
 	private string flagImageName;
 	private string[] defaultCityNames;
 
+	public this() {
+		NationPrototype.lastId++;
+		this(NationPrototype.lastId);
+	}
+
+	public this(int id) {
+		this.id = id;
+		if (id > NationPrototype.lastId) {
+			NationPrototype.lastId = id;
+		}
+	}
+
+	public const(int) getId() const {
+		return this.id;
+	}
 
 	public const(string) getName() const {
 		return this.name;

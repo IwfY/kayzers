@@ -4,6 +4,8 @@ import script.script;
 import script.scriptcontext;
 
 class StructurePrototype {
+	private static int lastId = 0;
+	private int id;
 	private string name;
 	private string popupText;
 	private string tileImage;
@@ -19,11 +21,16 @@ class StructurePrototype {
 	private Script produceScript;
 	private Script consumeScript;
 
-	public this() {
-
+	public this(string[string] data) {
+		StructurePrototype.lastId++;
+		this(StructurePrototype.lastId, data);
 	}
 
-	public this(string[string] data) {
+	public this(int id, string[string] data) {
+		this.id = id;
+		if (id > StructurePrototype.lastId) {
+			StructurePrototype.lastId = id;
+		}
 		this.name = data["name"];
 		this.popupText = data["popupText"];
 		this.tileImage = data["tileImage"];
@@ -37,6 +44,10 @@ class StructurePrototype {
 		this.initScript = new Script(data["initScript"]);
 		this.produceScript = new Script(data["produceScript"]);
 		this.consumeScript = new Script(data["consumeScript"]);
+	}
+
+	public const(int) getId() const {
+		return this.id;
 	}
 
 	public const(string) getName() const {

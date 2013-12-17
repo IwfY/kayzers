@@ -12,6 +12,8 @@ import std.random;
 import std.typecons;
 
 class Nation : ScriptContext {
+	private static int lastId = 0;
+	private int id;
 	private Rebindable!(const(NationPrototype)) prototype;
 	private Character ruler;
 	private ResourceManager resources;
@@ -24,10 +26,23 @@ class Nation : ScriptContext {
 			   "Nation::invariant seat is not of nation");
 	}
 
-	public this(const(NationPrototype) nationPrototype) {
+	public this(int id, const(NationPrototype) nationPrototype) {
+		this.id = id;
+		if (id > Nation.lastId) {
+			Nation.lastId = id;
+		}
 		this.prototype = nationPrototype;
 		this.resources = new ResourceManager();
 		this.color = new Color();
+	}
+
+	public this(const(NationPrototype) nationPrototype) {
+		Nation.lastId++;
+		this(Nation.lastId, nationPrototype);
+	}
+
+	public const(int) getId() const {
+		return this.id;
 	}
 
 	public const(Character) getRuler() const {

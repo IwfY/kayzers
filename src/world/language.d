@@ -6,22 +6,44 @@ import std.random;
  * groups information that is specific to one spoken language
  **/
 class Language {
+	private static int lastId = 0;
+	private int id;
 	private string name;
 	private string[] maleNames;
 	private string[] femaleNames;
 	private string nobiliaryParticleMale;
 	private string nobiliaryParticleFemale;
 
-	public this(string name,
+	public this(int id,
+	            string name,
 				string[] maleNames,
 				string[] femaleNames,
 				string nobiliaryParticleMale,
 				string nobiliaryParticleFemale) {
+		this.id = id;
+		if (id > Language.lastId) {
+			Language.lastId = id;
+		}
 		this.name = name;
 		this.maleNames = maleNames;
 		this.femaleNames = femaleNames;
 		this.nobiliaryParticleMale = nobiliaryParticleMale;
 		this.nobiliaryParticleFemale = nobiliaryParticleFemale;
+	}
+
+	public this(string name,
+	            string[] maleNames,
+				string[] femaleNames,
+				string nobiliaryParticleMale,
+				string nobiliaryParticleFemale) {
+		Language.lastId++;
+		this(Language.lastId,
+		     name, maleNames, femaleNames,
+		     nobiliaryParticleMale, nobiliaryParticleFemale);
+	}
+
+	public const(int) getId() const {
+		return this.id;
 	}
 
 	public const(string) getName() const {
