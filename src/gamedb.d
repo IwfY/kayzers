@@ -7,6 +7,7 @@ import std.string;
 import d2sqlite.d2sqlite3;
 
 import game;
+import map;
 import structuremanager;
 import world.character;
 import world.charactermanager;
@@ -222,6 +223,37 @@ class GameDB {
 	}
 
 
+	private static void saveMap(Database db, const(Map) map) {
+		db.execute(
+			"CREATE TABLE map (
+                width INTEGER NOT NULL,
+                height INTEGER NOT NULL,
+                data TEXT NOT NULL)"
+			);
+
+		string mapData;
+		for (int i = 0; i < map.getWidth(); ++i) {
+			for (int j = 0; j < map.getHeight(); ++j) {
+				mapData ~= text(map.getTile(i, j));
+			}
+		}
+
+		string sqlCommand = "
+			INSERT INTO map
+				(width, height, data)
+			VALUES
+				(%d, %d, \"%s\")".format(
+				map.getWidth(),
+				map.getHeight(),
+				mapData);
+		debug(1) {
+			import std.stdio;
+			writeln("GameDB::saveMap " ~ sqlCommand);
+		}
+		db.execute(sqlCommand);
+	}
+
+
 	public static bool saveToFile(Game game, string filename) {
 		// remove old file
 		if (isFile(filename)) {
@@ -233,6 +265,7 @@ class GameDB {
 		GameDB.saveCharacters(db, game.getCharacterManager());
 		GameDB.saveNations(db, game.getNations());
 		GameDB.saveStructures(db, game.getStructureManager());
+		GameDB.saveMap(db, game.getMap());
 
 		return true;
 	}
