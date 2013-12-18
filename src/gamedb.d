@@ -7,10 +7,12 @@ import std.string;
 import d2sqlite.d2sqlite3;
 
 import game;
+import structuremanager;
 import world.character;
 import world.charactermanager;
 import world.dynasty;
 import world.nation;
+import world.structure;
 
 class GameDB {
 	/**
@@ -71,7 +73,7 @@ class GameDB {
 
 	private static void
 			saveDynasties(Database db,
-						   const(CharacterManager) characterManager) {
+						  const(CharacterManager) characterManager) {
 		// create db table
 		db.execute(
 			"CREATE TABLE dynasty (
@@ -161,6 +163,65 @@ class GameDB {
 	}
 
 
+	private static void
+			saveStructures(Database db,
+						   const(StructureManager) structureManager) {
+		db.execute(
+			"CREATE TABLE structure (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                prototypeName TEXT NOT NULL,
+                nationId INTEGER NOT NULL,
+                positionI INTEGER NOT NULL,
+                positionJ INTEGER NOT NULL)"
+			);
+
+		db.execute(
+			"CREATE TABLE structureResources (
+                structureId INTEGER NOT NULL,
+                resourceName TEXT NOT NULL,
+                amount FLOAT NOT NULL)"
+			);
+
+		foreach(const(Structure) structure; structureManager.getStructures()) {
+			string sqlCommand = "
+				INSERT INTO structure
+					(id, name, prototypeName, nationId, positionI, positionJ)
+				VALUES
+					(%d, \"%s\", \"%s\", %d, %d, %d)".format(
+					structure.getId(),
+					GameDB.sqlEscape(structure.getName()),
+					GameDB.sqlEscape(structure.getPrototype().getName()),
+					structure.getNation().getId(),
+					structure.getPosition().i,
+					structure.getPosition().j);
+			debug(1) {
+				import std.stdio;
+				writeln("GameDB::saveStructures " ~ sqlCommand);
+			}
+			db.execute(sqlCommand);
+
+			// structure resources
+			foreach(string key, const(double) value;
+					structure.getResources().getResources()) {
+				sqlCommand = "
+					INSERT INTO structureResources
+						(structureId, resourceName, amount)
+					VALUES
+						(%d, \"%s\", %f)".format(
+						structure.getId(),
+						GameDB.sqlEscape(key),
+						value);
+				debug(1) {
+					import std.stdio;
+					writeln("GameDB::saveStructures " ~ sqlCommand);
+				}
+				db.execute(sqlCommand);
+			}
+		}
+	}
+
+
 	public static bool saveToFile(Game game, string filename) {
 		// remove old file
 		if (isFile(filename)) {
@@ -171,6 +232,7 @@ class GameDB {
 		GameDB.saveDynasties(db, game.getCharacterManager());
 		GameDB.saveCharacters(db, game.getCharacterManager());
 		GameDB.saveNations(db, game.getNations());
+		GameDB.saveStructures(db, game.getStructureManager());
 
 		return true;
 	}
