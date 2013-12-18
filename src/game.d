@@ -322,6 +322,9 @@ public class Game {
 	public const(bool) canPropose(const(Character) c) const {
 		return this.characterManager.canPropose(c);
 	}
+	public const(Character) getProposedToCharacter(int charId) const {
+		return this.characterManager.getProposedToCharacter(charId);
+	}
 
 	/**
 	 * a proposal was sent from a client

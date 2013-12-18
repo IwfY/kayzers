@@ -54,6 +54,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 	private Line seperator2;
 	private CharacterInfo partnerInfo;
 	private IWidget proposalButton;
+	private Label proposalLabel;
 
 	private Label childrenHead;
 	private Line seperator3;
@@ -221,6 +222,17 @@ class CharacterInfoRenderer : WidgetRenderer {
 			_("Send a proposal"));
 		this.addWidget(this.proposalButton);
 
+		this.proposalLabel = new Label(this.renderer, "");
+		this.addWidget(this.proposalLabel);
+		const(Character) proposedTo =
+			this.serverStub.getProposedToCharacter(this.character.getId());
+		if (proposedTo !is null) {
+			this.proposalLabel.setText(
+				_("Proposed to %s").format(proposedTo.getFullName()));
+		} else {
+			this.proposalLabel.hide();
+		}
+
 		// partner
 		this.partnerInfo = new CharacterInfo(
 			this.client, this.renderer,
@@ -315,6 +327,11 @@ class CharacterInfoRenderer : WidgetRenderer {
 		this.proposalButton.setXY(
 			0, this.seperator2.getBounds().y + 15);
 		this.proposalButton.centerHorizontally(
+			this.boxX, this.boxBackground.w());
+
+		this.proposalLabel.setXY(
+			0, this.seperator2.getBounds().y + 25);
+		this.proposalLabel.centerHorizontally(
 			this.boxX, this.boxBackground.w());
 
 		this.partnerInfo.setXY(
