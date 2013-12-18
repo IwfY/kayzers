@@ -51,14 +51,19 @@ class CharacterInfo : ContainerWidget {
 
 			// name label
 			tmpWidget = new Label(
-				this.renderer, this.character.getFullName());
+				this.renderer,
+				"%s%s%s".format(
+					this.character.getFullName(),
+					((this.character.getPartner() !is null) ? " ⚭" : ""),
+					(this.character.isDead() ? " ✝" : "")));
 			tmpWidget = new ClickWidgetDecorator(
 				tmpWidget, this.message, this.callback);
 
-			string popupText = format("%s: %d%s",
+			string popupText = format("%s: %d",
 				_("Age"),
-				this.character.getAge(this.client.getServerStub().getCurrentYear()),
-			    (this.character.isDead() ? " ✝" : ""));
+				this.character.getAge(
+					this.client.getServerStub().getCurrentYear()),
+			    );
 
 			this.name = new PopupWidgetDecorator(
 				tmpWidget,
