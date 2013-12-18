@@ -67,6 +67,38 @@ class GameDB {
 		}
 	}
 
+
+	private static void
+			saveDynasties(Database db,
+						   const(CharacterManager) characterManager) {
+		// create db table
+		db.execute(
+			"CREATE TABLE dynasty (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                languageName TEXT,
+                flagImageName TEXT)"
+			);
+
+		foreach(const(Dynasty) dynasty; characterManager.getDynasties()) {
+			string sqlCommand = "
+				INSERT INTO dynasty
+					(id, name, languageName, flagImageName)
+				VALUES
+					(%d, \"%s\", \"%s\", \"%s\")".format(
+					dynasty.getId(),
+					GameDB.sqlEscape(dynasty.getName()),
+					GameDB.sqlEscape(dynasty.getLanguage().getName()),
+					GameDB.sqlEscape(dynasty.getFlagImageName()));
+			debug(2) {
+				import std.stdio;
+				writeln("GameDB::saveDynasties " ~ sqlCommand);
+			}
+			db.execute(sqlCommand);
+		}
+	}
+
+
 	public static bool saveToFile(Game game, string filename) {
 		// remove old file
 		if (isFile(filename)) {
@@ -74,6 +106,7 @@ class GameDB {
 		}
 		Database db = Database(filename);
 
+		GameDB.saveDynasties(db, game.getCharacterManager());
 		GameDB.saveCharacters(db, game.getCharacterManager());
 
 		return true;
