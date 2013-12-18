@@ -2,6 +2,7 @@ module game;
 
 import client;
 import color;
+import gamedb;
 import map;
 import message;
 import player;
@@ -63,6 +64,10 @@ public class Game {
 	/************************
 	 * Getters and Setters
 	 ************************/
+	public const(CharacterManager) getCharacterManager() const {
+		return this.characterManager;
+	}
+
 	public const(string) getName() const {
 		return this.name;
 	}
@@ -112,11 +117,13 @@ public class Game {
 		Character male = CharacterManager.characterFactory(null, null, dynasty);
 		male.setSex(Sex.MALE);
 		male.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
+		male.setDeath(male.getBirth() - 1);
 		male.setName(language.getRandomMaleName());
 
 		Character female = CharacterManager.characterFactory(null, null, dynasty);
 		female.setSex(Sex.FEMALE);
 		female.setBirth(this.currentYear - 18 - uniform(0, 10, this.gen));
+		female.setDeath(female.getBirth() - 1);
 		female.setName(language.getRandomFemaleName());
 
 		female.setPartner(male);
@@ -220,6 +227,7 @@ public class Game {
 						Character child = CharacterManager.characterFactory(
 							father, character, father.getDynasty());
 						child.setBirth(this.currentYear);
+						child.setDeath(this.currentYear - 1);
 						//TODO: birthNation
 						if (uniform(0.0, 1.0, this.gen) > 0.51) {
 							child.setSex(Sex.FEMALE);
@@ -413,6 +421,14 @@ public class Game {
 		}
 
 		this.currentNationIndex = 0;
+	}
+
+
+	/**
+	 * save the current game
+	 **/
+	public void save(string filename) {
+		GameDB.saveToFile(this, filename);
 	}
 
 

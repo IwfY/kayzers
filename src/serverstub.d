@@ -125,5 +125,9 @@ class ServerStub {
 	public void endTurn() {
 		this.game.endTurn();
 	}
+
+	public void save(string filename) {
+		this.game.save(filename);
+	}
 }
 

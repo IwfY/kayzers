@@ -83,7 +83,6 @@ class Character {
 	}
 	public void setBirth(int birth) {
 		this.birth = birth;
-		this.death = birth - 1;
 	}
 
 	public const(int) getAge(int currentYear) const {

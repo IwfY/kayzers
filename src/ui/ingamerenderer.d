@@ -288,6 +288,8 @@ class InGameRenderer : Renderer, Observer {
 				// enter input
 				if (event.key.keysym.sym == SDLK_ESCAPE) {
 					this.client.stop();
+				} else if (event.key.keysym.sym == SDLK_F5) {
+					this.client.getServerStub().save("test.sqlite");
 				}
 			}
 		}
