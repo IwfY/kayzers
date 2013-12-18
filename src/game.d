@@ -305,8 +305,22 @@ public class Game {
 		return this.characterManager.isMarryable(c);
 	}
 
+	public const(bool)
+			isMarryable(const(Character) c1, const(Character) c2) const {
+		return this.characterManager.isMarryable(c1, c2);
+	}
+	public const(bool) isMarryable(int c1, int c2) const {
+		return this.characterManager.isMarryable(
+			this.characterManager.getCharacter(c1),
+			this.characterManager.getCharacter(c2));
+	}
+
 	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
 		return this.characterManager.getMarryableCharacters(characterId);
+	}
+
+	public const(bool) canPropose(const(Character) c) const {
+		return this.characterManager.canPropose(c);
 	}
 
 	/**

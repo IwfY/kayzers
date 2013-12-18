@@ -202,7 +202,9 @@ class InGameRenderer : Renderer, Observer {
 		   			this.proposalsToReply.length > 0) {
 				Tuple!(int, int) ids = this.proposalsToReply.front!(Tuple!(int, int))();
 				this.proposalsToReply.popFront();
-				this.startProposalReplyRenderer(ids);
+				if (this.client.getServerStub().isMarryable(ids[0], ids[1])) {
+					this.startProposalReplyRenderer(ids);
+				}
 			}
 			// check whether a character should be named
 			else if (this.characterNameRenderer is null &&

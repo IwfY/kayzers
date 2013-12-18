@@ -118,6 +118,10 @@ class List(T) {
 			list ~= t;
 		}
 	}
+
+	public T opIndex(size_t i) {
+		return this.get(i);
+	}
 }
 
 /**

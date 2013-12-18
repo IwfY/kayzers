@@ -231,7 +231,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 			this.partnerInfo.hide();
 		}
 		if (this.character.getDynasty() != this.serverStub.getCurrentDynasty() ||
-				!this.serverStub.isMarryable(this.character)) {
+				!this.serverStub.canPropose(this.character)) {
 			this.proposalButton.hide();
 		}
 	}

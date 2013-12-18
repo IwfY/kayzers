@@ -65,15 +65,27 @@ class CharacterManager {
 		return null;
 	}
 
-	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+	/**
+	 * get a list of characters the given character may propose to
+	 **/
+	public const(const(Character)[]) getMarryableCharacters(
+			int characterId) const {
 		const(Character) character = this.getCharacter(characterId);
-		if (character is null) {
-			return null;
-		}
 		return this.getMarryableCharacters(character);
 	}
-	public const(const(Character)[]) getMarryableCharacters(const(Character) character) const {
+
+
+	/**
+	 * get a list of characters the given character may propose to
+	 **/
+	public const(const(Character)[])
+			getMarryableCharacters(const(Character) character) const {
 		const(Character)[] marryableCharacters;
+
+		if (!this.canPropose(character)) {
+			return marryableCharacters;
+		}
+
 		foreach (const(Dynasty) dynasty; this.getDynasties()) {
 			foreach (const(Character) charCursor; dynasty.getMembers()) {
 				if (this.isMarryable(character, charCursor)) {
@@ -84,7 +96,12 @@ class CharacterManager {
 		return marryableCharacters;
 	}
 
-	public const(bool) isMarryable(const(Character) c1, const(Character) c2) const {
+
+	/**
+	 * check if two characters can marry
+	 **/
+	public const(bool)
+			isMarryable(const(Character) c1, const(Character) c2) const {
 		if (c1.getSex() != c2.getSex() &&
 				this.isMarryable(c1) && this.isMarryable(c2) &&
 				!CharacterManager.isSibling(c1, c2) &&
@@ -98,17 +115,26 @@ class CharacterManager {
 	public const(bool) isMarryable(const(Character) c) const {
 		if (!c.isDead() &&
 				c.getPartner() is null &&
-				c.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE &&
-				this.characterProposedTo(c.getId()) is null) {
+				c.getAge(this.game.getCurrentYear()) >= MIN_MARRIAGE_AGE) {
 			return true;
 		}
 		return false;
 	}
 
 	/**
+	 * check if a character is allowed to propose to someone
+	 *
+	 * includes check if a proposal was already sent this year
+	 **/
+	public const(bool) canPropose(const(Character) c) const {
+		return (this.isMarryable(c) &&
+				this.getProposedToCharacter(c.getId()) is null);
+	}
+
+	/**
 	 * get character that a given character proposed to
 	 **/
-	public const(Character) characterProposedTo(int charId) const {
+	public const(Character) getProposedToCharacter(int charId) const {
 		foreach (const(Proposal) proposal; this.proposalQueue) {
 			if (proposal.sender.getId() == charId) {
 				return proposal.receiver;
@@ -135,16 +161,15 @@ class CharacterManager {
 		this.proposalQueue ~= new Proposal(sender, receiver, false);
 	}
 
+	/**
+	 * a proposal was answered by the receiver
+	 **/
 	public void proposalAnswered(
 			int senderCharId, int receiverCharId, bool answer) {
 		Character sender = this.getCharacter(senderCharId);
 		Character receiver = this.getCharacter(receiverCharId);
 
-		if (answer) {	// receiver said Yes
-			sender.setPartner(receiver);
-			receiver.setPartner(sender);
-		}
-		// remove proposal from queue
+		// remove this proposal from queue
 		int i = 0;
 		int proposalIndex = -1;
 		foreach (const(Proposal) proposal; this.proposalQueue) {
@@ -157,6 +182,27 @@ class CharacterManager {
 		assert(proposalIndex >= 0,
 			   "CharacterManger::proposalAnswered proposal not found");
 		this.proposalQueue.removeIndex(proposalIndex);
+
+		// couple them
+		if (answer &&	// receiver said Yes
+				this.isMarryable(sender, receiver)) {	// still marryable?
+			sender.setPartner(receiver);
+			receiver.setPartner(sender);
+
+			// remove other proposals connected with both partners from queue
+			i = 0;
+			while (i < this.proposalQueue.length) {
+				Proposal proposal = this.proposalQueue[i];
+				if (proposal.sender == sender ||
+						proposal.receiver == sender ||
+						proposal.sender == receiver ||
+						proposal.receiver == receiver) {
+					this.proposalQueue.removeIndex(i);
+				} else {
+					++i;
+				}
+			}
+		}
 	}
 
 
