@@ -254,6 +254,30 @@ class GameDB {
 	}
 
 
+	private static void saveMetaData(Database db, const(Game) game) {
+		db.execute(
+			"CREATE TABLE meta (
+				name TEXT NOT NULL,
+				currentNationId INTEGER NOT NULL,
+				currentYear INTEGER NOT NULL)"
+		);
+
+		string sqlCommand = "
+			INSERT INTO meta
+				(name, currentNationId, currentYear)
+			VALUES
+				(\"%s\", %d, %d)".format(
+				game.getName(),
+				game.getCurrentNation().getId(),
+				game.getCurrentYear());
+		debug(1) {
+			import std.stdio;
+			writeln("GameDB::saveMetaData " ~ sqlCommand);
+		}
+		db.execute(sqlCommand);
+	}
+
+
 	public static bool saveToFile(Game game, string filename) {
 		// remove old file
 		if (isFile(filename)) {
@@ -266,6 +290,7 @@ class GameDB {
 		GameDB.saveNations(db, game.getNations());
 		GameDB.saveStructures(db, game.getStructureManager());
 		GameDB.saveMap(db, game.getMap());
+		GameDB.saveMetaData(db, game);
 
 		return true;
 	}
