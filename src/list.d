@@ -152,6 +152,7 @@ unittest {
 	assert(c.removeFirst(a2) == a2);
 	assert(c.length == 2);
 	assert(c.get(1) == a3);
+	assert(c[1] == a3);
 }
 
 unittest {
