@@ -1,0 +1,14 @@
+{
+	"_fileType" : "nation",
+	"name" : "Sachsen",
+	"language" : "German",
+	"flagImage" : "resources/img/flags/saxony.png",
+	"flagImageName" : "flag_saxony",
+	"defaultCityNames" : [
+		"Hamburg", "Harburg", "Bremen", "Münster",
+		"Braunschweig", "Paderborn", "Osnabrück",
+		"Hildesheim", "Salzwedel", "Goslar", "Dortmund",
+		"Lüneburg", "Minden", "Verden", "Quedlinburg"],
+	"canBuild" : [],
+	"canNotBuild" :  []
+}
