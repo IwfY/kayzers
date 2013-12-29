@@ -13,6 +13,7 @@ import ui.widgets.widget;
 import derelict.sdl2.sdl;
 
 import std.algorithm;
+import std.string;
 
 /**
  * widget container that arranges its children vertically
@@ -22,7 +23,7 @@ class VBoxPaged : Widget {
 	private int margin;	// vertical gap between child widgets
 	protected IWidget[] vboxChildren; // widgets that are to be added to vboxes
 	protected VBox[] vboxes;
-	private uint activeVBox;
+	private ulong activeVBox;
 	private Label pageNumberLabel;
 	private HBox navigation;
 	protected bool dirty;
@@ -64,7 +65,17 @@ class VBoxPaged : Widget {
 	}
 
 	private void callback(string message) {
-		//TODO
+		if (message == "-") {
+			if (this.activeVBox > 0) {
+				--this.activeVBox;
+				this.dirty = true;
+			}
+		} else if (message == "+") {
+			if (this.activeVBox < this.vboxes.length - 1) {
+				++this.activeVBox;
+				this.dirty = true;
+			}
+		}
 	}
 
 	public const(int) getMargin() const {
@@ -98,8 +109,32 @@ class VBoxPaged : Widget {
 		// calculate space for vboxes
 		int vboxHeight = this.h() - this.navigation.h() - this.margin;
 
-		// fill vboxes
-		//TODO
+		// empty vboxes
+		this.vboxes.length = 1;
+		this.vboxes[0].removeChildren();
+
+		// refill vboxes
+		int currentVBoxId = 0;
+		int y = 0;
+		foreach(IWidget child; this.vboxChildren) {
+			int height = child.h();
+			if (y + height > vboxHeight) {
+				VBox vbox = new VBox(this.renderer);
+				this.vboxes ~= vbox;
+				vbox.addChild(child);
+				y = height + this.margin;
+				++currentVBoxId;
+				continue;
+			}
+
+			this.vboxes[currentVBoxId].addChild(child);
+			y += height + this.margin;
+		}
+
+		if (this.activeVBox >= this.vboxes.length) {
+			this.activeVBox = this.vboxes.length - 1;
+		}
+		this.pageNumberLabel.setText("%d / %d".format(this.activeVBox + 1, this.vboxes.length));
 
 		// place vboxes
 		foreach(VBox vbox; this.vboxes) {

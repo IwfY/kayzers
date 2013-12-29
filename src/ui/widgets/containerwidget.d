@@ -24,6 +24,11 @@ abstract class ContainerWidget : Widget {
 		this.dirty = true;
 	}
 
+	public void removeChildren() {
+		this.children.length = 0;
+		this.dirty = true;
+	}
+
 	public override void setXY(int x, int y) {
 		super.setXY(x, y);
 		this.dirty = true;
