@@ -64,6 +64,7 @@ srcFiles = Split("""
     src/ui/widgets/positionbox.d
     src/ui/widgets/roundborderimage.d
     src/ui/widgets/vbox.d
+    src/ui/widgets/vboxpaged.d
     src/ui/widgets/widget.d
     src/ui/widgets/widgetdecorator.d
     src/world/character.d
