@@ -219,11 +219,11 @@ public class Game {
 						!character.isDead() &&
 						father !is null &&
 						father.getAge(this.currentYear) >= 14 &&
-						father.getAge(this.currentYear) <= 45 &&
+						father.getAge(this.currentYear) <= 49 &&
 						character.getAge(this.currentYear) >= 16 &&
-						character.getAge(this.currentYear) <= 35) {
+						character.getAge(this.currentYear) <= 41) {
 					// give birth
-					if (uniform(0.0, 1.0, this.gen) > 0.8) {
+					if (uniform(0.0, 1.0, this.gen) > 0.75) {
 						Character child = CharacterManager.characterFactory(
 							father, character, father.getDynasty());
 						child.setBirth(this.currentYear);
