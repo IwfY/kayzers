@@ -21,7 +21,7 @@ import ui.widgets.labelbutton;
 import ui.widgets.line;
 import ui.widgets.popupwidgetdecorator;
 import ui.widgets.roundborderimage;
-import ui.widgets.vbox;
+import ui.widgets.vboxpaged;
 import ui.widgets.widget;
 import world.character;
 import world.nation;
@@ -58,7 +58,7 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 	private Label childrenHead;
 	private Line seperator3;
-	private VBox childrenInfo;
+	private VBoxPaged childrenInfo;
 
 	private LabelButton okButton;
 	private LabelButton backButton;
@@ -260,7 +260,8 @@ class CharacterInfoRenderer : WidgetRenderer {
 
 		// children loop
 		// TODO: sort by age
-		this.childrenInfo = new VBox(this.renderer);
+		this.childrenInfo = new VBoxPaged(
+			this.renderer, new SDL_Rect(0, 0, 500, 280));
 		int i = 0;
 		foreach (const(Character) child; this.character.getChildren()) {
 			CharacterInfo childInfo = new CharacterInfo(
