@@ -17,7 +17,7 @@ import ui.widgets.roundborderimage;
 import ui.widgets.widget;
 
 import world.character;
-
+import world.language;
 
 import derelict.sdl2.sdl;
 
@@ -81,6 +81,12 @@ class CharacterNameRenderer : WidgetRenderer {
 			STD_FONT);
 		this.addWidget(this.inputBox);
 
+		const(Language) language = this.character.getDynasty().getLanguage();
+		if (this.character.getSex() == Sex.MALE) {
+			this.inputString = language.getRandomMaleName();
+		} else {
+			this.inputString = language.getRandomFemaleName();
+		}
 		this.inputBox.setTextPointer(&this.inputString);
 
 		this.okButton = new LabelButton(
@@ -154,7 +160,8 @@ class CharacterNameRenderer : WidgetRenderer {
 
 
 	private void okButtonCallback(string message) {
-		this.client.getServerStub().setCharacterName(this.character, this.inputString);
+		this.client.getServerStub()
+			.setCharacterName(this.character, this.inputString);
 		this.active = false;
 	}
 

@@ -22,13 +22,17 @@ class TextInput : Observable {
 
 	public void start() {
 		SDL_StartTextInput();
-		this.textInput = "";
 		this.reading = true;
 	}
 
 	public void stop() {
 		this.reading = false;
 		SDL_StopTextInput();
+		this.notifyObservers();
+	}
+
+	public void setText(string text) {
+		this.textInput = text;
 		this.notifyObservers();
 	}
 
@@ -55,7 +59,9 @@ class TextInput : Observable {
 				// input stop
 				if (event.key.keysym.sym == SDLK_RETURN) {
 					this.stop();
-				} else if (event.key.keysym.sym == SDLK_BACKSPACE) {
+				}
+				// backspace --> delete last character
+				else if (event.key.keysym.sym == SDLK_BACKSPACE) {
 					// converting text to utf32 so length corresponds to number
 					// of characters
 					dstring tmp = toUTF32(this.textInput);

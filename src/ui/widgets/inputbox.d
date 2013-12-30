@@ -43,6 +43,7 @@ class InputBox : Widget, Observer {
 
 	public void setTextPointer(string *text) {
 		this.text = text;
+		this.textInputServer.setText(*text);
 	}
 
 
