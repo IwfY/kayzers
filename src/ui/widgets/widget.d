@@ -7,6 +7,8 @@ import ui.widgets.iwidget;
 
 import derelict.sdl2.sdl;
 
+import std.math;
+
 abstract class Widget : IWidget {
 	// bounds sets scale for drawing and serves as hit box for interaction
 	protected SDL_Rect *bounds;
@@ -71,7 +73,7 @@ abstract class Widget : IWidget {
 	}
 
 	public void centerHorizontally(int start, int width) {
-		this.setXY(start + ((width - this.w()) / 2), this.y());
+		this.setXY(start + cast(int)(floor((width - this.w()) / 2.0)), this.y());
 	}
 
 	public void setBounds(int x, int y, int w, int h) {

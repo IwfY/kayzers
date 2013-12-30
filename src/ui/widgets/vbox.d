@@ -29,14 +29,15 @@ class VBox : ContainerWidget {
 	}
 
 	protected override void updateChildren() {
-		int y = this.y();
+		int y = 0;
 		int maxWidth = 0;
 		foreach (IWidget widget; this.children) {
-			widget.setXY(this.x(), y);
+			widget.setXY(this.x(), this.y() + y);
 			y += widget.h() + this.margin;
 			maxWidth = max(cast(const(int))maxWidth, widget.w());
 		}
-		this.bounds.h = y;
+		// prevent negative height for empty box
+		this.bounds.h = max(0, y - this.margin);
 		this.bounds.w = maxWidth;
 	}
 }

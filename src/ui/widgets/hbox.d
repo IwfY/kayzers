@@ -29,15 +29,16 @@ class HBox : ContainerWidget {
 	}
 
 	protected override void updateChildren() {
-		int x = this.x();
+		int x = 0;
 		int maxHeight = 0;
 		foreach (IWidget widget; this.children) {
-			widget.setXY(x, this.y());
+			widget.setXY(this.x() + x, this.y());
 			x += widget.w() + this.margin;
 			maxHeight = max(cast(const(int))maxHeight, widget.h());
 		}
 		this.bounds.h = maxHeight;
-		this.bounds.w = x;
+		// prevent negative width for empty box
+		this.bounds.w = max(0, x - this.margin);
 	}
 }
 
