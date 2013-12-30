@@ -44,10 +44,11 @@ class VBoxPaged : Widget {
 		this.activeVBox = 0;
 
 		this.navigation = new HBox(this.renderer);
+		this.navigation.setMargin(10);
 
 		LabelButton leftButton = new LabelButton(
-			this.renderer, "-", NULL_TEXTURE, NULL_TEXTURE,
-			new SDL_Rect(0, 0, 30, 30),
+			this.renderer, "-", "button_20_20", "white_a10pc",
+			new SDL_Rect(0, 0, 20, 20),
 			&(this.callback),
 			"<");
 		this.navigation.addChild(leftButton);
@@ -56,8 +57,8 @@ class VBoxPaged : Widget {
 		this.navigation.addChild(this.pageNumberLabel);
 
 		LabelButton rightButton = new LabelButton(
-			this.renderer, "+", NULL_TEXTURE, NULL_TEXTURE,
-			new SDL_Rect(0, 0, 30, 30),
+			this.renderer, "+", "button_20_20", "white_a10pc",
+			new SDL_Rect(0, 0, 20, 20),
 			&(this.callback),
 			">");
 		this.navigation.addChild(rightButton);
@@ -83,7 +84,7 @@ class VBoxPaged : Widget {
 	}
 	public void setMargin(int margin) {
 		this.margin = margin;
-		this.updateChildren();
+		this.dirty = true;
 	}
 
 	public void addChild(IWidget child) {
@@ -134,7 +135,8 @@ class VBoxPaged : Widget {
 		if (this.activeVBox >= this.vboxes.length) {
 			this.activeVBox = this.vboxes.length - 1;
 		}
-		this.pageNumberLabel.setText("%d / %d".format(this.activeVBox + 1, this.vboxes.length));
+		this.pageNumberLabel.setText(
+			"%d / %d".format(this.activeVBox + 1, this.vboxes.length));
 
 		// place vboxes
 		foreach(VBox vbox; this.vboxes) {

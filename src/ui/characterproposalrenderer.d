@@ -99,7 +99,8 @@ class CharacterProposalRenderer : WidgetRenderer {
 		this.addWidget(this.seperator);
 
 		// marryable characters
-		this.marryableCharacters = new VBoxPaged(this.renderer, new SDL_Rect(0, 0, 500, 380));
+		this.marryableCharacters = new VBoxPaged(
+			this.renderer, new SDL_Rect(0, 0, 500, 380));
 
 		foreach (const(Character) characterCursor;
 		         this.serverStub.getMarryableCharacters(this.character.getId())) {
