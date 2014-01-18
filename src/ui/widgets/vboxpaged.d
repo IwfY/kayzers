@@ -119,7 +119,7 @@ class VBoxPaged : Widget {
 		int y = 0;
 		foreach(IWidget child; this.vboxChildren) {
 			int height = child.h();
-			if (y + height > vboxHeight) {
+			if (y + height > vboxHeight) {	// current vbox is full
 				VBox vbox = new VBox(this.renderer);
 				this.vboxes ~= vbox;
 				vbox.addChild(child);
@@ -135,6 +135,13 @@ class VBoxPaged : Widget {
 		if (this.activeVBox >= this.vboxes.length) {
 			this.activeVBox = this.vboxes.length - 1;
 		}
+
+		if (currentVBoxId == 0) {
+			this.navigation.hide();
+		} else {
+			this.navigation.unhide();
+		}
+
 		this.pageNumberLabel.setText(
 			"%d / %d".format(this.activeVBox + 1, this.vboxes.length));
 
