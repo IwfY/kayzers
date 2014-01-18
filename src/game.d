@@ -203,6 +203,7 @@ public class Game {
 			this.structureManager.runConsumeScripts();
 
 			this.giveBirth();
+			this.characterDeaths();
 			this.sendProposals();
 		}
 
@@ -239,6 +240,41 @@ public class Game {
 						this.client.serverNotify(
 							new ObjectMessage!(const(Character))(
 								"nameCharacter", child));
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * calculate which characters die
+	 **/
+	private void characterDeaths() {
+		foreach (Dynasty dynasty; this.characterManager.getDynasties()) {
+			foreach (Character character; dynasty.getMembers()) {
+				if (!character.isDead()) {
+					if ((uniform(0.0, 1.0, this.gen) < (character.getAge(this.currentYear) / 1800.0) ||
+					    uniform(0.0, 1.0, this.gen) < ((4.0 - character.getAge(this.currentYear)) / 100.0)) &&
+					    character.getAge(this.currentYear) != 0) {
+						this.characterManager.characterDied(character);
+						debug(1) {
+							writefln("Game::characterDeath %s %s",
+							         character.getFullName(), character.getAge(this.currentYear));
+						}
+
+						foreach (Nation nation; this.nations) {	// check if ruler died
+							if (nation.getRuler == character) {
+								Character heir = this.characterManager.getHeir(character);
+								nation.setRuler(heir);
+								// TODO send client notification "newRuler": nation, ruler
+							}
+						}
+
+						// send client notification
+						this.client.serverNotify(
+							new ObjectMessage!(const(Character))(
+							"characterDied", character));
 					}
 				}
 			}

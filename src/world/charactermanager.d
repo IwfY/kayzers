@@ -1,5 +1,6 @@
 module world.charactermanager;
 
+import std.algorithm;
 import std.typecons;
 
 import constants;
@@ -236,6 +237,83 @@ class CharacterManager {
 		}
 
 		return newCharacter;
+	}
+
+
+	public void characterDied(Character character) {
+		Character partner = character.getPartner();
+		if (partner !is null) {
+			partner.setPartner(null);
+			character.setPartner(null);
+		}
+
+		// remove proposals
+		bool found = true;
+		while (found) {
+			found = false;
+			int i = 0;
+			foreach (Proposal proposal; this.proposalQueue) {
+				if (proposal.sender == character || proposal.receiver == character) {
+					found = true;
+					break;
+				}
+				++i;
+			}
+
+			if (found) {
+				this.proposalQueue.removeIndex(i);
+			}
+		}
+
+		character.setDeath(this.game.getCurrentYear());
+	}
+
+	/**
+	 * get the first heir of a character
+	 * 
+	 * order:
+	 * 		sons
+	 * 		grandsons, ...
+	 * 		partner
+	 **/
+	public Character getHeir(Character character) {
+		// iterate sons
+		Character heir = this.getMaleHeir(character);
+		if (heir !is null) {
+			return heir;
+		}
+
+		// partner if there is one
+		if (character.getPartner() !is null) {
+			return character.getPartner();
+		}
+		
+		// TODO choose heir of the throne more wisely
+		return CharacterManager.characterFactory(null, null, character.getDynasty());
+	}
+
+
+	public Character getMaleHeir(Character character) {
+		// iterate sons
+		foreach (Character child; sort!(Character.birthSort)(character.getChildren())) {
+			if (child.getSex() == Sex.MALE) {
+				if (!child.isDead()) {
+					return child;
+				}
+			}
+		}
+		
+		// iterate male descendents
+		foreach (Character child; sort!(Character.birthSort)(character.getChildren())) {
+			if (child.getSex() == Sex.MALE) {
+				Character heir = this.getMaleHeir(child);
+				if (heir !is null) {
+					return heir;
+				}
+			}
+		}
+
+		return null;
 	}
 }
 

@@ -143,6 +143,9 @@ class Character {
 		this.partner = partner;
 	}
 
+	public Character[] getChildren() {
+		return this.children;
+	}
 	public const(Character[]) getChildren() const {
 		return this.children;
 	}
@@ -163,4 +166,7 @@ class Character {
 		this.dynasty = dynasty;
 	}
 
+	public static bool birthSort(const(Character) a, const(Character) b) {
+		return (a.getBirth() < b.getBirth());
+	}
 }
