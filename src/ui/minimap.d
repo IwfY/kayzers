@@ -160,16 +160,20 @@ class MiniMap : Renderer {
 		// map renderer viewport center marker
 		Position viewportCenter =
 			this.getRelCoordinateForTile(this.mapRenderer.getTileAtCenter());
-		this.renderer.drawLine(this.screenRegion.x + viewportCenter.i - 1,
+		if (viewportCenter.i >= 0 && viewportCenter.i < this.screenRegion.w &&
+				viewportCenter.j >= 0 &&
+				viewportCenter.j < this.screenRegion.h) {
+			this.renderer.drawLine(this.screenRegion.x + viewportCenter.i - 1,
 							   this.screenRegion.y + viewportCenter.j,
 							   this.screenRegion.x + viewportCenter.i + 1,
 							   this.screenRegion.y + viewportCenter.j,
 							   new Color(255, 255, 255));
-		this.renderer.drawLine(this.screenRegion.x + viewportCenter.i,
+			this.renderer.drawLine(this.screenRegion.x + viewportCenter.i,
 							   this.screenRegion.y + viewportCenter.j - 1,
 							   this.screenRegion.x + viewportCenter.i,
 							   this.screenRegion.y + viewportCenter.j + 1,
 							   new Color(255, 255, 255));
+		}
 	}
 
 	public override void handleEvent(SDL_Event event) {
