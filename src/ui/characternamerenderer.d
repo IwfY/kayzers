@@ -116,12 +116,18 @@ class CharacterNameRenderer : WidgetRenderer {
 			this.renderer, father.getFullName());
 		this.addWidget(this.fatherName);
 
-		IWidget tmpWidget = new RoundBorderImage(
-			this.renderer, father.getDynasty.getFlagImageName());
-		this.fatherDynasty = new PopupWidgetDecorator(
-			tmpWidget,
-			this.renderer, father.getDynasty().getName(),
-			"ui_popup_background");
+		IWidget tmpWidget;
+		if (father.getDynasty() !is null) {
+			tmpWidget = new RoundBorderImage(
+				this.renderer, father.getDynasty.getFlagImageName());
+			this.fatherDynasty = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, father.getDynasty().getName(),
+				"ui_popup_background");
+		} else {
+			this.fatherDynasty = new RoundBorderImage(
+				this.renderer, NULL_TEXTURE);
+		}
 		this.fatherDynasty.setZIndex(2);
 		this.addWidget(this.fatherDynasty);
 
@@ -131,12 +137,17 @@ class CharacterNameRenderer : WidgetRenderer {
 			this.renderer, mother.getFullName());
 		this.addWidget(this.motherName);
 
-		tmpWidget = new RoundBorderImage(
-			this.renderer, mother.getDynasty.getFlagImageName());
-		this.motherDynasty = new PopupWidgetDecorator(
-			tmpWidget,
-			this.renderer, mother.getDynasty().getName(),
-			"ui_popup_background");
+		if (mother.getDynasty() !is null) {
+			tmpWidget = new RoundBorderImage(
+				this.renderer, mother.getDynasty.getFlagImageName());
+			this.motherDynasty = new PopupWidgetDecorator(
+				tmpWidget,
+				this.renderer, mother.getDynasty().getName(),
+				"ui_popup_background");
+		} else {
+			this.motherDynasty = new RoundBorderImage(
+				this.renderer, NULL_TEXTURE);
+		}
 		this.motherDynasty.setZIndex(3);
 		this.addWidget(this.motherDynasty);
 

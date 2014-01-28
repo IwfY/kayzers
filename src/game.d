@@ -226,7 +226,10 @@ public class Game {
 					// give birth
 					if (uniform(0.0, 1.0, this.gen) > 0.75) {
 						Character child = CharacterManager.characterFactory(
-							father, character, father.getDynasty());
+								father, character,
+								(father.getDynasty() !is null ?
+									father.getDynasty() :
+									character.getDynasty()));
 						child.setBirth(this.currentYear);
 						child.setDeath(this.currentYear - 1);
 						//TODO: birthNation
@@ -359,7 +362,7 @@ public class Game {
 			this.characterManager.getCharacter(c2));
 	}
 
-	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+	public const(const(Character)[]) getMarryableCharacters(int characterId) {
 		return this.characterManager.getMarryableCharacters(characterId);
 	}
 

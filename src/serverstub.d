@@ -52,7 +52,7 @@ class ServerStub {
 		this.game.setCharacterName(character, name);
 	}
 
-	public const(const(Character)[]) getMarryableCharacters(int characterId) const {
+	public const(const(Character)[]) getMarryableCharacters(int characterId) {
 		return this.game.getMarryableCharacters(characterId);
 	}
 

@@ -53,6 +53,9 @@ class Character {
 			this.name = name;
 	}
 	public const(string) getFullName() const {
+		if (this.dynasty is null) {
+			return this.name;
+		}
 		string ret = this.name ~ " ";
 		if (this.sex == Sex.MALE) {
 			ret ~= this.dynasty.getLanguage().getNobiliaryParticleMale();

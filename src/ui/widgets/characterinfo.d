@@ -71,12 +71,17 @@ class CharacterInfo : ContainerWidget {
 			this.addChild(this.name);
 
 			// dynasty flag
-			tmpWidget = new RoundBorderImage(
-				this.renderer,
-				this.character.getDynasty().getFlagImageName());
-			this.dynasty = new PopupWidgetDecorator(
-				tmpWidget, this.renderer, this.character.getDynasty().getName(),
-				"ui_popup_background");
+			if (this.character.getDynasty() is null) {
+				this.dynasty = new RoundBorderImage(
+					this.renderer, NULL_TEXTURE);
+			} else {
+				tmpWidget = new RoundBorderImage(
+					this.renderer,
+					this.character.getDynasty().getFlagImageName());
+				this.dynasty = new PopupWidgetDecorator(
+					tmpWidget, this.renderer, this.character.getDynasty().getName(),
+					"ui_popup_background");
+			}
 			this.dynasty.setZIndex(2);
 			this.addChild(this.dynasty);
 

@@ -1,6 +1,7 @@
 module world.charactermanager;
 
 import std.algorithm;
+import std.random;
 import std.typecons;
 
 import constants;
@@ -8,6 +9,7 @@ import game;
 import list;
 import world.character;
 import world.dynasty;
+import world.language;
 
 class Proposal {
 	public const(Character) sender;
@@ -30,8 +32,14 @@ class CharacterManager {
 
 	private List!(Proposal) proposalQueue;
 
+	public static Dynasty noDynasty;	// for civilians
+
 	public this(Game game) {
 		this.game = game;
+
+		CharacterManager.noDynasty = new Dynasty();
+		this.dynasties ~= CharacterManager.noDynasty;
+
 		this.proposalQueue = new List!(Proposal)();
 	}
 
@@ -67,10 +75,35 @@ class CharacterManager {
 	}
 
 	/**
+	 * get a marryable civil character for a given character
+	 **/
+	private Character getCivilCharacter(const(Character) character) {
+		Character civilian = new Character();
+
+		CharacterManager.noDynasty.addMember(civilian);
+
+		const(Language) language = character.getDynasty().getLanguage();
+		if (character.getSex() == Sex.MALE) {
+			civilian.setSex(Sex.FEMALE);
+			civilian.setName(language.getRandomFemaleName());
+		} else {
+			civilian.setSex(Sex.MALE);
+			civilian.setName(language.getRandomMaleName());
+		}
+
+		Random gen = Random(unpredictableSeed);
+		civilian.setBirth(
+			min(this.game.getCurrentYear() - MIN_MARRIAGE_AGE,
+				character.getBirth() + uniform(0, 10, gen) - 5));
+
+		return civilian;
+	}
+
+	/**
 	 * get a list of characters the given character may propose to
 	 **/
 	public const(const(Character)[]) getMarryableCharacters(
-			int characterId) const {
+			int characterId) {
 		const(Character) character = this.getCharacter(characterId);
 		return this.getMarryableCharacters(character);
 	}
@@ -80,7 +113,7 @@ class CharacterManager {
 	 * get a list of characters the given character may propose to
 	 **/
 	public const(const(Character)[])
-			getMarryableCharacters(const(Character) character) const {
+			getMarryableCharacters(const(Character) character) {
 		const(Character)[] marryableCharacters;
 
 		if (!this.canPropose(character)) {
@@ -94,6 +127,10 @@ class CharacterManager {
 				}
 			}
 		}
+
+		// civil partner
+		marryableCharacters ~= this.getCivilCharacter(character);
+
 		return marryableCharacters;
 	}
 
@@ -211,7 +248,8 @@ class CharacterManager {
 	 * return true if two characters have at least one parent in common
 	 **/
 	public static bool isSibling(const(Character) c1, const(Character) c2) {
-		return (c1.getFather() == c2.getFather() || c1.getMother() == c2.getMother());
+		return ((c1.getFather() !is null && c1.getFather() == c2.getFather()) ||
+			(c1.getMother() !is null && c1.getMother() == c2.getMother()));
 	}
 
 	/**
@@ -270,7 +308,7 @@ class CharacterManager {
 
 	/**
 	 * get the first heir of a character
-	 * 
+	 *
 	 * order:
 	 * 		sons
 	 * 		grandsons, ...
@@ -287,7 +325,7 @@ class CharacterManager {
 		if (character.getPartner() !is null) {
 			return character.getPartner();
 		}
-		
+
 		// TODO choose heir of the throne more wisely
 		return CharacterManager.characterFactory(null, null, character.getDynasty());
 	}
@@ -302,7 +340,7 @@ class CharacterManager {
 				}
 			}
 		}
-		
+
 		// iterate male descendents
 		foreach (Character child; sort!(Character.birthSort)(character.getChildren())) {
 			if (child.getSex() == Sex.MALE) {
