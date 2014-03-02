@@ -104,7 +104,8 @@ dPath = ['includes',
 env = Environment()
 env.Append(DPATH   = dPath)
 # add '-g' to allow debugging with gdb
-env.Append(DFLAGS  = ['-debug=1', '-unittest'])
+#env.Append(DFLAGS  = ['-debug=1', '-unittest'])
+env.Append(DFLAGS  = ['-release'])
 env.Append(LIBPATH = libPath)
 env.Append(LIBS = libs)
 default = env.Program(target = 'kayzers', source = srcFiles)
