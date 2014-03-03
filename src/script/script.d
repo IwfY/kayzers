@@ -41,15 +41,15 @@ class Script {
 
 
 	public Expression parseString(string text) {
-		Regex!(char) assignExpression = regex("^(.*?)=(.*?)$", "g");
-		Regex!(char) numberExpression = regex(`^(\d+?(\.\d+?)?)$`, "g");
-		Regex!(char) binaryExpression = regex(`^(.*?)([\+|\-|\*|/])(.*?)$`, "g");
+		Regex!(char) ifExpression = regex(`^if\((.*?)\)(.+?)$`, "g");
+		Regex!(char) assignExpression = regex("^(.*?[^=])=([^=].*?)$", "g");
+		Regex!(char) numberExpression = regex(`^(\-?\d+?(\.\d+?)?)$`, "g");
+		Regex!(char) binaryExpression =
+			regex(`^(.+?)([\+|\-|\*|/|<|>]|==)(.+?)$`, "g");
 		Regex!(char) consumeExpression =
-				regex(`^consume\(res\.(\w*?),(.+?)\)$`, "g");
+			regex(`^consume\(res\.(\w*?),(.+?)\)$`, "g");
 		Regex!(char) produceExpression =
-				regex(`^produce\(res\.(\w*?),(.+?)\)$`, "g");
-		Regex!(char) ifExpression =
-			regex(`^if\((.*?)\)(.+?)$`, "g");
+			regex(`^produce\(res\.(\w*?),(.+?)\)$`, "g");
 		Regex!(char) minExpression =
 			regex(`^min\((.*?),(.*?)\)$`, "g");
 		Regex!(char) maxExpression =
@@ -177,6 +177,7 @@ class Script {
 
 
 	public Token parseToken(string text) {
+		writefln("Scrip::parseToken text %s", text);
 		if (text[0] == '+') {
 			return new AddToken();
 		}
@@ -191,6 +192,18 @@ class Script {
 
 		if (text[0] == '/') {
 			return new DivToken();
+		}
+
+		if (text[0] == '<') {
+			return new LTToken();
+		}
+
+		if (text[0] == '>') {
+			return new GTToken();
+		}
+
+		if (text[0] == '=' && text[1] == '=') {
+			return new EqualToken();
 		}
 
 		return null;
