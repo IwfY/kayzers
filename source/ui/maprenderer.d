@@ -209,10 +209,10 @@ class MapRenderer : Renderer, Observer {
 	 * corner of the map screen region as (iMax, jMax)
 	 **/
 	private void getTileResolution(out int iMax, out int jMax) {
-		iMax = cast(int)(floor(2 * this.screenRegion.w /
-							   (this.tileDimensions.w / this.zoom)));
-		jMax = cast(int)(floor(2 * this.screenRegion.h /
-							   (this.tileDimensions.h / this.zoom)));
+		iMax = cast(int)(floor(2.0 * cast(float)this.screenRegion.w /
+		                       (cast(float)this.tileDimensions.w / cast(float)this.zoom)));
+		jMax = cast(int)(floor(2.0 * cast(float)this.screenRegion.h /
+		                       (cast(float)this.tileDimensions.h / cast(float)this.zoom)));
 		writefln("getTileResolution %d : %d", iMax, jMax);
 	}
 

@@ -1,4 +1,4 @@
-module ui.hoverwidget;
+module ui.widgets.hoverwidget;
 
 import utils;
 import ui.renderhelper;

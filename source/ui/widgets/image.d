@@ -1,4 +1,4 @@
-module ui.image;
+module ui.widgets.image;
 
 import utils;
 import ui.renderhelper;

@@ -1,4 +1,4 @@
-module ui.inputbox;
+module ui.widgets.inputbox;
 
 import message;
 import observer;

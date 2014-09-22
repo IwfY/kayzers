@@ -4,7 +4,7 @@ import std.conv;
 import std.file;
 import std.string;
 
-import d2sqlite.d2sqlite3;
+import d2sqlite3;
 
 import game;
 import map;
