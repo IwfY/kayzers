@@ -1,4 +1,4 @@
-module ui.button;
+module ui.widgets.button;
 
 import utils;
 import ui.widgets.hoverwidget;

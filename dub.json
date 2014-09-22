@@ -1,0 +1,11 @@
+{
+	"name": "kayzers",
+	"description": "Kayzers is a turn based strategy game.",
+	"copyright": "Copyright © 2014, Marcel Pfeiffer",
+	"authors": ["Marcel Pfeiffer"],
+	"targetType": "executable",
+	"dependencies": {
+		"derelict-sdl2": ">=1.2.6",
+		"d2sqlite3": ">=0.1.0"
+	}
+}

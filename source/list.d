@@ -199,7 +199,5 @@ unittest {
 unittest {
 	List!(int) c = new List!(int)();
 
-	foreach(int i; c) {
-		;
-	}
+	foreach(int i; c) {}
 }

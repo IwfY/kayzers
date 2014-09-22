@@ -1,4 +1,4 @@
-module ui.labelbutton;
+module ui.widgets.labelbutton;
 
 import constants;
 import rect;
