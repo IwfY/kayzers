@@ -22,6 +22,7 @@ import utils;
 
 import derelict.sdl2.sdl;
 
+import std.algorithm.sorting;
 import std.math;
 import std.stdio;
 import std.typecons;
@@ -255,16 +256,16 @@ class MapRenderer : Renderer, Observer {
 		// check for distances to 4 surounding tiles
 		this.getTopLeftTileCoordinate(
 			cast(int)floor(nearestI), cast(int)floor(nearestJ), x, y);
-		x += 0.5 * tileWidth;
-		y += 0.5 * tileHeight;
+		x += cast(int)floor(0.5 * tileWidth);
+		y += cast(int)floor(0.5 * tileHeight);
 		minDistance = getDistance(position.x, position.y, x, y);
 		i = cast(int)floor(nearestI);
 		j = cast(int)floor(nearestJ);
 
 		this.getTopLeftTileCoordinate(
 			cast(int)floor(nearestI), cast(int)ceil(nearestJ), x, y);
-		x += 0.5 * tileWidth;
-		y += 0.5 * tileHeight;
+		x += cast(int)floor(0.5 * tileWidth);
+		y += cast(int)floor(0.5 * tileHeight);
 		distance = getDistance(position.x, position.y, x, y);
 		if (distance < minDistance) {
 			minDistance = distance;
@@ -274,8 +275,8 @@ class MapRenderer : Renderer, Observer {
 
 		this.getTopLeftTileCoordinate(
 			cast(int)ceil(nearestI), cast(int)floor(nearestJ), x, y);
-		x += 0.5 * tileWidth;
-		y += 0.5 * tileHeight;
+		x += cast(int)floor(0.5 * tileWidth);
+		y += cast(int)floor(0.5 * tileHeight);
 		distance = getDistance(position.x, position.y, x, y);
 		if (distance < minDistance) {
 			minDistance = distance;
@@ -285,8 +286,8 @@ class MapRenderer : Renderer, Observer {
 
 		this.getTopLeftTileCoordinate(
 			cast(int)ceil(nearestI), cast(int)ceil(nearestJ), x, y);
-		x += 0.5 * tileWidth;
-		y += 0.5 * tileHeight;
+		x += cast(int)floor(0.5 * tileWidth);
+		y += cast(int)floor(0.5 * tileHeight);
 		distance = getDistance(position.x, position.y, x, y);
 		if (distance < minDistance) {
 			minDistance = distance;
@@ -550,7 +551,8 @@ class MapRenderer : Renderer, Observer {
 
 
 			// render tiles
-			int[] mapLayerKeys = this.mapLayers.keys.sort;
+			int[] mapLayerKeys = this.mapLayers.keys;
+			sort(mapLayerKeys);
 			foreach (int key; mapLayerKeys) {
 				for (uint i = iMin; i <= iMax; ++i) {
 					for (uint j = jMin; j <= jMax; ++j) {

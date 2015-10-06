@@ -50,7 +50,8 @@ class TextInput : Observable {
 				char[] text;
 				text ~= event.text.text;
 				size_t size;
-				dchar u = decodeFront!(char[])(text, size);
+				//~ dchar u = decodeFront!(char[])(text, size);
+				dchar u = decodeFront(text, size);
 				this.textInput ~= u;
 				this.notifyObservers();
 			}

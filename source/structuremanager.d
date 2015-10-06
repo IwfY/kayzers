@@ -131,7 +131,7 @@ class StructureManager {
 		}
 
 		// neighbouring structure?
-		Tuple!(int, int) neighbourLocations[];
+		Tuple!(int, int)[] neighbourLocations;
 		neighbourLocations ~= Tuple!(int, int)(0, -1); // top
 		neighbourLocations ~= Tuple!(int, int)(1, 0); // right
 		neighbourLocations ~= Tuple!(int, int)(0, 1); // bottom
