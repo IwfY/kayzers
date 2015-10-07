@@ -34,8 +34,8 @@ class StructureManager {
 			File structureFile = File(filename, "r");
 			string all = structureFile.readln('\0');
 
-			JSONValue json = parseJSON!string(all);
-			if (json["_fileType"].str != "structure") {		// file type check
+			JSONValue json = parseJSON(all);
+			if (json["_fileType"].str() != "structure") {		// file type check
 				continue;
 			}
 
@@ -43,7 +43,9 @@ class StructureManager {
 
 			string[string] structureData;
 			foreach(string s; json.object.keys) {
-				structureData[s] = json[s].str;
+				if (json[s].type == JSON_TYPE.STRING) {
+					structureData[s] = json[s].str;
+				}
 			}
 
 			StructurePrototype newPrototype =
