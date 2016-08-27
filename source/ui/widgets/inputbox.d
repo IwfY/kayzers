@@ -81,7 +81,9 @@ class InputBox : Widget, Observer {
 		string printText = *(this.text);
 		if (this.textInputServer.isReading()) {
 			SysTime time = Clock.currTime();
-			if (time.fracSec.msecs < 500) {
+
+			// draw blinking cursor
+			if (time.fracSecs.total!"msecs" < 500) {
 				printText ~= "|";
 			}
 		}
